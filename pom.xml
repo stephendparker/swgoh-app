@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>swgoh-app</name>
 	<description>Star Wars Galaxy of Hero Web Tools</description>
-
+	<packaging>war</packaging>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -43,6 +43,67 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- build and run the angular client so jar file can be deployed -->
+			<!-- https://dzone.com/articles/simplified-building-web-application-using-spring-b -->
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>0.0.28</version>
+				<configuration>
+					<workingDirectory>src/main/static/swgoh-tools-client</workingDirectory>
+					<nodeVersion>v8.11.3</nodeVersion>
+					<npmVersion>6.3.0</npmVersion>
+					<nodeDownloadRoot>http://nodejs.org/dist/</nodeDownloadRoot>
+					<npmDownloadRoot>http://registry.npmjs.org/npm/-/</npmDownloadRoot>
+					<installDirectory>target</installDirectory>
+				</configuration>
+				<executions>
+
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run buildProduction</arguments>
+						</configuration>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.2</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+
+					<!-- Add frontend folder to war package -->
+					<webResources>
+						<resource>
+							<directory>src/main/static/swgoh-tools-client/dist/swgoh-tools-client</directory>
+						</resource>
+					</webResources>
+
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
