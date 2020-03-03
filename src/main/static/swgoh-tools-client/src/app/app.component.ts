@@ -10,10 +10,7 @@ import { SwgohGgDataService } from './services/swgoh-gg-data.service';
 export class AppComponent {
   title = 'swgoh-tools-client';
 
-  constructor(private ds: SwgohGgDataService) {
-    ds.player("738889527").subscribe(text => {
-      console.log("I got: " + text);
-    });
+  constructor() {
   }
 
 }

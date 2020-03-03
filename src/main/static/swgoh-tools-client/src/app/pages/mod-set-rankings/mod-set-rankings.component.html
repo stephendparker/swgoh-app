@@ -1,0 +1,61 @@
+<div class="route-content">
+	<app-progress-spinner></app-progress-spinner>
+	<app-guild-selector (loadGuild)='loadGuild($event)'></app-guild-selector>
+
+	<div *ngIf="modelGuildData != null">
+
+		<div>
+			<app-player-filter #playerFilter (selectionChange)="selectPlayers($event)"></app-player-filter>
+		</div>
+		<div>
+			<app-character-filter (selectionChange)="selectCharacters($event)"></app-character-filter>
+		</div>
+
+		<div *ngIf="calculatedGuildData != null">
+
+			<div class="scrollable-container mat-elevation-z8">
+				<table mat-table [dataSource]="selectedUnits(calculatedGuildData.modCalcResults.units)">
+
+					<ng-container matColumnDef="name">
+						<th mat-header-cell *matHeaderCellDef> NAME </th>
+						<td mat-cell *matCellDef="let element ">
+							<app-character-identifier [baseId]="element.name"></app-character-identifier>
+						</td>
+					</ng-container>
+
+					<ng-container matColumnDef="sets">
+						<th mat-header-cell *matHeaderCellDef> SETS </th>
+						<td mat-cell *matCellDef="let element ">
+							<app-mod-set-icon [setType]="element.commonSet1 "></app-mod-set-icon>
+							<app-mod-set-icon [setType]="element.commonSet2 "></app-mod-set-icon>
+							<app-mod-set-icon *ngIf="element.commonSet3 " [setType]="element.commonSet3 "></app-mod-set-icon>
+						</td>
+					</ng-container>
+
+					<ng-container matColumnDef="circle">
+						<th mat-header-cell *matHeaderCellDef> CIRCLE </th>
+						<td mat-cell *matCellDef="let element "> {{element.commonCircle}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="cross">
+						<th mat-header-cell *matHeaderCellDef> CROSS </th>
+						<td mat-cell *matCellDef="let element "> {{element.commonCross}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="triangle">
+						<th mat-header-cell *matHeaderCellDef> TRIANGLE </th>
+						<td mat-cell *matCellDef="let element "> {{element.commonTriangle}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="arrow">
+						<th mat-header-cell *matHeaderCellDef> ARROW </th>
+						<td mat-cell *matCellDef="let element "> {{element.commonArrow}} </td>
+					</ng-container>
+
+					<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+					<tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

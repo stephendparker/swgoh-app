@@ -1,0 +1,6 @@
+<mat-form-field>
+	<mat-label>Filters</mat-label>
+	<mat-select [(value)]="selected" multiple (openedChange)="filterChange($event)">
+		<mat-option *ngFor="let player of playerList" [value]="player.data.ally_code">{{player.data.name}}</mat-option>
+	</mat-select>
+</mat-form-field>
