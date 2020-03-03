@@ -26,7 +26,7 @@ export class ModSetRankingsComponent implements OnInit, OnDestroy {
   }
 
   protected unsubscribe$ = new Subject<void>();
-  private modelGuildData: RootObject = null;
+  modelGuildData: RootObject = null;
   calculatedGuildData = null;
 
   displayedColumns = ["name", "sets", "circle", "cross", "triangle", "arrow"];

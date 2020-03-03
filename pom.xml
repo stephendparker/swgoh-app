@@ -89,20 +89,44 @@
 			</plugin>
 
 			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.2.2</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-
-					<!-- Add frontend folder to war package -->
-					<webResources>
-						<resource>
-							<directory>src/main/static/swgoh-tools-client/dist/swgoh-tools-client</directory>
-						</resource>
-					</webResources>
-
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.2</version>
+				<executions>
+					<execution>
+						<id>default-copy-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/static/swgoh-tools/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/main/static/swgoh-tools-client/dist/swgoh-tools-client</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+
+			<!--<plugin>-->
+				<!--<artifactId>maven-war-plugin</artifactId>-->
+				<!--<version>3.2.2</version>-->
+				<!--<configuration>-->
+					<!--<failOnMissingWebXml>false</failOnMissingWebXml>-->
+					<!--<outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/</outputDirectory>-->
+					<!--&lt;!&ndash; Add frontend folder to war package &ndash;&gt;-->
+					<!--<webResources>-->
+						<!--<resource>-->
+							<!--<directory>src/main/static/swgoh-tools-client/dist/swgoh-tools-client</directory>-->
+						<!--</resource>-->
+					<!--</webResources>-->
+
+				<!--</configuration>-->
+			<!--</plugin>-->
 
 		</plugins>
 	</build>
