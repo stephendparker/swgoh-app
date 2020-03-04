@@ -10,11 +10,13 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(){
+        System.out.println("root");
         return "index.html";
     }
 
     @RequestMapping("/swgoh-tools/{resource}")
     public String redirect(@PathVariable String resource) {
+        System.out.println("swgoh-tools");
         return "redirect:/" + resource;
     }
 }

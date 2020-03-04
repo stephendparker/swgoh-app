@@ -101,7 +101,7 @@
 						</goals>
 						<configuration>
 							<overwrite>true</overwrite>
-							<outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/static/swgoh-tools/</outputDirectory>
+							<outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${project.basedir}/src/main/static/swgoh-tools-client/dist/swgoh-tools-client</directory>
@@ -129,6 +129,11 @@
 			<!--</plugin>-->
 
 		</plugins>
+		<!--<resources>-->
+			<!--<resource>-->
+				<!--<directory>src/main/static/swgoh-tools-client/dist/</directory>-->
+			<!--</resource>-->
+		<!--</resources>-->
 	</build>
 
 </project>
