@@ -57,6 +57,11 @@ export class PrimaryCounts {
     }
 }
 
+export class ModCalculatedData {
+    public units: {};
+    public modCalcResults: ModCalcResults = new ModCalcResults();
+}
+
 
 export class SetTotalCounts {
 
@@ -173,7 +178,9 @@ export class SwgohGgCalc {
                 highestValue = counts[propertyName];
             }
         });
-        return retVal;
+        if (highestValue > 0)
+            return retVal;
+        else return null;
     }
 
     public static getMostCommonPrimary(primaryCounts: PrimaryCounts[]): string {
@@ -183,9 +190,13 @@ export class SwgohGgCalc {
         primaryCounts.forEach(primaryCount => {
             if (primaryCount.count > currentMax) {
                 retVal = primaryCount.primaryType;
+                currentMax = primaryCount.count;
             }
         });
-        return retVal;
+        if (currentMax > 0)
+            return retVal;
+        else
+            return null;
     }
 
     public static calculateModMostCommon(modUnitCalcResults: ModUnitCalcResults) {
@@ -214,11 +225,10 @@ export class SwgohGgCalc {
         modUnitCalcResults.commonTriangle = this.getMostCommonPrimary(modUnitCalcResults.trianglePrimaryCounts);
     }
 
-    public static calculateGuildData(mods: Mods[]): any {
-        let retVal = {
-            units: {},
-            modCalcResults: new ModCalcResults()
-        };
+    public static calculateMods(mods: Mods[]): ModCalculatedData {
+        let retVal = new ModCalculatedData();
+
+        if (mods == null) return retVal;
 
         let characterList: string[] = [];
         console.log('generate a list of characters');

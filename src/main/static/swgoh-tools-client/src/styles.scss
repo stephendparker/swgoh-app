@@ -16,3 +16,22 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .route-content {
     padding: 5px;
 }
+
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+}
+
+.thick {
+    font-weight: bold;
+}

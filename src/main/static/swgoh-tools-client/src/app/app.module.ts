@@ -9,6 +9,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 
+import { FlexLayoutModule } from "@angular/flex-layout";
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,6 +23,10 @@ import { CharacterFilterComponent } from './components/character-filter/characte
 import { PlayerFilterComponent } from './components/player-filter/player-filter.component';
 import { CharacterIdentifierComponent } from './components/character-identifier/character-identifier.component';
 import { ProgressSpinnerComponent } from './components/progress-spinner/progress-spinner.component';
+import { ModCommonComponent } from './pages/mod-common/mod-common.component';
+import { PlayerSelectorComponent } from './components/player-selector/player-selector.component';
+import { ModPrimaryPercentagesComponent } from './components/mod-primary-percentages/mod-primary-percentages.component';
+import { ModSetPercentagesComponent } from './components/mod-set-percentages/mod-set-percentages.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +38,11 @@ import { ProgressSpinnerComponent } from './components/progress-spinner/progress
     CharacterFilterComponent,
     PlayerFilterComponent,
     CharacterIdentifierComponent,
-    ProgressSpinnerComponent
+    ProgressSpinnerComponent,
+    ModCommonComponent,
+    PlayerSelectorComponent,
+    ModPrimaryPercentagesComponent,
+    ModSetPercentagesComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +56,8 @@ import { ProgressSpinnerComponent } from './components/progress-spinner/progress
     MatProgressSpinnerModule,
     MatTableModule,
     MatSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

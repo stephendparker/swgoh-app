@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Player } from './../../model/swgohgg/guild-data';
 import { Subject } from 'rxjs';
 import { DataStoreService } from './../../services/data-store.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-player-filter',
@@ -18,12 +19,16 @@ export class PlayerFilterComponent implements OnInit {
 
   protected unsubscribe$ = new Subject<void>();
 
+  public lockInput: boolean = false;
+
   constructor(private dataStoreService: DataStoreService, private cdref: ChangeDetectorRef) {
 
   }
 
   ngOnInit() {
-
+    this.dataStoreService.lockInput$.pipe(takeUntil(this.unsubscribe$)).subscribe(lockInput => {
+      this.lockInput = lockInput;
+    });
   }
 
   setPlayerList(playerList: Player[], selected: number[]) {
@@ -35,6 +40,16 @@ export class PlayerFilterComponent implements OnInit {
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  selectAll() {
+    this.selected = this.playerList.map(player => player.data.ally_code);
+    this.selectionChange.emit(this.selected);
+  }
+
+  selectNone() {
+    this.selected = [];
+    this.selectionChange.emit(this.selected);
   }
 
   filterChange(filterChangeEvent: any) {

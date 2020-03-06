@@ -1,0 +1,83 @@
+table {
+    width: 100%;
+}
+
+.scrollable-container {
+    height: calc(-75px + 100vh);
+    overflow: auto;
+    padding: 5px;
+}
+
+.header-row {
+    padding: 5px;
+}
+
+.hide {
+    display: none;
+}
+
+.primary-piece-label {
+    width: 150px;
+    display: inline-block;
+}
+
+.odd {
+    background-color: lightblue;
+}
+
+.wrong-set,
+.wrong-primary {
+    background-color: red;
+    display: inline-block;
+    padding: 4px;
+    color: white;
+}
+
+.flow {
+    display: flex;
+    box-sizing: border-box;
+    -webkit-box-direction: normal;
+}
+
+.character-col,
+.set-col,
+.primary-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+}
+
+.column {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    margin-bottom: 20px;
+}
+
+.row {
+    flex-direction: row;
+    padding: 5px;
+    -webkit-box-orient: horizontal;
+}
+
+.row .character-col {
+    max-width: 10%;
+}
+
+.row .set-col {
+    max-width: 10%;
+}
+
+.row .primary-col {
+    max-width: 20%;
+}
+
+.column .character-col {
+    max-height: 10%;
+}
+
+.column .set-col {
+    max-height: 10%;
+}
+.column .primary-col {
+    max-height: 20%;
+}

@@ -1,6 +1,6 @@
 <div>
 	<mat-form-field class="example-full-width">
-		<mat-label>Guild ID</mat-label>
+		<mat-label>{{ selectorLabel }}</mat-label>
 		<input matInput [(ngModel)]="guildId" [readonly]="lockInput">
 	</mat-form-field>
 	<button mat-button (click)='loadGuildAction(guildId)' [disabled]="lockInput">Load</button>

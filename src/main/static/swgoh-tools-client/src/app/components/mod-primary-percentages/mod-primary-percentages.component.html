@@ -1,0 +1,7 @@
+<span class="thick mod-label">{{ label }}:</span>
+<div *ngFor="let primaryCount of primaryCounts">
+	<div class="primary-col" [class.highlight]="highlightPrimary == primaryCount.primaryType">
+		<span class="primary-piece-label">{{ primaryCount.primaryType }}:</span>
+		<span>{{ round(primaryCount.count / total * 100) }}% - {{ primaryCount.count }}</span>
+	</div>
+</div>

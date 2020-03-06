@@ -1,0 +1,7 @@
+<div>
+	<mat-form-field>
+		<mat-label>{{ selectorLabel }}</mat-label>
+		<input matInput [(ngModel)]="playerId" [readonly]="lockInput">
+	</mat-form-field>
+	<button mat-button (click)='loadPlayerAction(playerId)' [disabled]="lockInput">Load</button>
+</div>

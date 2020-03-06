@@ -20,8 +20,24 @@
 
 .mat-spinner {
   position: absolute;
-  left: 50%;
-  top: 50%;
+
+  /* Firefox */
+  left: -moz-calc(50% - 62px);
+  /* WebKit */
+  left: -webkit-calc(50% - 62px);
+  /* Opera */
+  left: -o-calc(50% - 62px);
+  /* Standard */
+  left: calc(50% - 62px);
+
+  /* Firefox */
+  top: -moz-calc(50% - 62px);
+  /* WebKit */
+  top: -webkit-calc(50% - 62px);
+  /* Opera */
+  top: -o-calc(50% - 62px);
+  /* Standard */
+  top: calc(50% - 62px);
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }

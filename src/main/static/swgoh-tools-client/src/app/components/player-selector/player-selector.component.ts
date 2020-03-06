@@ -6,18 +6,18 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-guild-selector',
-  templateUrl: './guild-selector.component.html',
-  styleUrls: ['./guild-selector.component.scss']
+  selector: 'app-player-selector',
+  templateUrl: './player-selector.component.html',
+  styleUrls: ['./player-selector.component.scss']
 })
-export class GuildSelectorComponent implements OnInit, OnDestroy {
+export class PlayerSelectorComponent  implements OnInit, OnDestroy {
 
-  public guildId: string = '259';
+  public playerId: string = '738889527';
   public lockInput: boolean = false;
 
   @Input() selectorLabel: 'Guild ID'
 
-  @Output() loadGuild: EventEmitter<any> = new EventEmitter();
+  @Output() selectPlayer: EventEmitter<any> = new EventEmitter();
   protected unsubscribe$ = new Subject<void>();
 
   constructor(private dataStoreService: DataStoreService) { }
@@ -33,13 +33,7 @@ export class GuildSelectorComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  loadGuildAction(guildId: string) {
-    this.dataStoreService.setLockInput(true);
-    this.dataStoreService.getGuildData(guildId).subscribe(guildData => {
-      if (guildData != null) {
-        this.dataStoreService.setLockInput(false);
-        this.loadGuild.emit(guildData);
-      }
-    });
+  loadPlayerAction(playerId: string) {
+    this.selectPlayer.emit(playerId);
   }
 }

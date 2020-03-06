@@ -1,0 +1,19 @@
+.primary-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+}
+
+.primary-piece-label {
+    width: 150px;
+    display: inline-block;
+}
+
+.mod-label{ 
+    padding-bottom: 5px;
+}
+
+.highlight {
+    background-color: yellow;
+}
+

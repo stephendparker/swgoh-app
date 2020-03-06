@@ -1,0 +1,32 @@
+
+
+.flow {
+    display: flex;
+    box-sizing: border-box;
+    -webkit-box-direction: normal;
+}
+
+.character-col,
+.set-col,
+.primary-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+}
+
+.column {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    margin-bottom: 20px;
+}
+
+.row {
+    flex-direction: row;
+    padding: 5px;
+    -webkit-box-orient: horizontal;
+}
+
+
+.highlight {
+    background-color: yellow;
+}

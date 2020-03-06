@@ -3,6 +3,60 @@ table {
 }
 
 .scrollable-container {
-  height: 400px;
+  height: calc(-75px + 100vh);
   overflow: auto;
+  padding: 5px;
+}
+
+.header-row {
+  padding: 5px;
+}
+
+.primary-piece-label {
+  width: 150px;
+   display: inline-block;
+}
+
+.odd { 
+  background-color: lightblue; 
+  }
+
+.set-row {
+  padding: 5px;
+}
+
+.character-column {
+  display: flex;
+  flex-direction: column;
+  flex: 10;
+}
+
+.set-column {
+  display: flex;
+  flex-direction: column;
+  flex: 10;
+}
+
+.circle-column {
+  display: flex;
+  flex-direction: column;
+  flex: 20;
+}
+
+.cross-column {
+  display: flex;
+  flex-direction: column;
+  flex: 20;
+}
+
+.triangle-column {
+  display: flex;
+  flex-direction: column;
+  flex: 20;
+}
+
+.arrow-column {
+  display: flex;
+  flex-direction: column;
+  flex: 20;
 }

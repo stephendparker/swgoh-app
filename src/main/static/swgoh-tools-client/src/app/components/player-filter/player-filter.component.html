@@ -4,3 +4,5 @@
 		<mat-option *ngFor="let player of playerList" [value]="player.data.ally_code">{{player.data.name}}</mat-option>
 	</mat-select>
 </mat-form-field>
+<button mat-button (click)='selectAll()' [disabled]="lockInput">All</button>
+<button mat-button (click)='selectNone()' [disabled]="lockInput">None</button>

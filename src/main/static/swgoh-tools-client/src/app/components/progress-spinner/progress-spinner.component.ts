@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { DataStoreService } from './../../services/data-store.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

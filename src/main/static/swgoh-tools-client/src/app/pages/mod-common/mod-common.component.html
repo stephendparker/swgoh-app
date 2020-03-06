@@ -1,0 +1,133 @@
+<div class="route-content">
+	<app-progress-spinner></app-progress-spinner>
+	<app-guild-selector (loadGuild)='loadGuild($event)' [selectorLabel]="'Model Guild ID'"></app-guild-selector>
+
+	<div *ngIf="modelGuildData != null">
+
+		<div>
+			<app-player-filter #playerFilter (selectionChange)="selectPlayers($event)"></app-player-filter>
+		</div>
+		<div>
+			<app-player-selector (selectPlayer)='selectTargetPlayer($event)' [selectorLabel]="'Target Player'"></app-player-selector>
+		</div>
+		<div>
+			<app-character-filter (selectionChange)="selectCharacters($event)"></app-character-filter>
+		</div>
+
+		<div *ngIf="calculatedGuildData != null">
+
+			<div class="mat-elevation-z8">
+
+				<div ngClass="flow row" ngClass.lt-sm="hide">
+					<div class="character-col">
+						Character
+					</div>
+					<div class="set-col">
+						Set
+					</div>
+					<div class="primary-col">
+						Circle
+					</div>
+					<div class="primary-col">
+						Cross
+					</div>
+					<div class="primary-col">
+						Triangle
+					</div>
+					<div class="primary-col">
+						Arrow
+					</div>
+				</div>
+
+				<div class="scrollable-container">
+
+					<div *ngFor="let element of selectedUnits(calculatedComparedResults); let index=index; let odd=odd; let even=even;" [class.odd]="odd">
+
+						<div ngClass="flow row" ngClass.lt-sm="flow column" (click)="expandedCharacter = expandedCharacter != element.modelResults.name ? expandedCharacter = element.modelResults.name : null">
+
+							<div class="character-col">
+								<app-character-identifier [baseId]="element.modelResults.name"></app-character-identifier>
+							</div>
+							<div class="set-col">
+								<app-mod-set-icon [setType]="element.modelResults.commonSet1" *ngIf="element.modelResults.commonSet1" [class.wrong-set]="calculatedPlayerData != null && missingSet(element.modelResults.commonSet1, element.targetResults, null, null)"></app-mod-set-icon>
+								<app-mod-set-icon [setType]="element.modelResults.commonSet2" *ngIf="element.modelResults.commonSet2" [class.wrong-set]="calculatedPlayerData != null && missingSet(element.modelResults.commonSet2, element.targetResults, element.modelResults.commonSet1, null)"></app-mod-set-icon>
+								<app-mod-set-icon [setType]="element.modelResults.commonSet3" *ngIf="element.modelResults.commonSet3" [class.wrong-set]="calculatedPlayerData != null && missingSet(element.modelResults.commonSet3, element.targetResults, element.modelResults.commonSet1, element.modelResults.commonSet2)">
+								</app-mod-set-icon>
+							</div>
+							<div class="primary-col">
+								<span class="hide" ngClass.lt-sm="primary-piece-label">Circle:</span>
+								<span [class.wrong-set]="calculatedPlayerData != null && (element.targetResults == null || (element.modelResults.commonCircle != element.targetResults.commonCircle))">
+								{{element.modelResults.commonCircle}}</span>
+							</div>
+							<div class="primary-col">
+								<span class="hide" ngClass.lt-sm="primary-piece-label">Cross:</span>
+								<span [class.wrong-set]="calculatedPlayerData != null && (element.targetResults == null || (element.modelResults.commonCross != element.targetResults.commonCross))">
+								{{element.modelResults.commonCross}}</span>
+							</div>
+							<div class="primary-col">
+								<span class="hide" ngClass.lt-sm="primary-piece-label">Triangle:</span>
+								<span [class.wrong-set]="calculatedPlayerData != null && (element.targetResults == null || (element.modelResults.commonTriangle != element.targetResults.commonTriangle))">
+								{{element.modelResults.commonTriangle}}</span>
+							</div>
+							<div class="primary-col">
+								<span class="hide" ngClass.lt-sm="primary-piece-label">Arrow:</span>
+								<span [class.wrong-set]="calculatedPlayerData != null && (element.targetResults == null || (element.modelResults.commonArrow != element.targetResults.commonArrow))">
+								{{element.modelResults.commonArrow}}</span>
+							</div>
+						</div>
+						<div ngClass="flow row" *ngIf="expandedCharacter == element.modelResults.name">
+
+							<div ngClass="flow row">
+
+								<div ngClass="flow column" ngClass.lt-sm="flow row">
+									<span class="thick">4 Mod sets: {{ round(element.modelResults.fourSetTotals.setTypeTotal / (element.modelResults.fourSetTotals.setTypeTotal +
+									element.modelResults.twoSetTotals.setTypeTotal) * 100) }}% - {{ element.modelResults.fourSetTotals.setTypeTotal
+									}} </span>
+
+									<app-mod-set-percentages [highlightSetTotalCounts]="element.targetResults == null ? null : element.targetResults.fourSetTotals" [setTotals]="element.modelResults.fourSetTotals" [showFourPiece]="true"></app-mod-set-percentages>
+
+								</div>
+								<div ngClass="flow column" ngClass.lt-sm="flow row">
+									<div *ngIf="element.modelResults.twoSetTotals.setTypeTotal > 0">
+										<span class="thick">Non 4 Mod sets: {{ round(element.modelResults.twoSetTotals.setTypeTotal / (element.modelResults.fourSetTotals.setTypeTotal
+										+ element.modelResults.twoSetTotals.setTypeTotal) * 100) }}% - {{ element.modelResults.twoSetTotals.setTypeTotal
+										}}</span>
+
+										<app-mod-set-percentages [highlightSetTotalCounts]="element.targetResults == null ? null : element.targetResults.twoSetTotals" [setTotals]="element.modelResults.twoSetTotals" [showFourPiece]="false"></app-mod-set-percentages>
+
+									</div>
+								</div>
+								<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+									<app-mod-primary-percentages [label]="'Circle'" [highlightPrimary]="element.targetResults == null ? null : element.targetResults.commonCircle"
+										[primaryCounts]="element.modelResults.circlePrimaryCounts" [total]="element.modelResults.fourSetTotals.setTypeTotal + element.modelResults.twoSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+								</div>
+								<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+									<app-mod-primary-percentages [label]="'Cross'" [highlightPrimary]="element.targetResults == null ? null : element.targetResults.commonCross" [primaryCounts]="element.modelResults.crossPrimaryCounts" [total]="element.modelResults.fourSetTotals.setTypeTotal + element.modelResults.twoSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+								</div>
+								<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+									<app-mod-primary-percentages [label]="'Triangle'" [highlightPrimary]="element.targetResults == null ? null : element.targetResults.commonTriangle" [primaryCounts]="element.modelResults.trianglePrimaryCounts" [total]="element.modelResults.fourSetTotals.setTypeTotal + element.modelResults.twoSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+								</div>
+								<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+									<app-mod-primary-percentages [label]="'Arrow'" [highlightPrimary]="element.targetResults == null ? null : element.targetResults.commonArrow" [primaryCounts]="element.modelResults.arrowPrimaryCounts" [total]="element.modelResults.fourSetTotals.setTypeTotal + element.modelResults.twoSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+</div>
