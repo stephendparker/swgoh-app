@@ -25,6 +25,19 @@ table {
     background-color: lightblue;
 }
 
+.error-set {
+    background-color: red;
+    display: inline-block;
+    padding: 4px;
+    color: white;
+}
+
+.warning-set {
+    background-color: yellow;
+    display: inline-block;
+    padding: 4px;
+}
+
 .wrong-set,
 .wrong-primary {
     background-color: red;
@@ -78,6 +91,7 @@ table {
 .column .set-col {
     max-height: 10%;
 }
+
 .column .primary-col {
     max-height: 20%;
 }

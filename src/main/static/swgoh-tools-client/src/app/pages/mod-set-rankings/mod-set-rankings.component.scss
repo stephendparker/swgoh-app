@@ -3,60 +3,67 @@ table {
 }
 
 .scrollable-container {
-  height: calc(-75px + 100vh);
-  overflow: auto;
-  padding: 5px;
+    height: calc(-75px + 100vh);
+    overflow: auto;
+    padding: 5px;
+}
+
+.hidden {
+    display: none !important;
+}
+.toolbar-spacer {
+    flex: 1 1 auto;
 }
 
 .header-row {
-  padding: 5px;
+    padding: 5px;
 }
 
 .primary-piece-label {
-  width: 150px;
-   display: inline-block;
+    width: 150px;
+    display: inline-block;
 }
 
-.odd { 
-  background-color: lightblue; 
-  }
+.odd {
+    background-color: lightblue;
+}
 
 .set-row {
-  padding: 5px;
+    padding: 5px;
 }
 
 .character-column {
-  display: flex;
-  flex-direction: column;
-  flex: 10;
+    display: flex;
+    flex-direction: column;
+    flex: 10;
 }
 
 .set-column {
-  display: flex;
-  flex-direction: column;
-  flex: 10;
+    display: flex;
+    flex-direction: column;
+    flex: 10;
 }
 
 .circle-column {
-  display: flex;
-  flex-direction: column;
-  flex: 20;
+    display: flex;
+    flex-direction: column;
+    flex: 20;
 }
 
 .cross-column {
-  display: flex;
-  flex-direction: column;
-  flex: 20;
+    display: flex;
+    flex-direction: column;
+    flex: 20;
 }
 
 .triangle-column {
-  display: flex;
-  flex-direction: column;
-  flex: 20;
+    display: flex;
+    flex-direction: column;
+    flex: 20;
 }
 
 .arrow-column {
-  display: flex;
-  flex-direction: column;
-  flex: 20;
+    display: flex;
+    flex-direction: column;
+    flex: 20;
 }

@@ -16,6 +16,7 @@ export class ModPrimaryPercentagesComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
   }
 
   round(value: number): number {

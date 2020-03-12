@@ -114,11 +114,21 @@ THE SOFTWARE.
 
 @angular/material/core
 
+@angular/material/dialog
+
 @angular/material/form-field
+
+@angular/material/icon
+
+@angular/material/list
 
 @angular/material/progress-spinner
 
 @angular/material/select
+
+@angular/material/sort
+
+@angular/material/table
 
 @angular/material/toolbar
 

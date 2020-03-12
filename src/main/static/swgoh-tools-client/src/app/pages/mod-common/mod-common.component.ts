@@ -2,17 +2,28 @@ import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@ang
 import { DataStoreService } from './../../services/data-store.service';
 import { Subject, Observable, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SwgohGgCalc, ModUnitCalcResults, ModCalculatedData } from './../../calcs/swgoh-gg-calc';
+import { SwgohGgCalc, ModUnitCalcResults, ModCalculatedData, SetTotalCounts, PrimaryCounts } from './../../calcs/swgoh-gg-calc';
 import { PlayerFilterComponent } from './../../components/player-filter/player-filter.component';
 import { RootObject, Player } from './../../model/swgohgg/guild-data';
 
 import { delay } from 'rxjs/operators';
 import { Mods } from './../../model/swgohgg/mods-data';
 
-
 class ModResultsDto {
   public modelResults: ModUnitCalcResults;
   public targetResults: ModUnitCalcResults;
+
+  public sameSets: boolean = false;
+  public missingTarget: boolean = true;
+
+  public set1Warning: string = null;
+  public set2Warning: string = null;
+  public set3Warning: string = null;
+
+  public circleWarning: string = null;
+  public crossWarning: string = null;
+  public arrowWarning: string = null;
+  public triangleWarning: string = null;
 }
 
 @Component({
@@ -22,18 +33,6 @@ class ModResultsDto {
 })
 export class ModCommonComponent implements OnInit {
 
-  private playerFilterComponent: PlayerFilterComponent;
-  @ViewChild('playerFilter') set content(content: PlayerFilterComponent) {
-    if (this.playerFilterComponent == null) {
-      this.playerFilterComponent = content;
-      // only populate list first time or it will continually reset
-      if (this.modelGuildData != null) {
-        this.setPlayerList(this.modelGuildData.players);
-      }
-    }
-    this.playerFilterComponent = content;
-  }
-
   protected unsubscribe$ = new Subject<void>();
   modelGuildData: RootObject = null;
   calculatedGuildData: ModCalculatedData = null; // selected guild characters mod calcs
@@ -41,8 +40,6 @@ export class ModCommonComponent implements OnInit {
   calculatedComparedResults: ModResultsDto[] = null; // dto for characters, common guild + player
 
   selectedCharacters: string[] = []; // characters filtered to show
-  selectedPlayers: number[] = []; // players from the guild to include in calcs
-  fullPlayerList: Player[] = []; // full list of players from guild
 
   targetMods: Mods[] = null; // list of mods from target guilds selected players
   playerMods: Mods = null; // players mods
@@ -52,12 +49,7 @@ export class ModCommonComponent implements OnInit {
   constructor(private dataStoreService: DataStoreService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.dataStoreService.modelGuildData$.pipe(takeUntil(this.unsubscribe$)).subscribe(guildData => {
-      this.modelGuildData = guildData;
-      if (this.modelGuildData != null && this.playerFilterComponent != null) {
-        this.setPlayerList(this.modelGuildData.players);
-      }
-    });
+
   }
 
   ngOnDestroy() {
@@ -65,16 +57,8 @@ export class ModCommonComponent implements OnInit {
     this.unsubscribe$.complete();
   }
 
-  round(value: number) : number {
+  round(value: number): number {
     return Math.round(value);
-  }
-
-  setPlayerList(players: Player[]) {
-    this.fullPlayerList = players;
-    this.selectedPlayers = SwgohGgCalc.getTopByGalacticPower(players, 10).map(player => player.data.ally_code);
-    this.selectPlayers(this.selectedPlayers);
-    if (this.playerFilterComponent)
-      this.playerFilterComponent.setPlayerList(this.fullPlayerList, SwgohGgCalc.getTopByGalacticPower(players, 10).map(player => player.data.ally_code));
   }
 
   selectCharacters(characters) {
@@ -85,8 +69,6 @@ export class ModCommonComponent implements OnInit {
     this.dataStoreService.setLockInput(true);
     this.dataStoreService.getPlayerModData(playerId)
       .subscribe(response => {
-
-        //handle success response
         console.log("get players success");
         if (response != null) {
           this.playerMods = response.value.body;
@@ -94,11 +76,9 @@ export class ModCommonComponent implements OnInit {
           this.cdr.detectChanges();
         }
       }, (error) => {
-        // error handling
         console.log("get players error: " + error);
       }, () => {
         this.dataStoreService.setLockInput(false);
-        // when observable is completed
         console.log("get players complete");
       });
   }
@@ -112,7 +92,67 @@ export class ModCommonComponent implements OnInit {
     this.calculatedGuildData.modCalcResults.units.forEach(modelUnit => {
       let dto: ModResultsDto = new ModResultsDto();
       dto.modelResults = modelUnit;
+
       dto.targetResults = this.calculatedPlayerData == null ? null : this.calculatedPlayerData.modCalcResults.units.find(unit => unit.name == modelUnit.name);
+
+      if (dto.targetResults != null && dto.modelResults != null) {
+
+        dto.missingTarget = dto.targetResults.commonSet1 == null;
+
+        let modelList = [];
+        dto.modelResults.commonSet1 != null ? modelList.push(dto.modelResults.commonSet1) : null;
+        dto.modelResults.commonSet2 != null ? modelList.push(dto.modelResults.commonSet2) : null;
+        dto.modelResults.commonSet3 != null ? modelList.push(dto.modelResults.commonSet3) : null;
+        modelList.sort();
+
+        let targetList = [];
+        dto.targetResults.commonSet1 != null ? targetList.push(dto.targetResults.commonSet1) : null;
+        dto.targetResults.commonSet2 != null ? targetList.push(dto.targetResults.commonSet2) : null;
+        dto.targetResults.commonSet3 != null ? targetList.push(dto.targetResults.commonSet3) : null;
+        targetList.sort();
+
+        dto.sameSets = true;
+        if (modelList.length == targetList.length) {
+
+          for (let x = 0; x < modelList.length; x++) {
+            if (modelList[x] != targetList[x]) {
+              dto.sameSets = false;
+            }
+          }
+        } else {
+          dto.sameSets = false;
+        }
+        if (dto.sameSets == false) {
+
+          let modelList = [];
+          dto.modelResults.commonSet1 != null ? modelList.push(dto.modelResults.commonSet1) : null;
+          dto.modelResults.commonSet2 != null ? modelList.push(dto.modelResults.commonSet2) : null;
+          dto.modelResults.commonSet3 != null ? modelList.push(dto.modelResults.commonSet3) : null;
+          modelList.sort();
+
+          if (modelList.indexOf(dto.targetResults.commonSet1) == -1) {
+            dto.set1Warning = 'WARNING';
+          } else {
+            this.removeElement(modelList, dto.targetResults.commonSet1);
+          }
+          if (modelList.indexOf(dto.targetResults.commonSet2) == -1) {
+            dto.set2Warning = 'WARNING';
+          } else {
+            this.removeElement(modelList, dto.targetResults.commonSet2);
+          }
+          if (modelList.indexOf(dto.targetResults.commonSet3) == -1) {
+            dto.set3Warning = 'WARNING';
+          } else {
+            this.removeElement(modelList, dto.targetResults.commonSet3);
+          }
+        }
+
+      } else if (this.calculatedPlayerData != null && dto.targetResults == null) {
+        // no mods for this character?
+        dto.set1Warning = 'ERROR';
+        dto.set2Warning = 'ERROR';
+        dto.set3Warning = 'ERROR';
+      }
       this.calculatedComparedResults.push(dto);
     });
     console.log('recalculation complete');
@@ -148,29 +188,16 @@ export class ModCommonComponent implements OnInit {
     return selectedUnits.filter(mucr => this.selectedCharacters.indexOf(mucr.modelResults.name) != -1);
   }
 
-  missingSet(setName: string, targetResults: ModUnitCalcResults, remove1: string, remove2: string): boolean {
-    if (targetResults == null) {
-      return true;
-    }
-    let playerSets: string[] = [];
-    if (targetResults.commonSet1 != null) {
-      playerSets.push(targetResults.commonSet1);
-    }
-    if (targetResults.commonSet2 != null) {
-      playerSets.push(targetResults.commonSet2);
-    }
-    if (targetResults.commonSet3 != null) {
-      playerSets.push(targetResults.commonSet3);
-    }
-    if (remove1 != null) {
-      this.removeElement(playerSets, remove1);
-
-    }
-    if (remove2 != null) {
-      this.removeElement(playerSets, remove2);
-    }
-    return playerSets.indexOf(setName) == -1;
+  getFourSetPercent(results: ModUnitCalcResults): number {
+    return Math.round(results.fourSetTotals.setTypeTotal / this.getSetTotal(results)) * 100;
   }
+  getTwoSetPercent(results: ModUnitCalcResults): number {
+    return Math.round(results.twoSetTotals.setTypeTotal / this.getSetTotal(results)) * 100;
+  }
+  getSetTotal(results: ModUnitCalcResults): number {
+    return (results.fourSetTotals.setTypeTotal + results.twoSetTotals.setTypeTotal);
+  }
+
 
   removeElement(array, elem) {
     var index = array.indexOf(elem);
@@ -179,7 +206,4 @@ export class ModCommonComponent implements OnInit {
     }
   }
 
-  loadGuild(guildData: any) {
-    this.dataStoreService.setModelGuildData(guildData);
-  }
 }

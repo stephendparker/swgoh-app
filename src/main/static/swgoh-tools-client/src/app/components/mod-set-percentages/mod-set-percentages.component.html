@@ -1,36 +1,18 @@
 <div *ngIf="showFourPiece == true">
-	<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.speed > 0">
-		<app-mod-set-icon [setType]="'speed'"></app-mod-set-icon>
-		{{ round(setTotals.speed / (setTotals.setTypeTotal) * 100) }}
+
+	<div *ngFor="let set of fourSetArray">
+		<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts[set] > 0" *ngIf="setTotals[set] != 0 || (highlightSetTotalCounts != null && highlightSetTotalCounts[set] > 0)">
+			<span class="primary-piece-label ">	<app-mod-set-icon [setType]="set"></app-mod-set-icon></span> {{ round( (setTotals[set]
+			/ setTotals.setTypeTotal) * 100) }}% - {{ setTotals[set] }}
+		</div>
 	</div>
-	<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.offense  > 0">
-		<app-mod-set-icon [setType]="'offense'"></app-mod-set-icon>
-		{{ round(setTotals.offense / (setTotals.setTypeTotal) * 100) }}
-	</div>
-	<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.critDmg  > 0">
-		<app-mod-set-icon [setType]="'critDmg'"></app-mod-set-icon>
-		{{ round(setTotals.critDmg / (setTotals.setTypeTotal) * 100) }}
-	</div>
+
 	<hr>
 </div>
 
-<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.health  > 0">
-	<app-mod-set-icon [setType]="'health'"></app-mod-set-icon>
-	{{ round(setTotals.health / (setTotals.setTypeTotal) * 100) }}
-</div>
-<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.defense  > 0">
-	<app-mod-set-icon [setType]="'defense'"></app-mod-set-icon>
-	{{ round(setTotals.defense / (setTotals.setTypeTotal) * 100) }}
-</div>
-<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.critChance  > 0">
-	<app-mod-set-icon [setType]="'critChance'"></app-mod-set-icon>
-	{{ round(setTotals.critChance / (setTotals.setTypeTotal) * 100) }}
-</div>
-<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.potency  > 0">
-	<app-mod-set-icon [setType]="'potency'"></app-mod-set-icon>
-	{{ round(setTotals.potency / (setTotals.setTypeTotal) * 100) }}
-</div>
-<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts.tenacity  > 0">
-	<app-mod-set-icon [setType]="'tenacity'"></app-mod-set-icon>
-	{{ round(setTotals.tenacity / (setTotals.setTypeTotal) * 100) }}
+<div *ngFor="let set of twoSetArray">
+	<div ngClass="flow row" [class.highlight]="highlightSetTotalCounts != null && highlightSetTotalCounts[set] > 0" *ngIf="setTotals[set] != 0 || (highlightSetTotalCounts != null && highlightSetTotalCounts[set] > 0)">
+		<span class="primary-piece-label ">	<app-mod-set-icon [setType]="set"></app-mod-set-icon></span> {{ round( (setTotals[set]
+		/ setTotals.setTypeTotal) * 100) }}% - {{ setTotals[set] }}
+	</div>
 </div>

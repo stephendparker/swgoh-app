@@ -8,8 +8,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { MatDialogModule } from '@angular/material/dialog';
+
+import { CommonModule, DecimalPipe } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,6 +32,10 @@ import { ModCommonComponent } from './pages/mod-common/mod-common.component';
 import { PlayerSelectorComponent } from './components/player-selector/player-selector.component';
 import { ModPrimaryPercentagesComponent } from './components/mod-primary-percentages/mod-primary-percentages.component';
 import { ModSetPercentagesComponent } from './components/mod-set-percentages/mod-set-percentages.component';
+import { ColumnSelectorComponent } from './components/column-selector/column-selector.component';
+import { GuildPlayerSelectorComponent } from './components/guild-player-selector/guild-player-selector.component';
+import { PackValueComponent } from './pages/pack-value/pack-value.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -42,7 +51,10 @@ import { ModSetPercentagesComponent } from './components/mod-set-percentages/mod
     ModCommonComponent,
     PlayerSelectorComponent,
     ModPrimaryPercentagesComponent,
-    ModSetPercentagesComponent
+    ModSetPercentagesComponent,
+    ColumnSelectorComponent,
+    GuildPlayerSelectorComponent,
+    PackValueComponent
   ],
   imports: [
     BrowserModule,
@@ -57,9 +69,17 @@ import { ModSetPercentagesComponent } from './components/mod-set-percentages/mod
     MatTableModule,
     MatSelectModule,
     ReactiveFormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatSortModule,
+    MatIconModule,
+    MatListModule,
+    MatDialogModule,
+    MatAutocompleteModule
   ],
-  providers: [],
+  entryComponents: [
+    ColumnSelectorComponent
+  ],
+  providers: [DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

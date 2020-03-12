@@ -21,6 +21,8 @@ export class CharacterFilterComponent implements OnInit, OnDestroy {
 
   protected unsubscribe$ = new Subject<void>();
 
+  selected: string;
+
   characterData: CharacterData[] = null;
 
   constructor(private dataStoreService: DataStoreService) {
@@ -52,11 +54,18 @@ export class CharacterFilterComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
+  selectAll() {
+    this.filterChange(null);
+  }
+
+
   filterChange(filterChangeEvent: any) {
     let characters: string[] = [];
+    this.selected = null;
     if (filterChangeEvent == null) {
       characters = this.characterData.map(character => character.base_id);
     } else {
+      this.selected = filterChangeEvent.value;
       characters = this.characterData.filter(character => {
         return character.categories.indexOf(filterChangeEvent.value) != -1;
       }).map(character => character.base_id);

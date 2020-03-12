@@ -34,6 +34,11 @@ public class SwgohGGController {
         return swgohGGDataService.playerMods(allyCode);
     }
 
+    @RequestMapping("/gear")
+    public Object gear() {
+
+        return swgohGGDataService.gear();
+    }
 
     @RequestMapping(value = "/list/players/mods", method = RequestMethod.POST)
     public Object getRefreshedPlayerListModsData(@RequestBody int[] allyCodes) {

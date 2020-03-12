@@ -1,0 +1,14 @@
+<h4 mat-dialog-title>Select Columns</h4>
+<mat-dialog-content>
+	<mat-selection-list #columnSelection [(ngModel)]="selectionOptions">
+		<mat-list-option *ngFor="let column of options" [selected]="alreadySelected(column)" checkboxPosition="before"
+			[value]="column">
+			{{ column.label }}
+		</mat-list-option>
+	</mat-selection-list>
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button (click)="onOk()">Ok</button>
+	<button mat-button (click)="onClose()">Close</button>
+</div>

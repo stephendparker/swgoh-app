@@ -1,0 +1,6 @@
+<div>
+	<app-guild-selector (loadGuild)='loadGuild($event)' [selectorLabel]="'Model Guild ID'"></app-guild-selector>
+</div>
+<div>
+	<app-player-filter #playerFilter (selectionChange)="selectPlayers($event)"></app-player-filter>
+</div>

@@ -1,0 +1,229 @@
+<div class="route-content">
+	<app-progress-spinner></app-progress-spinner>
+	<app-guild-player-selector [selectorLabel]="'Model Guild ID'" (selectionChange)="selectPlayers($event)"></app-guild-player-selector>
+
+	<div [class.hidden]="calculatedGuildData == null">
+
+		<div>
+			<app-character-filter (selectionChange)="selectCharacters($event)"></app-character-filter>
+		</div>
+
+		<mat-toolbar>
+			<mat-toolbar-row>
+				<span class="toolbar-spacer"></span>
+				<button mat-icon-button (click)="configureColumns()"><mat-icon>settings</mat-icon></button>
+			</mat-toolbar-row>
+		</mat-toolbar>
+
+		<table mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8">
+
+			<!-- Position Column -->
+			<ng-container matColumnDef="name">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+				<td mat-cell *matCellDef="let element">
+					<app-character-identifier [baseId]="element.name"></app-character-identifier>
+				</td>
+			</ng-container>
+
+			<!-- Position Column -->
+			<ng-container matColumnDef="set">
+				<th mat-header-cell *matHeaderCellDef> Set </th>
+				<td mat-cell *matCellDef="let element">
+
+					<app-mod-set-icon [setType]="element.commonSet1" *ngIf="element.commonSet1"></app-mod-set-icon>
+					<app-mod-set-icon [setType]="element.commonSet2" *ngIf="element.commonSet2"></app-mod-set-icon>
+					<app-mod-set-icon [setType]="element.commonSet3" *ngIf="element.commonSet3"></app-mod-set-icon>
+
+				</td>
+			</ng-container>
+
+			<ng-container *ngFor="let column of statColumns">
+				<ng-container [matColumnDef]="column.name">
+					<th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.label }} </th>
+					<td mat-cell *matCellDef="let element">
+						{{ getProperty(element, column.name) }}
+					</td>
+				</ng-container>
+			</ng-container>
+			<!--
+
+			<ng-container matColumnDef="speedRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Speed Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.speedRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="speed">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Speed </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.speed }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="offenseRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Offense Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.offenseRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="offense">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Offense </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.offense }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="offensePercent">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Offense %</th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.offensePercent }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="offenseRolls">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Offense * </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.offenseRolls }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="critChanceRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Crit Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.critChanceRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="critChance">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Crit </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.critChance }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="potencyRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Potency Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.potencyRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="potency">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Potency </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.potency }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="healthRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Health Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.healthRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="health">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Health </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.health }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="healthPercent">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Health % </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.healthPercent }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="healthRolls">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Health * </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.healthRolls }}
+				</td>
+			</ng-container>
+
+
+			<ng-container matColumnDef="protectionRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Protection Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.protectionRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="protection">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Protection </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.protection }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="protectionPercent">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Protection % </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.protectionPercent }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="protectionRolls">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Protection * </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.protectionRolls }}
+				</td>
+			</ng-container>
+
+
+			<ng-container matColumnDef="defenseRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Defense Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.defenseRank }}
+				</td>
+			</ng-container>
+
+
+			<ng-container matColumnDef="defense">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Defense </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.defense }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="defensePercent">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Defense % </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.defensePercent }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="defenseRolls">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Defense * </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.defenseRolls }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="tenacityRank">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Tenacity Rank </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.tenacityRank }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="tenacity">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header> Tenacity </th>
+				<td mat-cell *matCellDef="let element">
+					{{ element.secondaryTotals.tenacity }}
+				</td>
+			</ng-container>-->
+
+			<tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
+			<tr mat-row *matRowDef="let row; columns: visibleColumns"></tr>
+		</table>
+
+	</div>
+
+
+
+</div>

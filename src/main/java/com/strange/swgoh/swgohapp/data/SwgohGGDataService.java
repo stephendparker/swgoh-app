@@ -47,6 +47,19 @@ public class SwgohGGDataService {
     }
 
 
+    @Cacheable("gear")
+    public Object gear() {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+
+        Object response = restTemplate.exchange("https://swgoh.gg/api/gear", HttpMethod.GET, entity, Object.class);
+        return response;
+    }
+
     @Cacheable("guild")
     public Object guild(String guildCode) {
 
