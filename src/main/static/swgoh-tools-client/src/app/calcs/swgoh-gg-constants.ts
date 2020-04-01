@@ -1,6 +1,15 @@
 
 
 export class SwgohGgConstants {
+
+
+    public static MOD_SLOT_SQUARE = 1;
+    public static MOD_SLOT_ARROW = 2;
+    public static MOD_SLOT_DIAMOND = 3;
+    public static MOD_SLOT_TRIANGLE = 4;
+    public static MOD_SLOT_CIRCLE = 5;
+    public static MOD_SLOT_CROSS = 6;
+
     public static HEALTH_STAT_ID = 1;
     public static STR_STAT_ID = 2;
     public static AGILITY_STAT_ID = 3;
@@ -22,4 +31,32 @@ export class SwgohGgConstants {
     public static PHYSCICAL_CRITICAL_AVOIDANCE_STAT_ID = 39;
     public static SPECIAL_CRITICAL_AVOIDANCE_STAT_ID = 40;
 
+
+
+    public static MOD_HEALTH_STAT_ID = 1;
+    public static MOD_HEALTH_PERCENT_STAT_ID = 55;
+    public static MOD_PROTECTION_STAT_ID = 28;
+    public static MOD_PROTECTION_PERCENT_STAT_ID = 56;
+    public static MOD_OFFENSE_STAT_ID = 41;
+    public static MOD_OFFENSE_PERCENT_STAT_ID = 48;
+    public static MOD_DEFENSE_STAT_ID = 42;
+    public static MOD_DEFENSE_PERCENT_STAT_ID = 49;
+    public static MOD_CRIT_CHANCE_STAT_ID = 53;
+    public static MOD_CRIT_DMG_STAT_ID = 16;
+    public static MOD_POTENCY_STAT_ID = 17;
+    public static MOD_SPEED_STAT_ID = 5;
+    public static MOD_TENACITY_STAT_ID = 18;
+    public static MOD_CRIT_AVOIDANCE_STAT_ID = 52;
+    public static MOD_ACCURACY_STAT_ID = 54;
+
+    public static ALL_CIRCLE_PRIMARIES = [SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID, SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID];
+
+    public static ALL_TRIANGLE_PRIMARIES = [SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID, SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID,
+    SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_DEFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_CRIT_CHANCE_STAT_ID, SwgohGgConstants.MOD_CRIT_DMG_STAT_ID];
+
+    public static ALL_CROSS_PRIMARIES = [SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID, SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID, SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID,
+    SwgohGgConstants.MOD_DEFENSE_STAT_ID, SwgohGgConstants.MOD_POTENCY_STAT_ID, SwgohGgConstants.MOD_TENACITY_STAT_ID];
+
+    public static ALL_ARROW_PRIMARIES = [SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID, SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID, SwgohGgConstants.MOD_SPEED_STAT_ID,
+    SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_DEFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_CRIT_AVOIDANCE_STAT_ID, SwgohGgConstants.MOD_ACCURACY_STAT_ID];
 }

@@ -8,10 +8,15 @@ import { takeUntil } from 'rxjs/operators';
 import { ModPortraitComponent } from './../mod-portrait/mod-portrait.component';
 
 import { EvaluatedModDto } from './../../calcs/swgoh-gg-calc';
+import { SwgohGgConstants } from './../../calcs/swgoh-gg-constants';
 
 export class ModListFilter {
   public slots: number[] = [];
   public sets: number[] = [];
+  public arrowPrimaryFilters: number[] = [];
+  public circlePrimaryFilters: number[] = [];
+  public trianglePrimaryFilters: number[] = [];
+  public crossPrimaryFilters: number[] = [];
 }
 
 export class LockedModDto {
@@ -45,8 +50,6 @@ export class ModListComponentComponent implements OnInit {
   lockedFilter: boolean = true;
 
   highlightedMod: ModsEntity = null;
-
-  items = Array.from({ length: 100000 }).map((_, i) => `Item #${i}`);
 
   windowWidth: number = null;
 
@@ -91,6 +94,20 @@ export class ModListComponentComponent implements OnInit {
 
   setModSlotFilter(slots: number[]) {
     this.modListFilter.slots = slots;
+    this.regenerateRows();
+    this.cdr.detectChanges();
+  }
+
+
+  setFilters(filters: any) {
+
+    this.modListFilter.sets = filters.filterSets.slice(0);
+    this.modListFilter.arrowPrimaryFilters = filters.arrowPrimaryFilters.slice(0);
+    this.modListFilter.circlePrimaryFilters = filters.circlePrimaryFilters.slice(0);
+    this.modListFilter.trianglePrimaryFilters = filters.trianglePrimaryFilters.slice(0);
+    this.modListFilter.crossPrimaryFilters = filters.crossPrimaryFilters.slice(0);
+    this.sortField = filters.sort;
+
     this.regenerateRows();
     this.cdr.detectChanges();
   }
@@ -143,6 +160,23 @@ export class ModListComponentComponent implements OnInit {
       if (this.modListFilter.sets != null && this.modListFilter.sets.length > 0) {
         modList = modList.filter(mod => this.modListFilter.sets.indexOf(mod.mod.set) != -1);
       }
+
+      if (this.modListFilter.circlePrimaryFilters != null && this.modListFilter.circlePrimaryFilters.length > 0) {
+        modList = modList.filter(mod => mod.mod.slot != SwgohGgConstants.MOD_SLOT_CIRCLE || this.modListFilter.circlePrimaryFilters.indexOf(mod.mod.primary_stat.stat_id) != -1);
+      }
+
+      if (this.modListFilter.crossPrimaryFilters != null && this.modListFilter.crossPrimaryFilters.length > 0) {
+        modList = modList.filter(mod => mod.mod.slot != SwgohGgConstants.MOD_SLOT_CROSS || this.modListFilter.crossPrimaryFilters.indexOf(mod.mod.primary_stat.stat_id) != -1);
+      }
+
+      if (this.modListFilter.trianglePrimaryFilters != null && this.modListFilter.trianglePrimaryFilters.length > 0) {
+        modList = modList.filter(mod => mod.mod.slot != SwgohGgConstants.MOD_SLOT_TRIANGLE || this.modListFilter.trianglePrimaryFilters.indexOf(mod.mod.primary_stat.stat_id) != -1);
+      }
+
+      if (this.modListFilter.arrowPrimaryFilters != null && this.modListFilter.arrowPrimaryFilters.length > 0) {
+        modList = modList.filter(mod => mod.mod.slot != SwgohGgConstants.MOD_SLOT_ARROW || this.modListFilter.arrowPrimaryFilters.indexOf(mod.mod.primary_stat.stat_id) != -1);
+      }
+
       if (this.lockedFilter != true) {
         modList = modList.filter(mod => this.lockedModDtos.find(lockedModDto => lockedModDto.id == mod.mod.id) == null);
       }

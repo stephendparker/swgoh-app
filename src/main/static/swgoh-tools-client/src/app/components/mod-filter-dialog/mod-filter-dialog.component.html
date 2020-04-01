@@ -1,14 +1,44 @@
 <h4 mat-dialog-title>Filter Mods</h4>
 <mat-dialog-content>
-	<div>
+	<div class="flow row">
 		<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="filterSets.indexOf(set.id) != -1" (click)="toggleSetFilter(set.id)">
 				<app-mod-set-icon [setType]="set.name"></app-mod-set-icon></button>
 	</div>
 
-	<div>
+	<div class="flow row">
 		<button *ngFor="let slot of SwgohGgCalc.SLOTS" mat-icon-button [class.filter-selected]="filterSlots.indexOf(slot.id) != -1"
 			(click)="toggleSlotFilter(slot.id)"><app-mod-slot-icon [slot]='slot.id'></app-mod-slot-icon></button>
 	</div>
+
+
+	<mat-form-field class="flow row">
+		<mat-label>Circle</mat-label>
+		<mat-select [formControl]="circlePrimaryFormControl" multiple [(ngModel)]="circlePrimaryFilter" [compareWith]="compareValue">
+			<mat-option *ngFor="let primary of circlePrimaries" [value]="primary.value">{{primary.label}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<mat-form-field class="flow row">
+		<mat-label>Cross</mat-label>
+		<mat-select [formControl]="crossPrimaryFormControl" multiple [(ngModel)]="crossPrimaryFilter" [compareWith]="compareValue">
+			<mat-option *ngFor="let primary of crossPrimaries" [value]="primary.value">{{primary.label}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<mat-form-field class="flow row">
+		<mat-label>Triangle</mat-label>
+		<mat-select [formControl]="trianglePrimaryFormControl" multiple [(ngModel)]="trianglePrimaryFilter" [compareWith]="compareValue">
+			<mat-option *ngFor="let primary of trianglePrimaries" [value]="primary.value">{{primary.label}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<mat-form-field class="flow row">
+		<mat-label>Arrow</mat-label>
+		<mat-select [formControl]="arrowPrimaryFormControl" multiple [(ngModel)]="arrowPrimaryFilter" [compareWith]="compareValue">
+			<mat-option *ngFor="let primary of arrowPrimaries" [value]="primary.value">{{primary.label}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
 </mat-dialog-content>
 
 <div mat-dialog-actions align="end">

@@ -27,6 +27,8 @@ public class HotUtilsMapper {
     public static int MOD_SPEED_STAT_ID = 5;
     public static int MOD_TENACITY_STAT_ID = 18;
     public static int MOD_CRIT_AVOIDANCE_STAT_ID = 52;
+    public static int MOD_ACCURACY_STAT_ID = 54;
+
 
 
     //<div id="modAZDq7MY5TFO7ECiBP4IPdw" class="mod-summary mod-content-item mod-selected mod-locked mod-upgradeable" onclick="ToggleMod('incomplete', 'AZDq7MY5TFO7ECiBP4IPdw');">
@@ -109,7 +111,7 @@ public class HotUtilsMapper {
         }
         if (text.contains("Accuracy")) {
             retVal.name = "Accuracy";
-            // TODO get accuracy ID
+            retVal.stat_id = MOD_ACCURACY_STAT_ID;
         }
         if (text.contains("Crit Damage")) {
             retVal.name = "Critical Damage";

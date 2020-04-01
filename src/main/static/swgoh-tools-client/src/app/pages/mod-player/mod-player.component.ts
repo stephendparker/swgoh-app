@@ -71,6 +71,12 @@ export class ModEditorViewConfiguration {
   public characterName;
   public filterSets: number[] = [];
   public filterSlots: number[] = [];
+
+  public crossPrimaryFilters: number[] = [];
+  public trianglePrimaryFilters: number[] = [];
+  public circlePrimaryFilters: number[] = [];
+  public arrowPrimaryFilters: number[] = [];
+
   public sort: string = 'strength';
 }
 
@@ -482,18 +488,33 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       width: '600px',
       disableClose: true,
       data: {
-        filterSets: this.filterSets,
-        filterSlots: this.filterSlots
-
+        filterSets: this.selectedModEditorViewConfiguration.filterSets,
+        filterSlots: this.filterSlots,
+        arrowPrimaryFilters: this.selectedModEditorViewConfiguration.arrowPrimaryFilters,
+        circlePrimaryFilters: this.selectedModEditorViewConfiguration.circlePrimaryFilters,
+        trianglePrimaryFilters: this.selectedModEditorViewConfiguration.trianglePrimaryFilters,
+        crossPrimaryFilters: this.selectedModEditorViewConfiguration.crossPrimaryFilters
       }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result != null) {
+        // TODO -remove this we are storing per player
         this.filterSets = result.filterSets;
         this.filterSlots = result.filterSlots;
 
-        this.modList.setModSetFilter(this.filterSets);
+        if (this.selectedModEditorViewConfiguration != null) {
+          this.selectedModEditorViewConfiguration.filterSets = result.filterSets;
+          this.selectedModEditorViewConfiguration.arrowPrimaryFilters = result.arrowPrimaryFilter;
+          this.selectedModEditorViewConfiguration.circlePrimaryFilters = result.circlePrimaryFilter;
+          this.selectedModEditorViewConfiguration.trianglePrimaryFilters = result.trianglePrimaryFilter;
+          this.selectedModEditorViewConfiguration.crossPrimaryFilters = result.crossPrimaryFilter;
+        } else {
+          this.setSetFilter([]);
+        }
+
         this.modList.setModSlotFilter(this.filterSlots);
+        this.modList.setFilters(this.selectedModEditorViewConfiguration);
+
         this.updateComponents();
         this.cdr.detectChanges();
       }
