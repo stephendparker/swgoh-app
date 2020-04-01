@@ -1,3 +1,12 @@
-<p>
-  confirmation-dialog works!
-</p>
+<h4 mat-dialog-title>Confirm</h4>
+<mat-dialog-content>
+
+
+	<mat-checkbox name="confirmation" [(ngModel)]="confirmation">{{ confirmationText }}</mat-checkbox>
+
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button [disabled]="confirmation == false" (click)="onOk()">Ok</button>
+	<button mat-button (click)="onClose()">Close</button>
+</div>

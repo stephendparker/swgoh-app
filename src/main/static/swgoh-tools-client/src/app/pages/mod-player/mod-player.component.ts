@@ -22,6 +22,7 @@ import { SquadEditComponent } from './../../components/squad-edit/squad-edit.com
 import { SquadDisplayComponent } from './../../components/squad-display/squad-display.component';
 import { RefreshModDialogComponent } from './../../components/refresh-mod-dialog/refresh-mod-dialog.component';
 import { HotutilsDataService } from './../../services/hotutils-data.service';
+import { ConfirmationDialogComponent } from './../../components/confirmation-dialog/confirmation-dialog.component';
 
 class CharacterBestMods {
   public name: string = "";
@@ -348,6 +349,26 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     if (this.modelGuildMods != null && this.modelGuildMods.length > 0) {
       this.playerModData.calculatedModelGuildData = SwgohGgCalc.calculateMods(this.modelGuildMods);
     }
+  }
+
+  clickUnlockAll() {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {
+        confirmationText: 'Are you sure you want to unlock all characters?'
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        this.playerCharacterDtos.forEach(characterModDto => {
+          characterModDto.lockedMods = [];
+        });
+        this.saveSettings();
+        this.updateComponents();
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   clickRefreshData() {
