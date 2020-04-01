@@ -438,6 +438,24 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.editSquadIndex = index;
   }
 
+  deleteSquad(index: number) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {
+        confirmationText: 'Are you sure you want to delete this squad?'
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        this.squads = this.squads.filter((squad, indexSquad) => indexSquad != index);
+        this.updateComponents();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   createSquad() {
     let newSquad: string[] = [];
     this.squads.push(newSquad);
