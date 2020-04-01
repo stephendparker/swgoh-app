@@ -224,11 +224,30 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
             let setNumber = SwgohGgCalc.convertSetPropertyNameToNumber(modCalcResults.commonSet3);
             modEditorViewConfiguration.filterSets.indexOf(setNumber) === -1 ? modEditorViewConfiguration.filterSets.push(setNumber) : null;
           }
-        }
 
+          modEditorViewConfiguration.circlePrimaryFilters = this.getAcceptablePrimary(modCalcResults, "circlePrimaryCounts");
+          modEditorViewConfiguration.crossPrimaryFilters = this.getAcceptablePrimary(modCalcResults, "crossPrimaryCounts");
+          modEditorViewConfiguration.arrowPrimaryFilters = this.getAcceptablePrimary(modCalcResults, "arrowPrimaryCounts");
+          modEditorViewConfiguration.trianglePrimaryFilters = this.getAcceptablePrimary(modCalcResults, "trianglePrimaryCounts");
+        }
         views.push(modEditorViewConfiguration);
       }
     });
+  }
+
+  getAcceptablePrimary(modCalcResults: ModUnitCalcResults, propertyName: string): number[] {
+    let countTotal = 0;
+    let primaryMost = 0;
+
+    modCalcResults[propertyName].forEach(primaryCount => {
+      countTotal = countTotal + primaryCount.count;
+      primaryMost = primaryCount.count > primaryMost ? primaryCount.count : primaryMost;
+    });
+    let highestPercent = primaryMost / countTotal;
+
+    return modCalcResults[propertyName].filter(primaryCount => {
+      return highestPercent - (primaryCount.count / countTotal) < .25;
+    }).map(primaryCount => SwgohGgCalc.convertPrimaryTitleToNumber(primaryCount.primaryType));
   }
 
   ngOnDestroy() {
@@ -687,7 +706,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.selectedModEditorViewConfiguration = this.playerModConfiguration.modEditorViewConfigurations.find(view => view.characterName == name);
 
       if (this.selectedModEditorViewConfiguration != null) {
-        this.setSetFilter(this.selectedModEditorViewConfiguration.filterSets);
+        this.modList.setFilters(this.selectedModEditorViewConfiguration);
       } else {
         this.setSetFilter([]);
       }

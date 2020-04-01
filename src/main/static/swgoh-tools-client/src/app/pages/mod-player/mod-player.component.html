@@ -128,7 +128,7 @@
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
 
 			<ng-container *ngIf="displayModeSettings.mini == false">
-				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="filterSets.indexOf(set.id) != -1" (click)="toggleSetFilter(set.id)">
+				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="selectedModEditorViewConfiguration != null && selectedModEditorViewConfiguration.filterSets.indexOf(set.id) != -1" (click)="toggleSetFilter(set.id)">
 					<app-mod-set-icon [setType]="set.name"></app-mod-set-icon>
 				</button>
 

@@ -629,6 +629,45 @@ export class SwgohGgCalc {
 
     }
 
+    public static convertPrimaryTitleToNumber(name: string): number {
+        switch (name) {
+            case MOD_PRIMARY_HEALTH: {
+                return SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID;
+            }
+            case MOD_PRIMARY_PROTECTION: {
+                return SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID;
+            }
+            case MOD_PRIMARY_OFFENSE: {
+                return SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID;
+            }
+            case MOD_PRIMARY_DEFENSE: {
+                return SwgohGgConstants.MOD_DEFENSE_PERCENT_STAT_ID;
+            }
+            case MOD_PRIMARY_CRIT_CHANCE: {
+                return SwgohGgConstants.MOD_CRIT_CHANCE_STAT_ID;
+            }
+            case MOD_PRIMARY_POTENCY: {
+                return SwgohGgConstants.MOD_POTENCY_STAT_ID;
+            }
+            case MOD_PRIMARY_TENACITY: {
+                return SwgohGgConstants.MOD_TENACITY_STAT_ID;
+            }
+            case MOD_PRIMARY_SPEED: {
+                return SwgohGgConstants.MOD_SPEED_STAT_ID;
+            }
+            case MOD_PRIMARY_CRITICAL_AVOIDANCE: {
+                return SwgohGgConstants.MOD_CRIT_AVOIDANCE_STAT_ID;
+            }
+            case MOD_PRIMARY_CRITICAL_DAMAGE: {
+                return SwgohGgConstants.MOD_CRIT_DMG_STAT_ID;
+            }
+            case MOD_PRIMARY_ACCURACY: {
+                return SwgohGgConstants.MOD_ACCURACY_STAT_ID;
+            }                                                                                                            
+        }
+        return null;
+    }
+
     public static convertSetPropertyNameToNumber(name: string): number {
         switch (name) {
             case "health": {
