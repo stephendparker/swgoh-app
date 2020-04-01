@@ -1,0 +1,26 @@
+.mod-col-normal {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+}
+
+.row .mod-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+    max-width: 50%;
+}
+
+.highlight-mod {
+    background-color: lightgray;
+
+}
+
+.border {
+  border-style: solid;
+  border-width: 1px;
+}
+
+.padded {
+    padding: 5px;
+}

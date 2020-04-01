@@ -1,0 +1,82 @@
+<div *ngIf="mod != null" [id]="mod.id">
+	<div *ngIf="displayModeSettings.mini == false">
+		<div class="mod-summary mod-content-item mod-locked">
+			<div class="mod-dots mod-content-item">
+				<div class="mod-dot mod-content-item"></div>
+				<div class="mod-dot mod-content-item"></div>
+				<div class="mod-dot mod-content-item"></div>
+				<div class="mod-dot mod-content-item"></div>
+				<div class="mod-dot mod-content-item"></div>
+			</div>
+			<!-- Slot ICON -->
+			<div [class]="'mod Std' + mod.slot + '-' + mod.tier + '-' + mod.rarity + '  mod-content-item'">
+				<div [class]="'mod-content-item mod-icon icon-slot' + mod.slot + ' icon-set-' + mod.set + '-' + mod.tier + ''"></div>
+			</div>
+			<!-- Slot ICON -->
+			<div class="mod-content-item mod-stats">
+				<div class="mod-content-item stat-primary">+{{ mod?.primary_stat?.display_value }} {{ mod?.primary_stat?.name }}</div>
+				<div *ngFor="let secondary of mod?.secondary_stats" [class]="'mod-content-item stat-secondary roll-' + secondary.roll + ''">+{{ secondary.display_value }} {{ secondary.name }} ({{secondary.roll}})</div>
+			</div>
+
+			<div *ngIf="mod.character != null" class="mod-character-image" [style.white-space]="'pre-line'" [style.background-image]="getPortraitStyleUrl()"></div>
+			<div *ngIf="mod.character == null" class="character-filler" [style.white-space]="'pre-line'"></div>
+			<div *ngIf="locked" style="white-space: pre-line;" title="Locked In Game" class="mod-locked-image"></div>
+			<!--<div style="white-space: pre-line;" title="Locked In Game" class="mod-locked-image"></div>-->
+		</div>
+	</div>
+
+	<div *ngIf="displayModeSettings.mini">
+
+		<section [class.container]="true">
+			<div [class.icon-section]="true">
+				<div [class]='"statmod  pc-statmod  statmod-small  pc-statmod-slot" + mod.slot + "  statmod-t" + mod.tier + "  statmod--max-level"'>
+					<div class="statmod-summary">
+						<div class="statmod-preview"><span class="statmod-pips"><span class="statmod-pip"></span><span class="statmod-pip"></span><span class="statmod-pip"></span>
+							<span class="statmod-pip"></span><span class="statmod-pip"></span><span class="statmod-pip"></span></span>
+							<div [class]='"statmod-base statmod-base--size-small statmod-base--tier-" + mod.tier + " statmod-base--slot-" + mod.slot + " statmod-base--set-" + mod.set'>
+								<div [class]='"statmod-base-inner statmod-base-inner--shapekey-" + mod.rarity + "-" + mod.slot + "-1 statmod-base-inner--iconkey-" + mod.set + "-" + mod.tier + ""'>
+									<div class="statmod-base-icon"></div>
+									<div class="statmod-base-shape"></div>
+								</div>
+								<!--</div><span class="statmod-level">15-E</span></div>-->
+							</div>
+						</div>
+
+						<div *ngIf="showStatsSmall" [style.width]="'40px'" [style.height]="'40px'" [style.top]="showStatsSmall ? '0px' : '40px'"
+							[style.right]="showStatsSmall ? '40px' : '0px'">
+							<img [src]="imageUrl" [style.max-width]="'30px'" [style.max-height]="'30px'">
+
+						</div>
+						<!--<div *ngIf="showStatsSmall" [style.width]="'40px'" [style.height]="'40px'" [style.top]="showStatsSmall ? '0px' : '40px'"
+							[style.right]="showStatsSmall ? '80px' : '0px'">
+							<mat-icon>lock</mat-icon>
+						</div>-->
+
+					</div>
+				</div>
+
+			</div>
+
+			<div [class.stats-section]="showStatsSmall" *ngIf="showStatsSmall">
+				<div>
+					<div class="stat-primary">+{{ mod?.primary_stat?.display_value }} {{ mod?.primary_stat?.name }}</div>
+					<div class="stat-secondary" *ngFor="let secondary of mod?.secondary_stats">+{{ secondary.display_value }} {{ secondary.name }} ({{secondary.roll}})</div>
+				</div>
+			</div>
+
+			<div [class.stats-section]="showStatsSmall == false" *ngIf="showStatsSmall == false">
+				<div [style.width]="'20px'" [style.height]="'40px'" style="float: left">
+					<img [src]="imageUrl" [style.max-width]="'20px'" [style.max-height]="'20px'">
+				</div>
+
+				<div *ngIf="locked" [style.width]="'40px'" [style.height]="'40px'"  style="margin-left: 25px">
+					<div [style.width]="'20px'" [style.height]="'20px'">
+						<mat-icon>lock</mat-icon>
+					</div>
+				</div>
+			</div>
+
+		</section>
+
+	</div>
+</div>

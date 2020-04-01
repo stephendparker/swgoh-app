@@ -1,0 +1,170 @@
+<div class="route-content">
+	<app-progress-spinner></app-progress-spinner>
+	<div>
+		Model Source:
+	</div>
+	<div class="flow row">
+		<mat-button-toggle-group name="modelSource" [(ngModel)]="modelSource">
+			<mat-button-toggle value="guild">Guild</mat-button-toggle>
+			<mat-button-toggle value="player">Player</mat-button-toggle>
+		</mat-button-toggle-group>
+	</div>
+
+	<div class="flow row" [class.hidden]="modelSource != 'guild'">
+		<app-guild-player-selector [selectorLabel]="'Model Guild ID'" (selectionChange)="selectGuildPlayers($event)"></app-guild-player-selector>
+	</div>
+
+	<div class="flow row" [class.hidden]="modelSource != 'player'">
+		<app-player-selector (selectPlayer)='selectTargetPlayer($event)' [selectorLabel]="'Target Player'"></app-player-selector>
+	</div>
+
+	<div ngClass="flow row" ngClass.lt-sm="flow column">
+
+		<div class="half-col">
+			<div>
+				Mod Set:
+			</div>
+			<div class="flow row">
+				<mat-button-toggle-group name="modSet" [(ngModel)]="modSet">
+					<mat-button-toggle value="speed">Speed</mat-button-toggle>
+					<mat-button-toggle value="offense">Offense</mat-button-toggle>
+					<mat-button-toggle value="critDmg">Crit Damage</mat-button-toggle>
+					<mat-button-toggle value="health">Health</mat-button-toggle>
+					<mat-button-toggle value="defense">Defense</mat-button-toggle>
+					<mat-button-toggle value="critChance">Crit Chance</mat-button-toggle>
+					<mat-button-toggle value="potency">Potency</mat-button-toggle>
+					<mat-button-toggle value="tenacity">Tenacity</mat-button-toggle>
+				</mat-button-toggle-group>
+			</div>
+
+			<div>
+				Slot:
+			</div>
+			<div class="flow row">
+				<mat-button-toggle-group name="slot" [(ngModel)]="slot">
+					<mat-button-toggle value="1">Square</mat-button-toggle>
+					<mat-button-toggle value="3">Diamond</mat-button-toggle>
+					<mat-button-toggle value="5">Circle</mat-button-toggle>
+					<mat-button-toggle value="2">Arrow</mat-button-toggle>
+					<mat-button-toggle value="4">Triangle</mat-button-toggle>
+					<mat-button-toggle value="6">Cross</mat-button-toggle>
+				</mat-button-toggle-group>
+			</div>
+
+			<div [class.hidden]="slot == null || slot == 1 || slot == 3">
+
+				<div class="flow row">
+					Primary:
+				</div>
+				<div class="flow row">
+					<mat-button-toggle-group name="primary" [(ngModel)]="primary">
+						<mat-button-toggle value="Speed" [class.hidden]="slot != 2">Speed</mat-button-toggle>
+						<mat-button-toggle value="Protection">Protection</mat-button-toggle>
+						<mat-button-toggle value="Health">Health</mat-button-toggle>
+						<mat-button-toggle value="Offense" [class.hidden]="slot == 5">Offense</mat-button-toggle>
+						<mat-button-toggle value="Defense" [class.hidden]="slot == 5">Defense</mat-button-toggle>
+						<mat-button-toggle value="Critical Chance" [class.hidden]="slot != 4">Critical Chance</mat-button-toggle>
+						<mat-button-toggle value="Critical Damage" [class.hidden]="slot != 4">Critical Damage</mat-button-toggle>
+						<mat-button-toggle value="Tenacity" [class.hidden]="slot != 6">Tenacity</mat-button-toggle>
+						<mat-button-toggle value="Potency" [class.hidden]="slot != 6">Potency</mat-button-toggle>
+						<mat-button-toggle value="Critical Avoidance" [class.hidden]="slot != 2">Crit Avoidance</mat-button-toggle>
+						<mat-button-toggle value="Accuracy" [class.hidden]="slot != 2">Accuracy</mat-button-toggle>
+					</mat-button-toggle-group>
+				</div>
+			</div>
+		</div>
+		<div class="half-col">
+			<div class="flow row">
+				Secondary:
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Speed'" (valueChanged)="secondarySpeed = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Health'" (valueChanged)="secondaryHealth = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Health %'" (valueChanged)="secondaryHealthPercent = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Protection'" (valueChanged)="secondaryProtection = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Protection %'" (valueChanged)="secondaryProtectionPercent = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Offense'" (valueChanged)="secondaryOffense = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Offense %'" (valueChanged)="secondaryOffensePercent = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Defense'" (valueChanged)="secondaryDefense = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Defense %'" (valueChanged)="secondaryDefensePercent = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Crit Chance'" (valueChanged)="secondaryCritChance = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Potency'" (valueChanged)="secondaryPotency = $event.amount"></app-mod-secondary-input>
+			</div>
+			<div class="flow row">
+				<app-mod-secondary-input [label]="'Tenacity'" (valueChanged)="secondaryTenacity = $event.amount"></app-mod-secondary-input>
+			</div>
+		</div>
+	</div>
+
+	<div class="mat-elevation-z8">
+
+		<div ngClass="flow row" ngClass.lt-sm="hide">
+			<div class="character-col"> Character </div>
+			<div class="set-col"> Set </div>
+			<div class="secondary-col"> Secondary </div>
+			<div class="match-strength-col"> Strength </div>
+		</div>
+
+		<div class="scrollable-container">
+
+
+
+			<div *ngFor="let element of matchingMods(); let index=index; let odd=odd; let even=even;" [class.odd]="odd">
+
+				<div ngClass="flow row" ngClass.lt-sm="flow column">
+					<div class="character-col">
+						<app-character-identifier [baseId]="element.name"></app-character-identifier>
+					</div>
+
+					<div class="set-col">
+						<div>
+							<app-mod-set-icon [setType]="element.commonSet1" *ngIf="element.commonSet1"></app-mod-set-icon>
+							<app-mod-set-icon [setType]="element.commonSet2" *ngIf="element.commonSet2"></app-mod-set-icon>
+							<app-mod-set-icon [setType]="element.commonSet3" *ngIf="element.commonSet3"></app-mod-set-icon>
+						</div>
+					</div>
+
+
+					<div class="secondary-col">
+						<div *ngFor="let secondaryCounts of element.secondaryCounts" ngClass="flow row">
+							<span class="primary-piece-label">	{{ round(secondaryCounts.rolls/element.allSetTotals.setTypeTotal)}}: {{ secondaryCounts.name }}</span>
+
+							<div *ngFor="let scType of secondaryCounts.types; let index=index" [class.highlight]="containsSecondaries(scType)">
+								<span class="primary-piece-label">{{ round(scType.value/element.allSetTotals.setTypeTotal * scType.multiplier)}}{{scType.type}}</span>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="match-strength-col">
+						<span>{{ getMatchStrength(element.name) }}</span>
+					</div>
+
+
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</div>

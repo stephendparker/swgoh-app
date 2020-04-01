@@ -1,0 +1,17 @@
+<h4 mat-dialog-title>Filter Mods</h4>
+<mat-dialog-content>
+	<div>
+		<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="filterSets.indexOf(set.id) != -1" (click)="toggleSetFilter(set.id)">
+				<app-mod-set-icon [setType]="set.name"></app-mod-set-icon></button>
+	</div>
+
+	<div>
+		<button *ngFor="let slot of SwgohGgCalc.SLOTS" mat-icon-button [class.filter-selected]="filterSlots.indexOf(slot.id) != -1"
+			(click)="toggleSlotFilter(slot.id)"><app-mod-slot-icon [slot]='slot.id'></app-mod-slot-icon></button>
+	</div>
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button (click)="onOk()">Ok</button>
+	<button mat-button (click)="onClose()">Close</button>
+</div>

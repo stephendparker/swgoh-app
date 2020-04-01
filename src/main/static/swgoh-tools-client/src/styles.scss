@@ -1,8 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+}
 
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.highlight {
+    background-color: yellow;
+}
 
 .button-spinner {
     float: right;
@@ -13,25 +27,91 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     display: inline-block;
 }
 
+.odd {
+    background-color: lightblue;
+}
+
 .route-content {
     padding: 5px;
 }
 
-
 .row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .column {
-  display: flex;
-  flex-direction: column;
-  flex-basis: 100%;
-  flex: 1;
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
 }
 
 .thick {
     font-weight: bold;
+}
+
+.centered-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rotate-180 {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.active {
+    background-color: white !important;
+    color: blue !important;
+    /* Note: You could also use a custom theme */
+}
+
+.flow {
+    display: flex;
+    box-sizing: border-box;
+    -webkit-box-direction: normal;
+}
+
+.column {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+}
+
+.row {
+    flex-direction: row;
+    -webkit-box-orient: horizontal;
+}
+
+.hidden {
+    display: none;
+    /* Hidden by default */
+}
+
+.row .character-col {
+    max-width: 10%;
+}
+
+.row .set-col {
+    max-width: 10%;
+}
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: initial;
+}
+
+mat-divider.style-fix {
+    height: 36px;
+    margin-left: 8px;
+    margin-right: 8px;
 }

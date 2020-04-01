@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
 
@@ -36,6 +37,28 @@ import { ColumnSelectorComponent } from './components/column-selector/column-sel
 import { GuildPlayerSelectorComponent } from './components/guild-player-selector/guild-player-selector.component';
 import { PackValueComponent } from './pages/pack-value/pack-value.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ModMatchCharacterComponent } from './pages/mod-match-character/mod-match-character.component';
+import { ModSecondaryInputComponent } from './components/mod-secondary-input/mod-secondary-input.component';
+import { ModPlayerComponent } from './pages/mod-player/mod-player.component';
+import { ModPortraitComponent } from './components/mod-portrait/mod-portrait.component';
+import { AddCharacterComponent } from './components/add-character/add-character.component';
+import { ModDisplayComponent } from './components/mod-display/mod-display.component';
+import { ModSetComparisonComponent } from './components/mod-set-comparison/mod-set-comparison.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ModListComponentComponent } from './components/mod-list-component/mod-list-component.component';
+import { CharacterPortraitComponent } from './components/character-portrait/character-portrait.component';
+import { PlayerLoginComponent } from './components/player-login/player-login.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import {MatMenuModule} from '@angular/material/menu';
+import { ModSlotIconComponent } from './components/mod-slot-icon/mod-slot-icon.component';
+import { ModFilterDialogComponent } from './components/mod-filter-dialog/mod-filter-dialog.component';
+import { SquadDisplayComponent } from './components/squad-display/squad-display.component';
+import { SquadEditComponent } from './components/squad-edit/squad-edit.component';
+import { RefreshModDialogComponent } from './components/refresh-mod-dialog/refresh-mod-dialog.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +77,23 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     ModSetPercentagesComponent,
     ColumnSelectorComponent,
     GuildPlayerSelectorComponent,
-    PackValueComponent
+    PackValueComponent,
+    ModMatchCharacterComponent,
+    ModSecondaryInputComponent,
+    ModPlayerComponent,
+    ModPortraitComponent,
+    AddCharacterComponent,
+    ModDisplayComponent,
+    ModSetComparisonComponent,
+    ModListComponentComponent,
+    CharacterPortraitComponent,
+    PlayerLoginComponent,
+    ModSlotIconComponent,
+    ModFilterDialogComponent,
+    SquadDisplayComponent,
+    SquadEditComponent,
+    RefreshModDialogComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -74,10 +113,22 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatIconModule,
     MatListModule,
     MatDialogModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    MatTabsModule,
+    MatDividerModule,
+    ScrollingModule,
+    MatMenuModule,
+    MatCheckboxModule
   ],
   entryComponents: [
-    ColumnSelectorComponent
+    ColumnSelectorComponent,
+    AddCharacterComponent,
+    PlayerLoginComponent,
+    ModFilterDialogComponent,
+    RefreshModDialogComponent,
+    ConfirmationDialogComponent
   ],
   providers: [DecimalPipe],
   bootstrap: [AppComponent]

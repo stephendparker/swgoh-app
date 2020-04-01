@@ -1,0 +1,10 @@
+<app-character-filter (selectionChange)="selectCharacters($event)"></app-character-filter>
+<div class="scrollable-container">
+
+	<div class="flow row">
+		<div *ngFor="let character of selectedCharacters" class="flow column" [style.width]="'130px'">
+			<app-character-portrait #characterPortraits (click)="addCharacter(character)" [baseId]="character"></app-character-portrait>
+		</div>
+	</div>
+
+</div>

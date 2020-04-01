@@ -1,0 +1,85 @@
+.mod-col,
+.selected-characters-col,
+.add-characters-col,
+.desktop-col,
+.select-player-col,
+.select-model-col,
+.edit-mod-left-col,
+.select-model-details-col,
+.condensed-edit-mod-left-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+}
+
+.row .mod-left-col {
+    padding: 5px;
+}
+.primary-piece-label {
+    width: 150px;
+    display: inline-block;
+}
+
+
+
+.scrollable {
+    overflow: auto;
+    height: calc(-75px + 100vh)
+}
+
+.non-toolbar-height {
+    height: calc(-64px + 100vh)
+}
+
+.filter-selected {
+    background-color: lightgray;
+}
+
+button {
+    padding-right: 5px;
+}
+
+mat-tab-group {
+    width: 100%;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.row .mod-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+    max-width: 300px;
+}
+
+.select-player-col {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    max-width: 300px;
+}
+
+.select-model-col {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    max-width: 300px;
+}
+
+.select-model-details-col {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    max-width: 500px;
+}
+
+.selected-characters-col {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    max-width: 300px;
+}
+
+.desktop-col {
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    max-width: 80%;
+}

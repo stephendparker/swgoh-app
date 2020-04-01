@@ -1,0 +1,78 @@
+<div class="route-content">
+	<div class="flow row">
+		<mat-form-field>
+			<mat-label>Number of Crystals</mat-label>
+			<input matInput [(ngModel)]="crystalCount">
+		</mat-form-field>
+	</div>
+	<div class="flow row">
+		<mat-form-field>
+			<mat-label>Cost of Crystals</mat-label>
+			<input matInput [(ngModel)]="crystalCost">
+		</mat-form-field>
+	</div>
+
+	<div class="flow row">
+		Value of Crystal: {{ crystalCost / crystalCount | currency }}
+	</div>
+
+	<div class="flow row">
+		<mat-form-field>
+			<mat-label>Pack Name</mat-label>
+			<input matInput [(ngModel)]="packName">
+		</mat-form-field>
+	</div>
+
+	<div class="flow row">
+
+		<mat-form-field>
+			<mat-label>Pack Cost</mat-label>
+			<input matInput [(ngModel)]="packCost">
+		</mat-form-field>
+	</div>
+
+	<form class="add-pack-item-form">
+		<mat-form-field class="add-pack-item-width">
+			<input type="text" placeholder="Select Item" matInput [formControl]="addItemControl" [matAutocomplete]="auto">
+			<mat-autocomplete #auto="matAutocomplete">
+				<mat-option *ngFor="let option of filteredGearNameList | async" [value]="option.name">
+					{{ option.name }} ( {{ option.cost | currency }} )
+				</mat-option>
+			</mat-autocomplete>
+
+		</mat-form-field>
+		<button mat-button (click)='addPackItem(addItemControl.value)'>Add</button>
+	</form>
+
+
+	<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+		<ng-container matColumnDef="name">
+			<th mat-header-cell *matHeaderCellDef> Name </th>
+			<td mat-cell *matCellDef="let gear"> {{gear.item.name}} </td>
+			<td mat-footer-cell *matFooterCellDef> </td>
+		</ng-container>
+
+		<ng-container matColumnDef="count">
+			<th mat-header-cell *matHeaderCellDef> Count </th>
+			<td mat-cell *matCellDef="let gear">
+
+				<mat-form-field>
+					<input matInput type="text" name="count" [(ngModel)]="gear.count" #name="ngModel">
+				</mat-form-field>
+
+			</td>
+			<td mat-footer-cell *matFooterCellDef> </td>
+		</ng-container>
+
+		<ng-container matColumnDef="cost">
+			<th mat-header-cell *matHeaderCellDef> Cost </th>
+			<td mat-cell *matCellDef="let gear"> {{ gear.item.cost * gear.count | currency }} </td>
+			<td mat-footer-cell *matFooterCellDef> {{getTotalCost(pack) | currency}}: {{ round((getTotalCost(pack) / packCost - 1) * 100) }}% extra <button mat-button (click)='copyTable()'>Copy</button></td>
+		</ng-container>
+
+		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+		<tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+	</table>
+</div>

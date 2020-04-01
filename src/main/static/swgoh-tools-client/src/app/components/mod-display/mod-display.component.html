@@ -1,0 +1,53 @@
+<div class="padded">
+
+	<div ngClass="flow row">
+		<div ngClass="mod-col">
+			<div [style.height]="displayModeSettings.modDisplayPortaitHeight+ 'px'">
+				<div class="flow row" [class.hidden]="square == null">
+					<app-mod-portrait #modPortraits [mod]="square" (click)="clickSlot('square', square)" [class.highlight-mod]="highlightMod(square)"
+						[class.border]="border=='square'">
+					</app-mod-portrait>
+				</div>
+			</div>
+
+			<div [style.height]="displayModeSettings.modDisplayPortaitHeight+ 'px'">
+				<div class="flow row" [class.hidden]="diamond == null">
+					<app-mod-portrait #modPortraits [mod]="diamond" (click)="clickSlot('diamond', diamond)" [class.highlight-mod]="highlightMod(diamond)"
+						[class.border]="border=='diamond'">
+					</app-mod-portrait>
+				</div>
+			</div>
+			<div [style.height]="displayModeSettings.modDisplayPortaitHeight+ 'px'">
+				<div class="flow row" [class.hidden]="circle == null">
+					<app-mod-portrait #modPortraits [mod]="circle" (click)="clickSlot('circle', circle)" [class.highlight-mod]="highlightMod(circle)"
+						[class.border]="border=='circle'">
+					</app-mod-portrait>
+				</div>
+			</div>
+		</div>
+		<div ngClass="mod-col">
+			<div [style.height]="displayModeSettings.modDisplayPortaitHeight+ 'px'">
+				<div class="flow row" [class.hidden]="arrow == null">
+					<app-mod-portrait #modPortraits [mod]="arrow" (click)="clickSlot('arrow', arrow)" [class.highlight-mod]="highlightMod(arrow)"
+						[class.border]="border=='arrow'">
+					</app-mod-portrait>
+				</div>
+			</div>
+			<div [style.height]="displayModeSettings.modDisplayPortaitHeight+ 'px'">
+				<div class="flow row" [class.hidden]="triangle == null">
+					<app-mod-portrait #modPortraits [mod]="triangle" (click)="clickSlot('triangle', triangle)" [class.highlight-mod]="highlightMod(triangle)"
+						[class.border]="border=='triangle'">
+					</app-mod-portrait>
+				</div>
+			</div>
+			<div [style.height]="displayModeSettings.modDisplayPortaitHeight+ 'px'">
+				<div class="flow row" [class.hidden]="cross == null">
+					<app-mod-portrait #modPortraits [mod]="cross" (click)="clickSlot('cross', cross)" [class.highlight-mod]="highlightMod(cross)"
+						[class.border]="border=='cross'">
+					</app-mod-portrait>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

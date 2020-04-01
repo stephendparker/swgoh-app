@@ -1,5 +1,6 @@
 package com.strange.swgoh.swgohapp.web.controller;
 
+import com.strange.swgoh.swgohapp.data.HotUtilsDataService;
 import com.strange.swgoh.swgohapp.data.SwgohGGDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -21,10 +22,21 @@ public class SwgohGGController {
     @Autowired
     SwgohGGDataService swgohGGDataService;
 
+    @Autowired
+    HotUtilsDataService hotUtilsDataService;
+
     @RequestMapping("/player/{allyCode}")
     public Object getRefreshedPlayerData(@PathVariable String allyCode) {
 
         return swgohGGDataService.player(allyCode);
+
+    }
+
+    // TODO move this into seperate controller
+    @RequestMapping("/hotutils/player/{sessionId}/mods")
+    public Object getHotutilsModList(@PathVariable String sessionId) {
+
+        return hotUtilsDataService.modList(sessionId);
 
     }
 

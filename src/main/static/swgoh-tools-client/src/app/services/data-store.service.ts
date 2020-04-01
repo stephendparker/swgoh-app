@@ -7,6 +7,7 @@ import { RootObject } from './../model/swgohgg/guild-data';
 import { CharacterData } from './../model/swgohgg/character-data';
 import { Mods } from './../model/swgohgg/mods-data';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { Gear } from './../model/swgohgg/gear-data';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class DataStoreService {
   guildDataCache = {};
   playerDataCache = {};
   playerModDataCache = {};
+  gearCache: Gear[] = null;
   characterDataCache: CharacterData[] = null;
 
   constructor(private swgohGgDs: SwgohGgDataService) {
@@ -54,6 +56,29 @@ export class DataStoreService {
       });
     }
     return characterFetchData$;
+  }
+
+  public getGearData(): Observable<Gear[]> {
+
+    let gearFetchData: BehaviorSubject<Gear[]> = new BehaviorSubject<Gear[]>(null);
+    let gearFetchData$: Observable<Gear[]> = asObservable(gearFetchData);
+
+    if (this.gearCache != undefined && this.gearCache != null) {
+
+      (async () => {
+        await delay(1);
+        gearFetchData.next(this.gearCache);
+        gearFetchData.complete();
+      })();
+
+    } else {
+      this.swgohGgDs.gear().subscribe(gearData => {
+        this.gearCache = gearData;
+        gearFetchData.next(gearData);
+        gearFetchData.complete();
+      });
+    }
+    return gearFetchData$;
   }
 
   public getPlayerListModData(playerAllyCodes: number[]): Observable<any> {

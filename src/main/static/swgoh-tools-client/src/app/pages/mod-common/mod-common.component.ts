@@ -31,7 +31,7 @@ class ModResultsDto {
   templateUrl: './mod-common.component.html',
   styleUrls: ['./mod-common.component.scss']
 })
-export class ModCommonComponent implements OnInit {
+export class ModCommonComponent implements OnInit, OnDestroy {
 
   protected unsubscribe$ = new Subject<void>();
   modelGuildData: RootObject = null;

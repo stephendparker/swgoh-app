@@ -21,24 +21,34 @@ export class SwgohGgDataService {
   guildUrl: string = '/api/guild/';
   charactersUrl: string = '/api/characters/';
   listPlayersMods: string = '/list/players/mods';
+  gearUrl: string = '/api/gear';
 
   constructor(private http: HttpClient) { }
 
   player(allyCode: string): Observable<any> {
     return this.http.get<any>(this.playerUrl + allyCode.replace(/-/g, ""), httpOptions)
       .pipe(
-        map(res => {
-          return res;
-        })
+      map(res => {
+        return res;
+      })
+      );
+  }
+
+  gear(): Observable<any> {
+    return this.http.get<any>(this.gearUrl, httpOptions)
+      .pipe(
+      map(res => {
+        return res;
+      })
       );
   }
 
   playersMods(allyCode: number): Observable<any> {
     return this.http.get<any>(this.playersUrl + allyCode + "/mods", httpOptions)
       .pipe(
-        map(res => {
-          return res;
-        })
+      map(res => {
+        return res;
+      })
       );
   }
 
@@ -46,9 +56,9 @@ export class SwgohGgDataService {
   playersListMods(allyCode: number[]): Observable<any> {
     return this.http.post<any>(this.listPlayersMods, allyCode)
       .pipe(
-        map(res => {
-          return res;
-        })
+      map(res => {
+        return res;
+      })
       );
   }
 
@@ -56,18 +66,18 @@ export class SwgohGgDataService {
   guild(guildCode: string): Observable<any> {
     return this.http.get<any>(this.guildUrl + guildCode.replace(/-/g, ""), httpOptions)
       .pipe(
-        map(res => {
-          return res;
-        })
+      map(res => {
+        return res;
+      })
       );
   }
 
   characters(): Observable<any> {
     return this.http.get<any>(this.charactersUrl, httpOptions)
       .pipe(
-        map(res => {
-          return res;
-        })
+      map(res => {
+        return res;
+      })
       );
   }
 

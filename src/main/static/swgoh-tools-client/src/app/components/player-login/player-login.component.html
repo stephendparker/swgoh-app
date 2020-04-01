@@ -1,0 +1,46 @@
+<app-progress-spinner></app-progress-spinner>
+<h4 mat-dialog-title>Login Player</h4>
+<mat-dialog-content>
+
+	<div class="flow row">
+		<mat-form-field>
+			<mat-label>Player Ally Code</mat-label>
+			<input matInput [(ngModel)]="playerId" [readonly]="lockInput">
+		</mat-form-field>
+	</div>
+
+	<div class="flow row">
+		<mat-form-field [style.width]="'350px'">
+			<mat-label>Hot Utils Session</mat-label>
+			<input matInput [(ngModel)]="playerHotutils" [readonly]="playerHotutils">
+		</mat-form-field>
+	</div>
+
+	<div class="flow row">
+		Optimization Source:
+	</div>
+	<div class="flow row">
+		<mat-button-toggle-group name="modelSource" [(ngModel)]="modelSource">
+			<mat-button-toggle [value]="NONE_SOURCE">None</mat-button-toggle>
+			<mat-button-toggle [value]="GUILD_SOURCE">Guild</mat-button-toggle>
+			<mat-button-toggle [value]="PLAYER_SOURCE">Player</mat-button-toggle>
+		</mat-button-toggle-group>
+	</div>
+
+	<div class="flow row" [class.hidden]="modelSource != GUILD_SOURCE">
+		<app-guild-player-selector [selectorLabel]="'Model Guild ID'" (selectionChange)="selectGuildPlayers($event)"></app-guild-player-selector>
+	</div>
+
+	<div class="flow row" [class.hidden]="modelSource != PLAYER_SOURCE">
+		<mat-form-field>
+			<mat-label>Optimize to Player Ally Code</mat-label>
+			<input matInput [(ngModel)]="modelPlayerId" [readonly]="lockInput">
+		</mat-form-field>
+	</div>
+
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button (click)="onOk()" [disabled]="formComplete() == false">Ok</button>
+
+</div>

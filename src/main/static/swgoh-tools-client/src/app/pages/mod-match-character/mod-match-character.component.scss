@@ -1,0 +1,40 @@
+.character-col,
+.set-col,
+.half-col,
+.secondary-col,
+.match-strength-col {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+}
+
+.primary-piece-label {
+    width: 150px;
+    display: inline-block;
+}
+
+.row .character-col {
+    max-width: 10%;
+}
+
+.row .half-col {
+    max-width: 50%;
+}
+
+.row .set-col {
+    max-width: 10%;
+}
+
+.row .secondary-col {
+    max-width: 40%;
+}
+
+.row .match-strength-col {
+    max-width: 10%;
+}
+
+.scrollable-container {
+    height: calc(-75px + 100vh);
+    overflow: auto;
+    padding: 5px;
+}

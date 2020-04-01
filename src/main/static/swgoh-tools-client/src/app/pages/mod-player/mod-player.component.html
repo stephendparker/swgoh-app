@@ -1,0 +1,306 @@
+<div>
+	<app-progress-spinner></app-progress-spinner>
+
+	<div [class.hidden]="viewMode != VIEW_SELECT_CHARACTER">
+
+		<mat-toolbar>
+			<span class="spacer"></span>
+			<button mat-icon-button (click)="clickRefreshData()">
+    			<mat-icon>refresh</mat-icon>
+  			</button>
+			<button mat-icon-button>
+    			<mat-icon>account_circle</mat-icon>
+  			</button>
+		</mat-toolbar>
+
+		<div class="flow mod-left-col">
+			<div class="mat-elevation-z8 full-width">
+				<div class="scrollable " [style.height]="displayModeSettings.modEditorHeight -200 + 'px'">
+
+					<div *ngFor="let squad of squads; let i = index" class="flow row ">
+						<app-squad-display #squadDisplay (characterSelected)="modCharacter($event)" [characters]="squad"></app-squad-display>
+						<div class="flow column">
+							<div class="flow column">
+								<button mat-icon-button (click)="editSquad(squad, i)">
+    					<mat-icon >edit</mat-icon>
+  					</button>
+							</div>
+							<div class="flow column">
+								<button mat-icon-button (click)="editSquad(squad, i)">
+    					<mat-icon >delete</mat-icon>
+  					</button>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="flow row">
+			<button mat-button (click)="createSquad()">Create Squad</button>
+		</div>
+		<!--<app-add-character [class.hidden]="true" (characterSelected)="modCharacter($event)"></app-add-character>-->
+
+	</div>
+	<div [class.hidden]="viewMode != VIEW_EDIT_SQUAD">
+		<mat-toolbar>
+
+			<button mat-icon-button (click)="viewMode = VIEW_SELECT_CHARACTER">
+    			<mat-icon>navigate_before</mat-icon>
+  			</button>
+		</mat-toolbar>
+
+		<app-squad-edit #squadEditor (squadUpdated)="updateSquad($event)"></app-squad-edit>
+
+	</div>
+	<div [class.hidden]="viewMode != VIEW_MODS">
+		<mat-toolbar>
+
+			<button mat-icon-button (click)="viewMode = VIEW_SELECT_CHARACTER">
+    			<mat-icon>navigate_before</mat-icon>
+  			</button>
+			<app-character-portrait #characterPortrait [maxHeight]="'50px'" [showName]="false" (click)="viewMode = VIEW_REVIEW_CHARACTER"></app-character-portrait>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+			<button mat-icon-button (click)="toggleLock(selectedCharacterDto)">
+				<mat-icon>{{ allLocked(selectedCharacterDto) ? 'lock' : 'lock_open' }}</mat-icon>
+  			</button>
+
+			<button mat-icon-button (click)="resetMods(selectedCharacterDto.name)">
+    			<mat-icon>skip_previous</mat-icon>
+  			</button>
+
+			<button mat-icon-button (click)="revertMods(selectedCharacterDto.name)">
+    			<mat-icon class="rotate-180">play_arrow</mat-icon>
+  			</button>
+
+			<button mat-icon-button (click)="clickOptimizeCharacter(selectedCharacterDto.name)" [disabled]="getModelData() == null">
+    			<mat-icon>offline_bolt</mat-icon>
+  			</button>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+
+			<button mat-icon-button [matMenuTriggerFor]="sortMenu">
+				<mat-icon>sort</mat-icon>
+			</button>
+			<mat-menu #sortMenu="matMenu">
+				<button mat-menu-item (click)="setModSort('strength')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'strength'">Optimization</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('speed')">
+					<span  [class.thick]="selectedModEditorViewConfiguration?.sort == 'speed'">Speed</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('physicalOffense')">
+					<span  [class.thick]="selectedModEditorViewConfiguration?.sort == 'physicalOffense'">Physcial Offense</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('specialOffense')">
+					<span  [class.thick]="selectedModEditorViewConfiguration?.sort == 'specialOffense'">Special Offense</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('critChance')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'critChance'">Crit Chance</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('health')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'health'">Health</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('protection')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'protection'">Protection</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('potency')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'potency'">Potency</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('tenacity')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'tenacity'">Tenacity</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('physicalDefense')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'physicalDefense'">Physcial Defense</span>
+				</button>
+				<button mat-menu-item (click)="setModSort('specialDefense')">
+					<span [class.thick]="selectedModEditorViewConfiguration?.sort == 'specialDefense'">Special Defense</span>
+				</button>
+			</mat-menu>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+			<ng-container *ngIf="displayModeSettings.mini == false">
+				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="filterSets.indexOf(set.id) != -1" (click)="toggleSetFilter(set.id)">
+					<app-mod-set-icon [setType]="set.name"></app-mod-set-icon>
+				</button>
+
+				<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+				<button *ngFor="let slot of SwgohGgCalc.SLOTS" mat-icon-button [class.filter-selected]="filterSlots.indexOf(slot.id) != -1"
+					(click)="toggleSlotFilter(slot.id)">
+					<app-mod-slot-icon [slot]='slot.id'></app-mod-slot-icon>
+				</button>
+				<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+				<button mat-icon-button [class.filter-selected]="filterLocked" (click)="toggleLockedFilter()">
+					<mat-icon>lock</mat-icon>
+				</button>
+			</ng-container>
+
+			<button mat-icon-button (click)="openModFilterOptions()">
+    			<mat-icon>filter_list</mat-icon>
+  			</button>
+
+			<span class="spacer"></span>
+
+			<button mat-icon-button (click)="clickRefreshData()">
+    			<mat-icon>refresh</mat-icon>
+  			</button>
+
+			<button mat-icon-button>
+    			<mat-icon>account_circle</mat-icon>
+  			</button>
+
+		</mat-toolbar>
+
+		<div class="flow row">
+			<!-- left hand side of editor -->
+			<div class="flow mod-left-col" [style.width]="displayModeSettings.modLeftPaneWidth + 'px'" [style.height]="displayModeSettings.modEditorHeight + 'px'">
+				<div class="mat-elevation-z8 full-width">
+					<div class="scrollable">
+						<div class="flow row">
+							<div class="flow column">
+								<app-mod-display #pendingModsDisplay (modClicked)="clickModDisplayMod($event)" [class.hidden]="selectedCharacterDto == null || selectedCharacterDto.lockedMods == null"></app-mod-display>
+							</div>
+							<div class="flow row ">
+								<div fxShow [fxHide.lt-md]="selectedSlotMod != null">
+									<app-mod-set-comparison #compareCurrentPending></app-mod-set-comparison>
+								</div>
+								<div fxHide [fxShow.lt-md]="selectedSlotMod != null">
+									<app-mod-portrait #selectedSlotModPortrait [showStatsSmall]="true"></app-mod-portrait>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- right hand side of editor -->
+			<div class="flow column">
+				<div class="flow row">
+					<app-mod-list-component (selectMod)="setPending($event)"></app-mod-list-component>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="hide">
+			<mat-tab-group>
+
+
+				<mat-tab label="Edit">
+
+
+
+				</mat-tab>
+
+				<mat-tab label="Review">
+					<div class="flow row">
+
+						<div class="flow column">
+							<div class="flow row">
+								<span>In Game:</span>
+								<mat-toolbar>
+									<span class="spacer"></span>
+									<mat-slide-toggle>
+										Lock
+									</mat-slide-toggle>
+								</mat-toolbar>
+							</div>
+
+							<!-- TODO - [mods]="selectedCharacterDto.currentMods" -->
+							<app-mod-display #currentModsDisplay [class.hidden]="selectedCharacterDto == null || selectedCharacterDto.currentMods == null"></app-mod-display>
+						</div>
+						<div class="flow column">
+							<div class="flow row">
+								<span>Modified:</span>
+								<mat-toolbar>
+									<button mat-button (click)="resetMods(selectedCharacterDto.name)">Reset (Game)</button>
+									<button mat-button (click)="clickOptimizeCharacter(selectedCharacterDto.name)" [disabled]="getModelData() == null">Optimize</button>
+									<span class="spacer"></span>
+									<mat-slide-toggle>
+										Lock
+									</mat-slide-toggle>
+								</mat-toolbar>
+							</div>
+							<!-- TODO - [mods]="selectedCharacterDto.lockedMods" -->
+							<app-mod-display #lockedModsDisplay [class.hidden]="selectedCharacterDto == null || selectedCharacterDto.lockedMods == null"></app-mod-display>
+						</div>
+					</div>
+
+					<div class="flow row" [class.hidden]="(selectedCharacterDto != null && selectedCharacterDto.currentMods != null && selectedCharacterDto.lockedMods != null) == false">
+						<app-mod-set-comparison #compareCurrentNew></app-mod-set-comparison>
+					</div>
+				</mat-tab>
+
+
+			</mat-tab-group>
+		</div>
+
+	</div>
+
+
+	<div [class.hidden]="viewMode != VIEW_REVIEW_CHARACTER">
+		<mat-toolbar>
+
+			<button mat-icon-button (click)="viewMode = VIEW_MODS">
+    				<mat-icon>navigate_before</mat-icon>
+  				</button>
+			<app-character-portrait #characterPortrait [maxHeight]="'50px'" [showName]="false" (click)="viewMode = VIEW_MODS"></app-character-portrait>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+			<span class="spacer"></span>
+
+			<button mat-icon-button>
+    				<mat-icon>account_circle</mat-icon>
+  				</button>
+
+		</mat-toolbar>
+
+		<div class="flow row" *ngIf="modCalcResults != null">
+
+			<div ngClass="flow column" ngClass.lt-sm="flow row">
+				<app-mod-set-percentages [setTotals]="modCalcResults.allSetTotals" [showFourPiece]="true"></app-mod-set-percentages>
+
+			</div>
+
+			<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+				<app-mod-primary-percentages [label]="'Circle'" [primaryCounts]="modCalcResults.circlePrimaryCounts" [total]="modCalcResults.allSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+			</div>
+			<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+				<app-mod-primary-percentages [label]="'Cross'" [primaryCounts]="modCalcResults.crossPrimaryCounts" [total]="modCalcResults.allSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+			</div>
+			<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+				<app-mod-primary-percentages [label]="'Triangle'" [primaryCounts]="modCalcResults.trianglePrimaryCounts" [total]="modCalcResults.allSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+			</div>
+			<div ngClass="flow column" ngClass.lt-sm="flow row">
+
+				<app-mod-primary-percentages [label]="'Arrow'" [primaryCounts]="modCalcResults.arrowPrimaryCounts" [total]="modCalcResults.allSetTotals.setTypeTotal"></app-mod-primary-percentages>
+
+			</div>
+		</div>
+		<div ngClass="flow row" *ngIf="modCalcResults != null">
+			<div *ngFor="let secondaryCounts of modCalcResults.secondaryCounts" ngClass="flow row">
+				<span class="primary-piece-label">	{{ round(secondaryCounts.rolls/modCalcResults.allSetTotals.setTypeTotal)}}</span>
+				<span class="primary-piece-label">{{ secondaryCounts.name }}</span>
+
+				<div *ngFor="let scType of secondaryCounts.types; let index=index; let odd=oddI; let even=evenI;">
+
+					<span class="primary-piece-label">{{ round(scType.value/modCalcResults.allSetTotals.setTypeTotal * scType.multiplier)}}{{scType.type}}</span>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

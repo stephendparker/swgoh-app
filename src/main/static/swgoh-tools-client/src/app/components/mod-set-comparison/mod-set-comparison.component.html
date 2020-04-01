@@ -1,0 +1,61 @@
+<!--<div *ngIf="displayModeSettings.mini == false">
+	<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mat-small">
+
+		<ng-container matColumnDef="label">
+			<th mat-header-cell *matHeaderCellDef class="label-column"> </th>
+			<td mat-cell *matCellDef="let element"> {{element.label}} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="oldValue">
+			<th mat-header-cell *matHeaderCellDef class="stat-column"> Current </th>
+			<td mat-cell *matCellDef="let element"> {{element.oldValue| number }} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="newValue">
+			<th mat-header-cell *matHeaderCellDef class="stat-column"> New </th>
+			<td mat-cell *matCellDef="let element"> {{element.newValue| number }} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="delta">
+			<th mat-header-cell *matHeaderCellDef class="stat-column"> Change </th>
+			<td mat-cell *matCellDef="let element" [class.highlight-improve]="element.delta != null && element.delta > 0" [class.highlight-worsten]="element.delta != null && element.delta < 0">
+				{{element.delta| number }} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="pendingValue">
+			<th mat-header-cell *matHeaderCellDef class="stat-column"> Pending </th>
+			<td mat-cell *matCellDef="let element"> {{element.pendingValue| number }} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="pendingDelta">
+			<th mat-header-cell *matHeaderCellDef class="stat-column"> Change </th>
+			<td mat-cell *matCellDef="let element" [class.highlight-improve]="element.pendingDelta != null && element.pendingDelta > 0"
+				[class.highlight-worsten]="element.pendingDelta != null && element.pendingDelta < 0">
+				{{element.pendingDelta| number }} </td>
+		</ng-container>
+
+		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+	</table>
+
+</div>-->
+
+<table class="mat-small">
+	<tr *ngFor="let element of dataSource">
+		<td>{{ element.label }}</td>
+
+		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('oldValue') != -1">{{element.oldValue| number }}</td>
+		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('newValue') != -1">{{element.newValue| number }}</td>
+		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('delta') != -1" [class.highlight-improve]="element.delta != null && element.delta > 0"
+			[class.highlight-worsten]="element.delta != null && element.delta < 0">{{element.delta| number }}</td>
+
+		<td>{{element.pendingValue| number }}</td>
+		<td [class.highlight-improve]="element.pendingDelta != null && element.pendingDelta > 0" [class.highlight-worsten]="element.pendingDelta != null && element.pendingDelta	< 0 ">
+			{{element.pendingDelta| number }} </td>
+
+		<td>{{element.pendingUpgradedValue| number }}</td>
+		<td [class.highlight-improve]="element.pendingUpgradedDelta != null && element.pendingUpgradedDelta > 0" [class.highlight-worsten]="element.pendingUpgradedDelta != null && element.pendingUpgradedDelta	< 0 ">
+			{{element.pendingUpgradedDelta| number }} </td>
+
+	</tr>
+</table>

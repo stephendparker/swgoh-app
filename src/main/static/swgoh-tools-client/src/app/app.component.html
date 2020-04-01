@@ -1,13 +1,12 @@
-<mat-toolbar color="primary">
-
-  <mat-toolbar-row>
-
-    <a mat-button routerLink="/mod-common" routerLinkActive="active">Common Mods</a>
-    <a mat-button routerLink="/mod-set-rankings" routerLinkActive="active">Mod Rankings</a>
-    <a mat-button routerLink="/pack-value" routerLinkActive="active">Pack Value</a>
-
-  </mat-toolbar-row>
-
-</mat-toolbar>
-
+<div ngClass.lt-md="hide">
+	<mat-toolbar color="primary">
+		<mat-toolbar-row>
+			<a mat-button routerLink="/mod-common" routerLinkActive="active">Common Mods</a>
+			<a mat-button routerLink="/mod-set-rankings" routerLinkActive="active">Mod Rankings</a>
+			<a mat-button routerLink="/pack-value" routerLinkActive="active">Pack Value</a>
+			<a mat-button routerLink="/mod-match-character" routerLinkActive="active">Mod Matcher</a>
+			<a mat-button routerLink="/mod-player" routerLinkActive="active">Mod Player</a>
+		</mat-toolbar-row>
+	</mat-toolbar>
+</div>
 <router-outlet></router-outlet>

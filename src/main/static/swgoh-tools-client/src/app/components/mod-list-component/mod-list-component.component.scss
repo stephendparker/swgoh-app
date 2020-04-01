@@ -1,0 +1,11 @@
+.scrollable-container {
+    height: calc(-75px + 100vh);
+    overflow: auto;
+    padding: 5px;
+}
+
+.example-viewport {
+  height: 600px;
+  width: 1000px;
+  border: 1px solid black;
+}

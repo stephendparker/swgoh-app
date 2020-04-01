@@ -1,0 +1,10 @@
+<cdk-virtual-scroll-viewport [minBufferPx]="displayModeSettings.modEditorHeight" [maxBufferPx]="displayModeSettings.modEditorHeight + 200"
+	[itemSize]="displayModeSettings.modPortraitHeight" [style.width]="displayModeSettings.modRightPaneWidth - 30 + 'px'" [style.height]="displayModeSettings.modEditorHeight + 'px'">
+	<div *cdkVirtualFor="let modRow of modRows" [style.height]="displayModeSettings.modPortraitHeight + 'px'">
+		<div class="flow row">
+			<span *ngFor="let mod of modRow" [style.width]="displayModeSettings.modPortraitWidth+ 'px'" [class.highlight]="highlightedMod != null && highlightedMod.id == mod.id">
+				<app-mod-portrait #modPortraits [locked]="isLocked(mod)" [showStatsSmall]="true" [mod]="mod.mod" (click)="clickMod(mod.mod)" > </app-mod-portrait>
+			</span>
+		</div>
+	</div>
+</cdk-virtual-scroll-viewport>

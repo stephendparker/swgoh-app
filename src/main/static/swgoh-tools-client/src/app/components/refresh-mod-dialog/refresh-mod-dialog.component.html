@@ -1,0 +1,28 @@
+<h4 mat-dialog-title>Refresh Mod Data</h4>
+<mat-dialog-content>
+	<form>
+		<div class="padded">
+			<mat-checkbox name="playerSwgohGg" [(ngModel)]="playerSwgohGg">Player Data SWGOH.GG</mat-checkbox>
+		</div>
+		<div [class.hidden]="playerSwgohGg == false" class="padded">
+			<mat-checkbox name="clearMods" [(ngModel)]="clearMods">Delete removed mods</mat-checkbox>
+		</div>		
+		<div class="padded">
+			<mat-checkbox name="playerHotutils" [(ngModel)]="playerHotutils">Player Data HotUtils</mat-checkbox>
+		</div>
+		<div [class.hidden]="playerHotutils == false" class="padded">
+			<mat-form-field>
+				<mat-label>Session ID</mat-label>
+				<input matInput name="sessionIdHotutils" [(ngModel)]="sessionIdHotutils">
+			</mat-form-field>
+		</div>
+		<div class="padded">
+			<mat-checkbox name="optimizationSwgohGg" [(ngModel)]="optimizationSwgohGg">Optimization Data</mat-checkbox>
+		</div>
+	</form>
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button (click)="onOk()">Ok</button>
+	<button mat-button (click)="onClose()">Close</button>
+</div>

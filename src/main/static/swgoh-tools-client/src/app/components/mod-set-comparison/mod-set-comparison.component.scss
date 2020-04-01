@@ -1,0 +1,38 @@
+table {
+    width: 100%;
+}
+
+.label-column {
+    min-width: 200px;
+}
+
+.stat-column {
+    padding: 10px;
+}
+
+.highlight-improve {
+    background-color: green;
+    padding-left: 15px;
+}
+
+.highlight-improve.mat-cell {
+    color: white;
+}
+
+.highlight-worsten {
+    background-color: red;
+    color: white;
+    padding-left: 15px;
+}
+
+.highlight-worsten.mat-cell {
+    color: white;
+}
+
+tr.mat-row {
+    height: 35px;
+}
+
+tr.mat-header-row {
+    height: 55px;
+}

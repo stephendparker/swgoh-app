@@ -21,6 +21,8 @@ public class SwgohGGDataService {
     @Cacheable("player")
     public Object player(String allyCode) {
 
+        logger.info("getting non-cached playerMods: " + allyCode);
+
         String allyCodeFormatted = allyCode.replaceAll("-", "");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -34,6 +36,8 @@ public class SwgohGGDataService {
 
     @Cacheable("playerMods")
     public Object playerMods(String allyCode) {
+
+        logger.info("getting non-cached playerMods: " + allyCode);
 
         String allyCodeFormatted = allyCode.replaceAll("-", "");
         RestTemplate restTemplate = new RestTemplate();
@@ -49,6 +53,8 @@ public class SwgohGGDataService {
 
     @Cacheable("gear")
     public Object gear() {
+
+        logger.info("getting non-cached gear");
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -79,6 +85,8 @@ public class SwgohGGDataService {
 
     @Cacheable("characters")
     public Object characters() {
+
+        logger.info("getting non-cached characters");
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
