@@ -7,7 +7,7 @@ import { DataStoreService } from './../../services/data-store.service';
 import { UnitsEntity, PlayerData } from './../../model/swgohgg/player-data';
 import { ModDisplayComponent } from './../../components/mod-display/mod-display.component';
 import { ModSetComparisonComponent } from './../../components/mod-set-comparison/mod-set-comparison.component';
-import { ModListComponentComponent } from './../../components/mod-list-component/mod-list-component.component';
+import { ModListComponentComponent, LockedModDto } from './../../components/mod-list-component/mod-list-component.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PlayerLoginComponent } from './../../components/player-login/player-login.component';
 import { CharacterPortraitComponent } from './../../components/character-portrait/character-portrait.component';
@@ -614,6 +614,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       } else {
         characterModDto.lockedMods = characterModDto.pendingMods.slice(0);
         this.modList.setLockedMods(this.getLockedMods(true));
+        this.modList.setTheLockedMods(this.getLockedModDtos(true));
 
         this.playerCharacterDtos.forEach(playerCharacter => {
           // remove locked mods from other characters
@@ -722,6 +723,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     }
     if (this.modList) {
       this.modList.setLockedMods(this.getLockedMods(true));
+      this.modList.setTheLockedMods(this.getLockedModDtos(true));
     }
 
     if (this.selectedSlotModPortrait) {
@@ -758,6 +760,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         let lockedMods = this.selectedCharacterDto.pendingMods.filter(pendingMod => this.selectedCharacterDto.currentMods.find(newMod => newMod.id == pendingMod.id) == null);
         modDisplay.highlightMods = lockedMods;
         modDisplay.setLockedMods(this.selectedCharacterDto == null ? null : this.selectedCharacterDto.lockedMods);
+        // TODO
+        // this.modList.setTheLockedMods(this.getLockedModDtos(true));
       });
     }
 
@@ -857,6 +861,22 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.playerCharacterDtos.forEach(dto => {
         dto.lockedMods.forEach(mod => {
           retVal.push(mod);
+        })
+      });
+    }
+    return retVal;
+  }
+
+  getLockedModDtos(locked: boolean): LockedModDto[] {
+    let retVal: LockedModDto[] = [];
+    if (locked) {
+
+      this.playerCharacterDtos.forEach(dto => {
+        dto.lockedMods.forEach(mod => {
+          retVal.push({
+            id: mod.id,
+            name: dto.name
+          });
         })
       });
     }

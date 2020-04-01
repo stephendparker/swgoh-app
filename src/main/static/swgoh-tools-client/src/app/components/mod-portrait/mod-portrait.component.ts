@@ -21,6 +21,8 @@ export class ModPortraitComponent implements OnInit, OnDestroy {
 
   @Input() showStatsSmall = false;
 
+  @Input() currentCharacter: string;
+
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
   @Input() locked: boolean = false;
@@ -34,8 +36,8 @@ export class ModPortraitComponent implements OnInit, OnDestroy {
       if (displayModeSettings != null)
         this.displayModeSettings = displayModeSettings;
     });
-    if (this.mod != null)
-      this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(`${'https://swgoh.gg/game-asset/u/' + this.mod.character}`);
+
+    this.setImageUrl();
   }
 
   ngOnDestroy() {
@@ -43,8 +45,20 @@ export class ModPortraitComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
+  setImageUrl() {
+    let currentCharacter = this.getCurrentCharacter();
+
+    if (currentCharacter != null)
+      this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(`${'https://swgoh.gg/game-asset/u/' + currentCharacter}`);
+  }
+
   setLocked(locked: boolean) {
     this.locked = locked;
+    this.cdr.detectChanges();
+  }
+
+  setCurrentCharacter(name: string) {
+    this.currentCharacter = name;
     this.cdr.detectChanges();
   }
 
@@ -56,9 +70,19 @@ export class ModPortraitComponent implements OnInit, OnDestroy {
     }
 
   }
+
+  getCurrentCharacter(): string {
+    if (this.currentCharacter != null) {
+      return this.currentCharacter;
+    } else if (this.mod != null) {
+      return this.mod.character;
+    }
+  }
   getPortraitStyleUrl(): SafeStyle {
     // 'url(' + getPortraitUrl() + ');'
-    let retVal = this.sanitizer.sanitize(SecurityContext.STYLE, `url(${'https://swgoh.gg/game-asset/u/' + this.mod.character})`);
+    let currentCharacter = this.getCurrentCharacter();
+
+    let retVal = this.sanitizer.sanitize(SecurityContext.STYLE, `url(${'https://swgoh.gg/game-asset/u/' + currentCharacter})`);
     return retVal;
   }
 

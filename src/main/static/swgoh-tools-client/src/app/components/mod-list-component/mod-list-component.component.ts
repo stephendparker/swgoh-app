@@ -14,6 +14,11 @@ export class ModListFilter {
   public sets: number[] = [];
 }
 
+export class LockedModDto {
+  public name: string;
+  public id: string;
+}
+
 @Component({
   selector: 'app-mod-list-component',
   templateUrl: './mod-list-component.component.html',
@@ -34,6 +39,7 @@ export class ModListComponentComponent implements OnInit {
   @Output() selectMod: EventEmitter<ModsEntity> = new EventEmitter<ModsEntity>();
 
   lockedMods: ModsEntity[];
+  lockedModDtos: LockedModDto[] = [];
 
   modListFilter: ModListFilter = new ModListFilter();
   lockedFilter: boolean = true;
@@ -101,6 +107,21 @@ export class ModListComponentComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  setTheLockedMods(lockedMods: LockedModDto[]) {
+    this.lockedModDtos = lockedMods;
+
+    this.modPortraits.forEach(modPortrait => {
+      let modDto: LockedModDto = lockedMods.find(lockedMod => lockedMod.id == modPortrait.mod.id);
+      if (modDto != null) {
+        modPortrait.setCurrentCharacter(modDto.name);
+        modPortrait.setLocked(true);
+      } else {
+        modPortrait.setCurrentCharacter(null);
+        modPortrait.setLocked(false);
+      }
+    });
+  }
+
   setLockedMods(mods: ModsEntity[]) {
     this.lockedMods = mods;
     if (mods != null && this.modPortraits != null) {
@@ -123,7 +144,7 @@ export class ModListComponentComponent implements OnInit {
         modList = modList.filter(mod => this.modListFilter.sets.indexOf(mod.mod.set) != -1);
       }
       if (this.lockedFilter != true) {
-        modList = modList.filter(mod => this.lockedMods.find(lockedMod => lockedMod.id == mod.mod.id) == null);
+        modList = modList.filter(mod => this.lockedModDtos.find(lockedModDto => lockedModDto.id == mod.mod.id) == null);
       }
 
       modList = modList.sort((a, b) => {
