@@ -23,6 +23,7 @@ import { SquadDisplayComponent } from './../../components/squad-display/squad-di
 import { RefreshModDialogComponent } from './../../components/refresh-mod-dialog/refresh-mod-dialog.component';
 import { HotutilsDataService } from './../../services/hotutils-data.service';
 import { ConfirmationDialogComponent } from './../../components/confirmation-dialog/confirmation-dialog.component';
+import { ModSetSummaryComponent } from './../../components/mod-set-summary/mod-set-summary.component';
 
 class CharacterBestMods {
   public name: string = "";
@@ -98,6 +99,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   public VIEW_REVIEW_CHARACTER = 3;
   public VIEW_EDIT_SQUAD = 4;
 
+  public FILTER_OUT_THRESHOLD = .35;
+
   public viewMode: number = null;
 
   @ViewChildren('currentModsDisplay') modDisplayCurrentMods: QueryList<ModDisplayComponent>;
@@ -111,6 +114,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   @ViewChild(AddCharacterComponent) addCharacterComponent: AddCharacterComponent;
   @ViewChild(ModListComponentComponent) modList: ModListComponentComponent;
   @ViewChild(SquadEditComponent) squadEditComponent: SquadEditComponent;
+  @ViewChildren('modSetSummaryComponents') modSetSummaryComponents: ModSetSummaryComponent;
 
   private squadDisplay: QueryList<SquadDisplayComponent>;
 
@@ -246,7 +250,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     let highestPercent = primaryMost / countTotal;
 
     return modCalcResults[propertyName].filter(primaryCount => {
-      return highestPercent - (primaryCount.count / countTotal) < .25;
+      return highestPercent - (primaryCount.count / countTotal) < this.FILTER_OUT_THRESHOLD;
     }).map(primaryCount => SwgohGgCalc.convertPrimaryTitleToNumber(primaryCount.primaryType));
   }
 
@@ -433,12 +437,12 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   // FROM UI
   toggleSetFilter(id: number) {
 
-    if (this.filterSets.indexOf(id) == -1) {
-      this.filterSets.push(id);
+    if (this.selectedModEditorViewConfiguration.filterSets.indexOf(id) == -1) {
+      this.selectedModEditorViewConfiguration.filterSets.push(id);
     } else {
-      this.filterSets = this.filterSets.filter(filterName => filterName != id);
+      this.selectedModEditorViewConfiguration.filterSets = this.selectedModEditorViewConfiguration.filterSets.filter(filterName => filterName != id);
     }
-    this.modList.setModSetFilter(this.filterSets);
+    this.modList.setModSetFilter(this.selectedModEditorViewConfiguration.filterSets);
     this.updateComponents();
     this.cdr.detectChanges();
   }
@@ -754,6 +758,15 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.fullyLockedCharacters = this.playerCharacterDtos.filter(dto => dto.lockedMods != null && dto.lockedMods.length == 6);
   }
 
+  isCommonSet(set): boolean {
+    if (this.selectedCharacter != null && this.playerModData.calculatedModelGuildData != null) {
+      let unit: ModUnitCalcResults = this.playerModData.calculatedModelGuildData.modCalcResults.units.find(unit => unit.name == this.selectedCharacter);
+
+      return set.name == unit.commonSet1 || set.name == unit.commonSet2 || set.name == unit.commonSet3;
+    }
+    return false;
+  }
+
   updateComponents() {
 
     if (this.characterPortrait) {
@@ -764,6 +777,15 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     if (this.modList) {
       this.modList.setLockedMods(this.getLockedMods(true));
       this.modList.setTheLockedMods(this.getLockedModDtos(true));
+    }
+    if (this.modSetSummaryComponents && this.selectedCharacter != null && this.playerModData.calculatedModelGuildData != null) {
+      let unit: ModUnitCalcResults = this.playerModData.calculatedModelGuildData.modCalcResults.units.find(unit => unit.name == this.selectedCharacter);
+      this.modSetSummaryComponents.forEach(modSetSummaryComponent => {
+        if (unit != null) {
+
+          modSetSummaryComponent.setCommonSet(unit.commonSet1, unit.commonSet2, unit.commonSet3);
+        }
+      });
     }
 
     if (this.selectedSlotModPortrait) {

@@ -237,14 +237,14 @@ export class SwgohGgCalc {
     public static FOUR_SET_LIST = ["offense", "speed", "critDmg"];
 
     public static SETS: SetInfo[] = [
+        { name: 'speed', id: MOD_SET_SPEED },        
+        { name: 'critDmg', id: MOD_SET_CRIT_DMG },
         { name: 'offense', id: MOD_SET_OFFENSE },
         { name: 'health', id: MOD_SET_HEALTH },
-        { name: 'defense', id: MOD_SET_DEFENSE },
-        { name: 'speed', id: MOD_SET_SPEED },
         { name: 'critChance', id: MOD_SET_CRIT_CHANCE },
-        { name: 'critDmg', id: MOD_SET_CRIT_DMG },
         { name: 'potency', id: MOD_SET_POTENCY },
-        { name: 'tenacity', id: MOD_SET_TENACITY }
+        { name: 'tenacity', id: MOD_SET_TENACITY },
+        { name: 'defense', id: MOD_SET_DEFENSE }
     ];
 
     public static SLOTS: SlotInfo[] = [

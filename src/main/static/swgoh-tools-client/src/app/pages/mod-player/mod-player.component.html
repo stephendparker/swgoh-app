@@ -127,9 +127,17 @@
 
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
 
+			<button mat-icon-button (click)="openModFilterOptions()">
+    			<mat-icon>filter_list</mat-icon>
+  			</button>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
 			<ng-container *ngIf="displayModeSettings.mini == false">
-				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="selectedModEditorViewConfiguration != null && selectedModEditorViewConfiguration.filterSets.indexOf(set.id) != -1" (click)="toggleSetFilter(set.id)">
-					<app-mod-set-icon [setType]="set.name"></app-mod-set-icon>
+				
+				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="selectedModEditorViewConfiguration != null && selectedModEditorViewConfiguration.filterSets.indexOf(set.id) != -1"
+				[class.important-filter]="isCommonSet(set)"	(click)="toggleSetFilter(set.id)">
+		 			<app-mod-set-icon [setType]="set.name"></app-mod-set-icon>
 				</button>
 
 				<mat-divider class="style-fix" [vertical]="true"></mat-divider>
@@ -145,9 +153,7 @@
 				</button>
 			</ng-container>
 
-			<button mat-icon-button (click)="openModFilterOptions()">
-    			<mat-icon>filter_list</mat-icon>
-  			</button>
+
 
 			<span class="spacer"></span>
 
@@ -167,6 +173,9 @@
 				<div class="mat-elevation-z8 full-width">
 					<div class="scrollable">
 						<div class="flow row">
+							<!--<div class="flow row" [class.hidden]="displayModeSettings.mini">
+								<app-mod-set-summary #modSetSummaryComponents></app-mod-set-summary>
+							</div>-->
 							<div class="flow column">
 								<app-mod-display #pendingModsDisplay (modClicked)="clickModDisplayMod($event)" [class.hidden]="selectedCharacterDto == null || selectedCharacterDto.lockedMods == null"></app-mod-display>
 							</div>

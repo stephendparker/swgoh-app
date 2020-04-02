@@ -59,6 +59,7 @@ import { SquadEditComponent } from './components/squad-edit/squad-edit.component
 import { RefreshModDialogComponent } from './components/refresh-mod-dialog/refresh-mod-dialog.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { ModSetSummaryComponent } from './components/mod-set-summary/mod-set-summary.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +94,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     SquadDisplayComponent,
     SquadEditComponent,
     RefreshModDialogComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    ModSetSummaryComponent
   ],
   imports: [
     BrowserModule,
