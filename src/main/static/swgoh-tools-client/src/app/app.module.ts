@@ -60,6 +60,7 @@ import { RefreshModDialogComponent } from './components/refresh-mod-dialog/refre
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { ModSetSummaryComponent } from './components/mod-set-summary/mod-set-summary.component';
+import { DeleteModConfigDialogComponent } from './components/delete-mod-config-dialog/delete-mod-config-dialog.component';
 
 @NgModule({
   declarations: [
@@ -95,7 +96,8 @@ import { ModSetSummaryComponent } from './components/mod-set-summary/mod-set-sum
     SquadEditComponent,
     RefreshModDialogComponent,
     ConfirmationDialogComponent,
-    ModSetSummaryComponent
+    ModSetSummaryComponent,
+    DeleteModConfigDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -130,7 +132,8 @@ import { ModSetSummaryComponent } from './components/mod-set-summary/mod-set-sum
     PlayerLoginComponent,
     ModFilterDialogComponent,
     RefreshModDialogComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    DeleteModConfigDialogComponent
   ],
   providers: [DecimalPipe],
   bootstrap: [AppComponent]

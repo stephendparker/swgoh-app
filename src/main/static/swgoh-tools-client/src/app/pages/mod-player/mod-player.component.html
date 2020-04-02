@@ -4,11 +4,11 @@
 	<div [class.hidden]="viewMode != VIEW_SELECT_CHARACTER">
 
 		<mat-toolbar>
-			<button mat-icon-button (click)="clickUnlockAll()">
-				<mat-icon>lock_open</mat-icon>
-  			</button>
 
 			<span class="spacer"></span>
+			<button mat-icon-button (click)="clickCleanUpData()">
+    			<mat-icon>delete</mat-icon>
+  			</button>
 			<button mat-icon-button (click)="clickRefreshData()">
     			<mat-icon>refresh</mat-icon>
   			</button>
@@ -134,9 +134,9 @@
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
 
 			<ng-container *ngIf="displayModeSettings.mini == false">
-				
+
 				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="selectedModEditorViewConfiguration != null && selectedModEditorViewConfiguration.filterSets.indexOf(set.id) != -1"
-				[class.important-filter]="isCommonSet(set)"	(click)="toggleSetFilter(set.id)">
+					[class.important-filter]="isCommonSet(set)" (click)="toggleSetFilter(set.id)">
 		 			<app-mod-set-icon [setType]="set.name"></app-mod-set-icon>
 				</button>
 
@@ -156,6 +156,10 @@
 
 
 			<span class="spacer"></span>
+
+			<button mat-icon-button (click)="clickCleanUpData()">
+    			<mat-icon>delete</mat-icon>
+  			</button>
 
 			<button mat-icon-button (click)="clickRefreshData()">
     			<mat-icon>refresh</mat-icon>

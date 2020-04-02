@@ -24,6 +24,7 @@ import { RefreshModDialogComponent } from './../../components/refresh-mod-dialog
 import { HotutilsDataService } from './../../services/hotutils-data.service';
 import { ConfirmationDialogComponent } from './../../components/confirmation-dialog/confirmation-dialog.component';
 import { ModSetSummaryComponent } from './../../components/mod-set-summary/mod-set-summary.component';
+import { DeleteModConfigDialogComponent } from './../../components/delete-mod-config-dialog/delete-mod-config-dialog.component';
 
 class CharacterBestMods {
   public name: string = "";
@@ -212,7 +213,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   }
 
   generateDefaultEditorViews() {
-    let views: ModEditorViewConfiguration[] = this.playerModConfiguration.modEditorViewConfigurations
+    let views: ModEditorViewConfiguration[] = this.playerModConfiguration.modEditorViewConfigurations;
     this.playerCharacterDtos.forEach(pcd => {
 
       if (views.find(view => view.characterName == pcd.name) == null) {
@@ -550,6 +551,38 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.saveSettings();
         this.updateComponents();
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+  clickCleanUpData() {
+    const dialogRef = this.dialog.open(DeleteModConfigDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        if (result.lockedMods == DeleteModConfigDialogComponent.ALL) {
+          this.playerCharacterDtos.forEach(characterModDto => {
+            characterModDto.lockedMods = [];
+          });
+
+        }
+        if (result.filters == DeleteModConfigDialogComponent.ALL) {
+          this.playerModConfiguration.modEditorViewConfigurations = [];
+        }
+        if (result.filters == DeleteModConfigDialogComponent.RESET) {
+          this.playerModConfiguration.modEditorViewConfigurations = [];
+          this.generateDefaultEditorViews();
+        }
+        this.saveSettings();
+        this.updateComponents();
+        this.cdr.detectChanges();
+        //         lockedMods: this.lockedMods,
+        // filters: this.filters
+
+        //   if (result.lockedMods == )
       }
     });
   }
