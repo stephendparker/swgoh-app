@@ -157,6 +157,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   SQUADS_LOCAL_STORAGE_KEY = "squads";
   PLAYER_MOD_DATA_STORAGE_KEY = "playerModData";
   PLAYER_LOCKED_MOD_DATA_STORAGE_KEY = "lockedMods";
+  PLAYER_FILTERS_DATA_STORAGE_KEY = "filterMods";
 
   squads: string[][] = [];
 
@@ -176,6 +177,12 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     if (squadString != null) {
       this.squads = JSON.parse(squadString);
     }
+
+    let filterString = localStorage.getItem(this.PLAYER_FILTERS_DATA_STORAGE_KEY);
+    if (filterString != null) {
+      this.playerModConfiguration = JSON.parse(filterString);
+    }
+
     let pmdString = localStorage.getItem(this.PLAYER_MOD_DATA_STORAGE_KEY);
     if (pmdString != null) {
       this.playerModData = JSON.parse(pmdString);
@@ -262,6 +269,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   saveSettings() {
     localStorage.setItem(this.SQUADS_LOCAL_STORAGE_KEY, JSON.stringify(this.squads));
     localStorage.setItem(this.PLAYER_MOD_DATA_STORAGE_KEY, JSON.stringify(this.playerModData));
+    localStorage.setItem(this.PLAYER_FILTERS_DATA_STORAGE_KEY, JSON.stringify(this.playerModConfiguration));
+
 
     if (this.playerCharacterDtos) {
       let saveMods: SaveModDto[] = [];
@@ -443,6 +452,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.selectedModEditorViewConfiguration.filterSets = this.selectedModEditorViewConfiguration.filterSets.filter(filterName => filterName != id);
     }
     this.modList.setModSetFilter(this.selectedModEditorViewConfiguration.filterSets);
+    this.saveSettings();
     this.updateComponents();
     this.cdr.detectChanges();
   }
@@ -537,7 +547,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
         this.modList.setModSlotFilter(this.filterSlots);
         this.modList.setFilters(this.selectedModEditorViewConfiguration);
-
+        this.saveSettings();
         this.updateComponents();
         this.cdr.detectChanges();
       }
@@ -913,7 +923,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         }
       }
     })
-    this.generateDefaultEditorViews();
+    if (this.playerModConfiguration == null) {
+      this.generateDefaultEditorViews();
+    }
   }
 
   getLockedMods(locked: boolean): ModsEntity[] {
