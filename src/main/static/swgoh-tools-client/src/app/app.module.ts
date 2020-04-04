@@ -54,13 +54,14 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import {MatMenuModule} from '@angular/material/menu';
 import { ModSlotIconComponent } from './components/mod-slot-icon/mod-slot-icon.component';
 import { ModFilterDialogComponent } from './components/mod-filter-dialog/mod-filter-dialog.component';
-import { SquadDisplayComponent } from './components/squad-display/squad-display.component';
-import { SquadEditComponent } from './components/squad-edit/squad-edit.component';
 import { RefreshModDialogComponent } from './components/refresh-mod-dialog/refresh-mod-dialog.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { ModSetSummaryComponent } from './components/mod-set-summary/mod-set-summary.component';
 import { DeleteModConfigDialogComponent } from './components/delete-mod-config-dialog/delete-mod-config-dialog.component';
+import { CharacterModSummaryComponent } from './components/character-mod-summary/character-mod-summary.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { SquadManagerComponent } from './components/squad-manager/squad-manager.component';
 
 @NgModule({
   declarations: [
@@ -92,12 +93,12 @@ import { DeleteModConfigDialogComponent } from './components/delete-mod-config-d
     PlayerLoginComponent,
     ModSlotIconComponent,
     ModFilterDialogComponent,
-    SquadDisplayComponent,
-    SquadEditComponent,
     RefreshModDialogComponent,
     ConfirmationDialogComponent,
     ModSetSummaryComponent,
-    DeleteModConfigDialogComponent
+    DeleteModConfigDialogComponent,
+    CharacterModSummaryComponent,
+    SquadManagerComponent
   ],
   imports: [
     BrowserModule,
@@ -124,7 +125,8 @@ import { DeleteModConfigDialogComponent } from './components/delete-mod-config-d
     MatDividerModule,
     ScrollingModule,
     MatMenuModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    DragDropModule
   ],
   entryComponents: [
     ColumnSelectorComponent,

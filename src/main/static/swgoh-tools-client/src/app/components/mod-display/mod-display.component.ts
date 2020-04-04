@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { takeUntil } from 'rxjs/operators';
 import { ModPortraitComponent } from './../mod-portrait/mod-portrait.component';
@@ -19,7 +19,7 @@ const MOD_SLOT_CROSS = 6;
   templateUrl: './mod-display.component.html',
   styleUrls: ['./mod-display.component.scss']
 })
-export class ModDisplayComponent implements OnInit {
+export class ModDisplayComponent implements OnInit, OnChanges {
 
   @ViewChildren('modPortraits') modPortraits: QueryList<ModPortraitComponent>;
 
@@ -53,6 +53,10 @@ export class ModDisplayComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
+    this.setMods(this.mods);
+  }
+  ngOnChanges() {
 
     this.setMods(this.mods);
   }

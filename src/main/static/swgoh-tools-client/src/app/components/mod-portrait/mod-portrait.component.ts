@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef, OnDestroy, SecurityContext } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, OnDestroy, SecurityContext, OnChanges } from '@angular/core';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { DataStoreService } from './../../services/data-store.service';
 import { Subject } from 'rxjs';
@@ -6,14 +6,14 @@ import { Subject } from 'rxjs';
 import { SwgohGgCalc } from './../../calcs/swgoh-gg-calc';
 import { takeUntil } from 'rxjs/operators';
 import { DisplayModeService, DisplayModeSettings } from './../../services/display-mode.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl, SafeStyle } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-mod-portrait',
   templateUrl: './mod-portrait.component.html',
   styleUrls: ['./mod-portrait.component.scss']
 })
-export class ModPortraitComponent implements OnInit, OnDestroy {
+export class ModPortraitComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() mod: ModsEntity;
 
@@ -43,6 +43,11 @@ export class ModPortraitComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  ngOnChanges() {
+
+    this.setImageUrl();
   }
 
   setImageUrl() {

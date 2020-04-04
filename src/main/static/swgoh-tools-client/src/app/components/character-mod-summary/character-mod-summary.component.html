@@ -1,0 +1,20 @@
+<div class="flow row">
+	<div class="flow column padded">
+		<div class="flow row">
+			<app-character-portrait [baseId]="modDto.name"></app-character-portrait>
+		</div>
+		<div class="flow row" *ngIf="optimization != null">
+			<div class="flow row">Target Set:</div>
+			<div class="flow row">
+				<app-mod-set-summary [commonSet1]="optimization?.commonSet1" [commonSet2]="optimization?.commonSet2" [commonSet3]="optimization?.commonSet3"></app-mod-set-summary>
+			</div>
+		</div>
+	</div>
+	<div class="flow column" [style.width]="displayModeSettings.modLeftPaneWidth + 'px'">
+		<app-mod-display #modDisplay [mods]="displayMods" (click)="clickMods()"></app-mod-display>
+	</div>
+	<div class="flow column">
+		<app-mod-set-comparison [unitData]="modDto.unitData" [inGameMods]="modDto.currentMods" [lockedMods]="modDto.lockedMods"></app-mod-set-comparison>
+	</div>
+
+</div>

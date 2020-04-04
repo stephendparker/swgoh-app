@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
 import { DataStoreService } from './../../services/data-store.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { CharacterData } from './../../model/swgohgg/character-data';
   templateUrl: './character-portrait.component.html',
   styleUrls: ['./character-portrait.component.scss']
 })
-export class CharacterPortraitComponent implements OnInit, OnDestroy {
+export class CharacterPortraitComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() baseId: string;
   @Input() showName: boolean = true;
@@ -40,13 +40,20 @@ export class CharacterPortraitComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  ngOnChanges() {
+    this.setBaseId(this.baseId);
+  }
+
   setBaseId(baseId: string) {
     this.baseId = baseId;
-    this.characterData = this.allCharacterData.find(character => character.base_id == this.baseId);
-    if (this.characterData != null) {
-      this.name = this.characterData.name;
+    if (this.allCharacterData != null) {
+      this.characterData = this.allCharacterData.find(character => character.base_id == this.baseId);
+      if (this.characterData != null) {
+        this.name = this.characterData.name;
 
-      this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(`${'https://swgoh.gg' + this.characterData.image}`);
+        this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(`${'https://swgoh.gg' + this.characterData.image}`);
+      }
     }
   }
 

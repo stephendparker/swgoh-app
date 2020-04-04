@@ -1,9 +1,36 @@
 <div>
 	<app-progress-spinner></app-progress-spinner>
 
-	<div [class.hidden]="viewMode != VIEW_SELECT_CHARACTER">
-
+	<div *ngIf="viewMode == VIEW_REVIEW_ALL_CHARACTERS">
 		<mat-toolbar>
+
+			<button mat-icon-button class="navigation-selected">
+    			<mat-icon>list</mat-icon>
+  			</button>
+
+			<button mat-icon-button (click)="viewMode = VIEW_EDIT_SQUAD">
+    			<mat-icon>group</mat-icon>
+  			</button>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+
+			<button mat-icon-button [matMenuTriggerFor]="menu">
+				<mat-icon>filter_list</mat-icon>
+			</button>
+
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item (click)="setReviewFilterAll()">All</button>
+				<button mat-menu-item [matMenuTriggerFor]="squadsMenu">Squads</button>
+				<button mat-menu-item [matMenuTriggerFor]="categoriesMenu">Categories</button>
+			</mat-menu>
+
+			<mat-menu #squadsMenu="matMenu">
+				<button *ngFor="let squad of squads" mat-menu-item (click)="setReviewFilterSquad(squad)"><app-character-identifier  [baseId]="squad[0]"></app-character-identifier></button>
+			</mat-menu>
+			<mat-menu #categoriesMenu="matMenu">
+				<button *ngFor="let category of categoryList" mat-menu-item (click)="setReviewFilterCategory(category)">{{ category }}</button>
+			</mat-menu>
+
 
 			<span class="spacer"></span>
 			<button mat-icon-button (click)="clickCleanUpData()">
@@ -17,50 +44,54 @@
   			</button>
 		</mat-toolbar>
 
-		<div class="flow mod-left-col">
-			<div class="mat-elevation-z8 full-width">
-				<div class="scrollable " [style.height]="displayModeSettings.modEditorHeight -200 + 'px'">
+		<cdk-virtual-scroll-viewport [itemSize]="displayModeSettings.modCharacterReviewHeight" [minBufferPx]="displayModeSettings.modEditorHeight"
+			[maxBufferPx]="displayModeSettings.modEditorHeight + 200" [style.width]="'100%'" [style.height]="displayModeSettings.modEditorHeight + 'px'">
 
-					<div *ngFor="let squad of squads; let i = index" class="flow row ">
-						<app-squad-display #squadDisplay (characterSelected)="modCharacter($event)" [characters]="squad"></app-squad-display>
-						<div class="flow column">
-							<div class="flow column">
-								<button mat-icon-button (click)="editSquad(squad, i)">
-    					<mat-icon >edit</mat-icon>
-  					</button>
-							</div>
-							<div class="flow column">
-								<button mat-icon-button (click)="deleteSquad(i)">
-    					<mat-icon >delete</mat-icon>
-  					</button>
-							</div>
-						</div>
-					</div>
+			<div *cdkVirtualFor="let character of getReviewPlayerCharacterDtos(); let index=index; let odd=odd; let even=even;" [class.odd]="odd"
+				[style.height]="displayModeSettings.modCharacterReviewHeight + 'px'">
 
-				</div>
+				<app-character-mod-summary [lockedMods]="getLockedMods(true)" (modsClicked)="modCharacter(character.name)" [modDto]="character"
+					[optimization]="getOptimization(character.name)"></app-character-mod-summary>
+
 			</div>
-		</div>
-		<div class="flow row">
-			<button mat-button (click)="createSquad()">Create Squad</button>
-		</div>
-		<!--<app-add-character [class.hidden]="true" (characterSelected)="modCharacter($event)"></app-add-character>-->
+
+		</cdk-virtual-scroll-viewport>
 
 	</div>
+
 	<div [class.hidden]="viewMode != VIEW_EDIT_SQUAD">
+
 		<mat-toolbar>
 
-			<button mat-icon-button (click)="viewMode = VIEW_SELECT_CHARACTER">
-    			<mat-icon>navigate_before</mat-icon>
+			<button mat-icon-button (click)="viewMode = VIEW_REVIEW_ALL_CHARACTERS">
+    			<mat-icon>list</mat-icon>
+  			</button>
+
+			<button mat-icon-button class="navigation-selected">
+    			<mat-icon>group</mat-icon>
+  			</button>
+
+			<span class="spacer"></span>
+			<button mat-icon-button (click)="clickCleanUpData()">
+    			<mat-icon>delete</mat-icon>
+  			</button>
+			<button mat-icon-button (click)="clickRefreshData()">
+    			<mat-icon>refresh</mat-icon>
+  			</button>
+			<button mat-icon-button>
+    			<mat-icon>account_circle</mat-icon>
   			</button>
 		</mat-toolbar>
 
-		<app-squad-edit #squadEditor (squadUpdated)="updateSquad($event)"></app-squad-edit>
+		<app-squad-manager #squadManager (updateSquads)="updateSquads($event)"></app-squad-manager>
 
 	</div>
+
+
 	<div [class.hidden]="viewMode != VIEW_MODS">
 		<mat-toolbar>
 
-			<button mat-icon-button (click)="viewMode = VIEW_SELECT_CHARACTER">
+			<button mat-icon-button (click)="viewMode = VIEW_REVIEW_ALL_CHARACTERS">
     			<mat-icon>navigate_before</mat-icon>
   			</button>
 			<app-character-portrait #characterPortrait [maxHeight]="'50px'" [showName]="false" (click)="viewMode = VIEW_REVIEW_CHARACTER"></app-character-portrait>
@@ -202,60 +233,6 @@
 					<app-mod-list-component (selectMod)="setPending($event)"></app-mod-list-component>
 				</div>
 			</div>
-		</div>
-
-
-		<div class="hide">
-			<mat-tab-group>
-
-
-				<mat-tab label="Edit">
-
-
-
-				</mat-tab>
-
-				<mat-tab label="Review">
-					<div class="flow row">
-
-						<div class="flow column">
-							<div class="flow row">
-								<span>In Game:</span>
-								<mat-toolbar>
-									<span class="spacer"></span>
-									<mat-slide-toggle>
-										Lock
-									</mat-slide-toggle>
-								</mat-toolbar>
-							</div>
-
-							<!-- TODO - [mods]="selectedCharacterDto.currentMods" -->
-							<app-mod-display #currentModsDisplay [class.hidden]="selectedCharacterDto == null || selectedCharacterDto.currentMods == null"></app-mod-display>
-						</div>
-						<div class="flow column">
-							<div class="flow row">
-								<span>Modified:</span>
-								<mat-toolbar>
-									<button mat-button (click)="resetMods(selectedCharacterDto.name)">Reset (Game)</button>
-									<button mat-button (click)="clickOptimizeCharacter(selectedCharacterDto.name)" [disabled]="getModelData() == null">Optimize</button>
-									<span class="spacer"></span>
-									<mat-slide-toggle>
-										Lock
-									</mat-slide-toggle>
-								</mat-toolbar>
-							</div>
-							<!-- TODO - [mods]="selectedCharacterDto.lockedMods" -->
-							<app-mod-display #lockedModsDisplay [class.hidden]="selectedCharacterDto == null || selectedCharacterDto.lockedMods == null"></app-mod-display>
-						</div>
-					</div>
-
-					<div class="flow row" [class.hidden]="(selectedCharacterDto != null && selectedCharacterDto.currentMods != null && selectedCharacterDto.lockedMods != null) == false">
-						<app-mod-set-comparison #compareCurrentNew></app-mod-set-comparison>
-					</div>
-				</mat-tab>
-
-
-			</mat-tab-group>
 		</div>
 
 	</div>

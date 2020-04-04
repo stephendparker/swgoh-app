@@ -27,6 +27,8 @@ export class DisplayModeSettings {
   public modDisplayPortaitHeight: number = 1;
 
   public modEditorHeight: number = 1;
+
+  public modCharacterReviewHeight: number = 430;
 }
 
 @Injectable({

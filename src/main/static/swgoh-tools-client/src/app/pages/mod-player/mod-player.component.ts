@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { Subject, forkJoin } from 'rxjs';
-import { ModCalculatedData, SwgohGgCalc, ModUnitCalcResults, SetTotalCounts, CommonSet, EvaluatedModDto, ModTotalBonus, StatsDto, SetInfo } from './../../calcs/swgoh-gg-calc';
+import { ModCalculatedData, SwgohGgCalc, ModUnitCalcResults, SetTotalCounts, CommonSet, EvaluatedModDto, ModTotalBonus, StatsDto, SetInfo, CharacterModDto } from './../../calcs/swgoh-gg-calc';
 import { delay, takeUntil } from 'rxjs/operators';
 import { DataStoreService } from './../../services/data-store.service';
 import { UnitsEntity, PlayerData } from './../../model/swgohgg/player-data';
@@ -18,13 +18,15 @@ import { CharacterData } from './../../model/swgohgg/character-data';
 import { MatSort } from '@angular/material/sort';
 import { FormControl } from '@angular/forms';
 import { ModFilterDialogComponent } from './../../components/mod-filter-dialog/mod-filter-dialog.component';
-import { SquadEditComponent } from './../../components/squad-edit/squad-edit.component';
-import { SquadDisplayComponent } from './../../components/squad-display/squad-display.component';
 import { RefreshModDialogComponent } from './../../components/refresh-mod-dialog/refresh-mod-dialog.component';
 import { HotutilsDataService } from './../../services/hotutils-data.service';
 import { ConfirmationDialogComponent } from './../../components/confirmation-dialog/confirmation-dialog.component';
 import { ModSetSummaryComponent } from './../../components/mod-set-summary/mod-set-summary.component';
 import { DeleteModConfigDialogComponent } from './../../components/delete-mod-config-dialog/delete-mod-config-dialog.component';
+
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { SquadManagerComponent } from './../../components/squad-manager/squad-manager.component';
+
 
 class CharacterBestMods {
   public name: string = "";
@@ -38,13 +40,7 @@ class CharacterBestMods {
 
 
 // Users current mod selection configuration
-class CharacterModDto {
-  public name: string;
-  public currentMods: ModsEntity[] = [];
-  public lockedMods: ModsEntity[] = [];
-  public pendingMods: ModsEntity[] = [];
-  public unitData: UnitsEntity;
-}
+
 class SaveModDto {
   public id: string;
   public character: string;
@@ -92,14 +88,13 @@ export class PlayerModConfiguration {
   styleUrls: ['./mod-player.component.scss']
 })
 export class ModPlayerComponent implements OnInit, OnDestroy {
-
   SwgohGgCalc: typeof SwgohGgCalc = SwgohGgCalc;
 
   public VIEW_SELECT_CHARACTER = 1;
   public VIEW_MODS = 2;
   public VIEW_REVIEW_CHARACTER = 3;
   public VIEW_EDIT_SQUAD = 4;
-
+  public VIEW_REVIEW_ALL_CHARACTERS = 5;
   public FILTER_OUT_THRESHOLD = .35;
 
   public viewMode: number = null;
@@ -114,14 +109,19 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   @ViewChildren('selectedSlotModPortrait') selectedSlotModPortrait: QueryList<ModPortraitComponent>;
   @ViewChild(AddCharacterComponent) addCharacterComponent: AddCharacterComponent;
   @ViewChild(ModListComponentComponent) modList: ModListComponentComponent;
-  @ViewChild(SquadEditComponent) squadEditComponent: SquadEditComponent;
-  @ViewChildren('modSetSummaryComponents') modSetSummaryComponents: ModSetSummaryComponent;
+  @ViewChildren('modSetSummaryComponents') modSetSummaryComponents: QueryList<ModSetSummaryComponent>;
 
-  private squadDisplay: QueryList<SquadDisplayComponent>;
+  private squadManagers: QueryList<SquadManagerComponent>;
 
-  @ViewChildren('squadDisplay') set content(content: QueryList<SquadDisplayComponent>) {
+  @ViewChildren('squadManager') set squadManagerContent(content: QueryList<SquadManagerComponent>) {
 
-    this.squadDisplay = content;
+    this.squadManagers = content;
+    (async () => {
+      await delay(1);
+      if (this.squadManagers) {
+        this.squadManagers.forEach(squadManager => squadManager.setCharacterGroups(this.squads));
+      }
+    })();
   }
 
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
@@ -164,6 +164,11 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
   restoredLockedMods: SaveModDto[] = null;
 
+  categoriesFormControl = new FormControl();
+  categoryList: string[] = [];
+  characterData: CharacterData[] = null;
+
+
   constructor(private dataStoreService: DataStoreService, private hotutilsDataService: HotutilsDataService,
     private displayModeService: DisplayModeService, private cdr: ChangeDetectorRef, public dialog: MatDialog) { }
 
@@ -174,14 +179,34 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.displayModeSettings = displayModeSettings;
     });
 
+    this.dataStoreService.getCharacterData().pipe(takeUntil(this.unsubscribe$)).subscribe(charData => {
+      if (charData != null) {
+        this.characterData = charData;
+
+        this.categoryList = [];
+        charData.forEach(cData => {
+          cData.categories.forEach(category => {
+            this.categoryList.indexOf(category) === -1 ? this.categoryList.push(category) : null;
+          });
+
+        });
+
+        this.categoryList = this.categoryList.sort((a, b) => a.localeCompare(b));
+
+        // this.selectionChange.emit(charData.map(cd => cd.base_id));
+      }
+    });
+
     let squadString = localStorage.getItem(this.SQUADS_LOCAL_STORAGE_KEY);
     if (squadString != null) {
       this.squads = JSON.parse(squadString);
+
     }
 
     let filterString = localStorage.getItem(this.PLAYER_FILTERS_DATA_STORAGE_KEY);
     if (filterString != null) {
       this.playerModConfiguration = JSON.parse(filterString);
+
     }
 
     let pmdString = localStorage.getItem(this.PLAYER_MOD_DATA_STORAGE_KEY);
@@ -198,19 +223,82 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     (async () => {
       await delay(1);
       this.updateFullyLockedCharacters();
-      if (this.squadDisplay != null) {
-        this.squadDisplay.forEach(squadDisplayComponent => {
-          squadDisplayComponent.setLockedCharacters(this.fullyLockedCharacters.map(flc => flc.name));
-        });
-      }
 
       if (this.playerModData.playerAllyCode == null) {
         this.openPlayerLogin();
       } else {
-        this.viewMode = this.VIEW_SELECT_CHARACTER;
+        this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
+      }
+      if (this.squadManagers) {
+        this.squadManagers.forEach(squadManager => squadManager.setCharacterGroups(this.squads));
       }
     })();
   }
+
+  filterSelected: string;
+  filteredCharacters: string[] = [];
+
+  filterChange(filterChangeEvent: any) {
+    this.filteredCharacters = [];
+    this.filterSelected = null;
+    if (filterChangeEvent == null) {
+      this.filteredCharacters = this.characterData.map(character => character.base_id);
+    } else {
+      this.filterSelected = filterChangeEvent.value;
+      this.filteredCharacters = this.characterData.filter(character => {
+        return character.categories.indexOf(filterChangeEvent.value) != -1;
+      }).map(character => character.base_id);
+    }
+  }
+
+  REVIEW_FILTER_SQUAD = "filterSquad";
+  REVIEW_FILTER_CATEGORY = "filterCategory";
+
+  reviewFilterType: string = null;
+  reviewFilterSquad: string[] = null;
+  reviewFilterCategory: string = null;
+
+  setReviewFilterAll() {
+    this.reviewFilterType = null;
+  }
+
+  setReviewFilterSquad(squad) {
+    this.reviewFilterType = this.REVIEW_FILTER_SQUAD;
+    this.reviewFilterSquad = squad;
+  }
+
+  setReviewFilterCategory(category) {
+    this.reviewFilterType = this.REVIEW_FILTER_CATEGORY;
+    this.reviewFilterCategory = category;
+  }
+
+  getReviewPlayerCharacterDtos(): CharacterModDto[] {
+    let retVal: CharacterModDto[] = [];
+
+    switch (this.reviewFilterType) {
+      case null: {
+        retVal = this.playerCharacterDtos;
+        break;
+      }
+      case this.REVIEW_FILTER_SQUAD: {
+        retVal = this.reviewFilterSquad.map(character => this.playerCharacterDtos.find(playerCharacterDto => playerCharacterDto.name == character));
+        break;
+      }
+      case this.REVIEW_FILTER_CATEGORY: {
+        retVal = this.playerCharacterDtos.filter(playerCharacterDto => {
+          let character = this.characterData.find(character => character.base_id == playerCharacterDto.name);
+          return character != null && character.categories.indexOf(this.reviewFilterCategory) != -1;
+        });
+        break;
+      }
+      default: {
+        //statements; 
+        break;
+      }
+    }
+    return retVal;
+  }
+
 
   generateDefaultEditorViews() {
     let views: ModEditorViewConfiguration[] = this.playerModConfiguration.modEditorViewConfigurations;
@@ -288,6 +376,12 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       });
       localStorage.setItem(this.PLAYER_LOCKED_MOD_DATA_STORAGE_KEY, JSON.stringify(saveMods))
     }
+  }
+
+
+  updateSquads(squads: string[][]) {
+    this.squads = squads;
+    this.saveSettings();
   }
 
   updateSquad(squad: string[]) {
@@ -439,7 +533,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
         this.reloadData(true, result.playerHotutils != null, result.playerHotutils, false, result.playerHotutils);
 
-        this.viewMode = this.VIEW_SELECT_CHARACTER;
+        this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
       }
     });
   }
@@ -472,12 +566,6 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  editSquad(squad: string[], index: number) {
-    this.viewMode = this.VIEW_EDIT_SQUAD;
-    this.squadEditComponent.characters = squad;
-    this.editSquadIndex = index;
-  }
-
   deleteSquad(index: number) {
 
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -494,14 +582,6 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
-  }
-
-  createSquad() {
-    let newSquad: string[] = [];
-    this.squads.push(newSquad);
-    this.viewMode = this.VIEW_EDIT_SQUAD;
-    this.squadEditComponent.characters = newSquad;
-    this.editSquadIndex = this.squads.length - 1;
   }
 
   // FROM UI
@@ -738,6 +818,13 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     return Math.round(value);
   }
 
+  getOptimization(name: string): ModUnitCalcResults {
+    if (this.playerModData.calculatedModelGuildData != null) {
+      return this.playerModData.calculatedModelGuildData.modCalcResults.units.find(unit => unit.name == name);
+    }
+    return null;
+  }
+
   setSelectedCharacter(name: string) {
 
     this.selectedCharacter = name;
@@ -823,12 +910,11 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     }
     if (this.modSetSummaryComponents && this.selectedCharacter != null && this.playerModData.calculatedModelGuildData != null) {
       let unit: ModUnitCalcResults = this.playerModData.calculatedModelGuildData.modCalcResults.units.find(unit => unit.name == this.selectedCharacter);
-      this.modSetSummaryComponents.forEach(modSetSummaryComponent => {
-        if (unit != null) {
 
-          modSetSummaryComponent.setCommonSet(unit.commonSet1, unit.commonSet2, unit.commonSet3);
-        }
-      });
+      if (unit != null) {
+        this.modSetSummaryComponents.forEach(modSetSummaryComponent => modSetSummaryComponent.setCommonSet(unit.commonSet1, unit.commonSet2, unit.commonSet3));
+
+      };
     }
 
     if (this.selectedSlotModPortrait) {
@@ -837,13 +923,6 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       });
     }
     this.updateFullyLockedCharacters();
-
-    // this.addCharacterComponent.setLockedCharacters(fullyLockedCharacters);
-    if (this.squadDisplay != null) {
-      this.squadDisplay.forEach(squadDisplayComponent => {
-        squadDisplayComponent.setLockedCharacters(this.fullyLockedCharacters.map(flc => flc.name));
-      });
-    }
 
     if (this.modDisplayCurrentMods) {
       this.modDisplayCurrentMods.forEach(modDisplay => {
@@ -887,8 +966,10 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.compareCurrentPending.forEach(compareCurrentNew => {
 
         if (this.selectedCharacterDto != null) {
-          compareCurrentNew.setData(this.selectedCharacterDto.unitData, this.selectedCharacterDto.currentMods,
-            this.selectedCharacterDto.currentMods, this.selectedCharacterDto.lockedMods, this.selectedCharacterDto.pendingMods);
+
+          compareCurrentNew.setModData(this.selectedCharacterDto.unitData, this.selectedCharacterDto.currentMods,
+            this.selectedCharacterDto.lockedMods, this.selectedCharacterDto.pendingMods);
+
         } else {
           compareCurrentNew.setData(null, null, null, null, null);
         }

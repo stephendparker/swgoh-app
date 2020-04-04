@@ -230,6 +230,14 @@ export class SlotInfo {
     public id: number;
 }
 
+export class CharacterModDto {
+  public name: string;
+  public currentMods: ModsEntity[] = [];
+  public lockedMods: ModsEntity[] = [];
+  public pendingMods: ModsEntity[] = [];
+  public unitData: UnitsEntity;
+}
+
 export class SwgohGgCalc {
 
     public static FULL_SET_LIST = ["offense", "speed", "critDmg", "health", "defense", "critChance", "potency", "tenacity"];

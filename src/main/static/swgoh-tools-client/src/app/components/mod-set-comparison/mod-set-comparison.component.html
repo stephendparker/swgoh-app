@@ -41,10 +41,53 @@
 </div>-->
 
 <table class="mat-small">
+
+	<tr>
+		<th></th>
+		<th>Game</th>
+		<th *ngIf="showLocked">Locked</th>
+		<th *ngIf="showLocked">Locked Delta</th>
+
+		<th *ngIf="showPending">Pending</th>
+		<th *ngIf="showPending">Pending Delta</th>
+
+		<th *ngIf="showSixE">6E</th>
+		<th *ngIf="showSixE">6E Delta</th>
+	</tr>
+
 	<tr *ngFor="let element of dataSource">
 		<td>{{ element.label }}</td>
 
-		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('oldValue') != -1">{{element.oldValue| number }}</td>
+		<td>{{ element.inGameValue | number }} <span *ngIf="element.inGameBonusText != 0"> ({{ element.inGameBonusText | number }})</span></td>
+
+		<td *ngIf="showLocked">{{ element.lockedValue | number }}</td>
+		<td *ngIf="showLocked" [class.highlight-worsten]="element.lockedDelta != null && element.lockedDelta < 0" [class.highlight-improve]="element.lockedDelta != null && element.lockedDelta > 0">{{ element.lockedDelta | number }}</td>
+
+		<td *ngIf="showPending">{{ element.pendingValue | number }}</td>
+		<td *ngIf="showPending" [class.highlight-worsten]="element.lockedDelta != null && element.lockedDelta < 0" [class.highlight-improve]="element.pendingDelta != null && element.pendingDelta > 0">{{ element.pendingDelta | number }}</td>
+
+		<td *ngIf="showSixE">{{ element.sixEValue | number }}</td>
+		<td *ngIf="showSixE">{{ element.sixEDelta | number }}</td>
+	</tr>
+
+</table>
+
+<!--label: field.label,
+        inGameValue: this.round(inGameValue, field.format),
+        lockedValue: this.round(lockedValue, field.format),
+        pendingValue: this.round(pendingValue, field.format),
+        sixEValue: this.round(sixEValue, field.format),
+        lockedDelta: this.round(lockedValue - inGameValue, field.format),
+        pendingDelta: this.round(pendingValue - lockedValue, field.format),
+        sixEDelta: this.round(sixEValue - pendingValue, field.format)-->
+
+<!--
+      this.showLocked = this.showLocked || lockedDelta != 0;
+      this.showPending = this.showLocked || pendingDelta != 0;
+      this.showSixE = this.showLocked || sixEDelta != 0;
+
+
+		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('oldValue') != -1">{{element.inGameValue| number }}</td>
 		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('newValue') != -1">{{element.newValue| number }}</td>
 		<td *ngIf="displayModeSettings.mini == false && displayedColumns.indexOf('delta') != -1" [class.highlight-improve]="element.delta != null && element.delta > 0"
 			[class.highlight-worsten]="element.delta != null && element.delta < 0">{{element.delta| number }}</td>
@@ -55,7 +98,4 @@
 
 		<td>{{element.pendingUpgradedValue| number }}</td>
 		<td [class.highlight-improve]="element.pendingUpgradedDelta != null && element.pendingUpgradedDelta > 0" [class.highlight-worsten]="element.pendingUpgradedDelta != null && element.pendingUpgradedDelta	< 0 ">
-			{{element.pendingUpgradedDelta| number }} </td>
-
-	</tr>
-</table>
+			{{element.pendingUpgradedDelta| number }} </td>-->
