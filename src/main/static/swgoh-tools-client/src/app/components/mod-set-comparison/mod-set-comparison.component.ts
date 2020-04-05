@@ -132,7 +132,7 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
       this.lockedTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.lockedMods);
     }
 
-    let derivedPendingMods = this.pendingMods.slice(0);
+    let derivedPendingMods = this.pendingMods == null ? [] : this.pendingMods.slice(0);
     if (this.lockedMods != null && this.lockedMods.length > 0) {
       this.lockedMods.forEach(lockedMod => {
         if (this.excludedMods == null || this.excludedMods.find(excludedMod => excludedMod.id == lockedMod.id) == null &&
