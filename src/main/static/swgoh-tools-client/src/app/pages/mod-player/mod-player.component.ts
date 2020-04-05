@@ -968,7 +968,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         if (this.selectedCharacterDto != null) {
 
           compareCurrentNew.setModData(this.selectedCharacterDto.unitData, this.selectedCharacterDto.currentMods,
-            this.selectedCharacterDto.lockedMods, this.selectedCharacterDto.pendingMods);
+            this.selectedCharacterDto.lockedMods, this.selectedCharacterDto.pendingMods, this.getLockedMods(true));
 
         } else {
           compareCurrentNew.setData(null, null, null, null, null);

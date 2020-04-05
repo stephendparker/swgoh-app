@@ -27,6 +27,7 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
   @Input() newMods: ModsEntity[] = null;
   @Input() pendingMods: ModsEntity[] = null;
   @Input() unitData: UnitsEntity = null;
+  @Input() excludedMods: ModsEntity[] = null;
 
   fields: ModCompareFieldsDto[] = [
     { name: 'speed', label: 'Speed', format: '' },
@@ -127,12 +128,22 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
     if (this.inGameMods != null) {
       this.inGameTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.inGameMods);
     }
-    if (this.lockedMods != null) {
+    if (this.lockedMods != null && this.lockedMods.length > 0) {
       this.lockedTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.lockedMods);
     }
 
-    if (this.pendingMods != null) {
-      this.pendingTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.pendingMods);
+    let derivedPendingMods = this.pendingMods.slice(0);
+    if (this.lockedMods != null && this.lockedMods.length > 0) {
+      this.lockedMods.forEach(lockedMod => {
+        if (this.excludedMods == null || this.excludedMods.find(excludedMod => excludedMod.id == lockedMod.id) == null &&
+          derivedPendingMods.find(derivedPendingMod => derivedPendingMod.slot == lockedMod.slot) == null) {
+            derivedPendingMods.push(lockedMod);
+        }
+      });
+    }
+
+    if (derivedPendingMods != null) {
+      this.pendingTotalBonus = SwgohGgCalc.calculateModTotalBonus(derivedPendingMods);
     }
     if (this.unitData != null && this.inGameTotalBonus != null) {
       this.characterBaseStats = SwgohGgCalc.deriveBaseStats(this.unitData, this.inGameTotalBonus);
@@ -149,7 +160,7 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
     }
     let sixESet = this.inGameMods;
     sixESet = this.lockedMods == null ? sixESet : this.lockedMods;
-    sixESet = this.pendingMods == null ? sixESet : this.pendingMods;
+    sixESet = derivedPendingMods == null ? sixESet : derivedPendingMods;
 
     if (this.characterBaseStats != null && sixESet != null) {
       let sixEBonus = SwgohGgCalc.calculateModTotalBonus(sixESet, true);
@@ -169,7 +180,7 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
       let pendingDelta = pendingValue - lockedValue;
       let sixEDelta = sixEValue - pendingValue;
 
-      this.showLocked = this.showLocked || lockedDelta != 0;
+      this.showLocked = this.showLocked || (lockedDelta != 0 && this.lockedMods != null && this.lockedMods.length > 0);
       this.showPending = this.showPending || pendingDelta != 0;
       this.showSixE = this.showSixE || sixEDelta != 0;
 
@@ -186,93 +197,16 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
       };
       this.dataSource.push(newRow);
     });
-    let x = 10;
-    // let pendingChanges = false;
-    // let newChanges = false;
-    // this.dataSource = [];
-    // if (this.unitData != null) {
-    //   if (this.existingMods != null) {
-    //     this.existingTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.existingMods);
-    //     this.baseStats = SwgohGgCalc.deriveBaseStats(this.unitData, this.existingTotalBonus);
-    //   }
 
-    //   if (this.existingMods != null) {
-
-    //     // this.oldStats = SwgohGgCalc.getStats(this.unitData);
-    //     this.existingTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.existingMods);
-    //     // let baseStats: StatsDto = SwgohGgCalc.deriveBaseStats(this.unitData, this.existingTotalBonus);
-
-    //     if (this.newMods != null && this.newMods.length > 0 && this.pendingMods != null && this.pendingMods.length > 0) {
-    //       this.newTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.newMods);
-    //       this.newStats = SwgohGgCalc.applyBonuses(this.baseStats, this.newTotalBonus);
-
-    //       this.currentTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.currentMods);
-    //       this.currentStats = SwgohGgCalc.applyBonuses(this.baseStats, this.currentTotalBonus);
-
-    //       this.pendingModsTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.pendingMods);
-
-    //       let sixEBonus: ModTotalBonus = SwgohGgCalc.calculateModTotalBonus(this.pendingMods, true);
-
-    //       this.pendingStats = SwgohGgCalc.applyBonuses(this.baseStats, this.pendingModsTotalBonus);
-    //       this.upgradedPendingStats = SwgohGgCalc.applyBonuses(this.baseStats, sixEBonus);
-    //     }
-    //   }
-    //   if (this.pendingMods != null && this.pendingMods.length > 0) {
-    //     if (this.pendingMods.length == this.currentMods.length) {
-
-    //       this.pendingMods.forEach(pendingMod => {
-    //         if (this.newMods.find(currentMod => pendingMod.id == currentMod.id) == null) {
-    //           pendingChanges = true;
-    //         }
-    //       });
-    //     } else {
-    //       pendingChanges = true;
-    //     }
-    //   }
-
-    //   this.fields.forEach(field => {
-    //     let currentValue = this.currentStats == null ? 0 : this.currentStats[field.name];
-    //     let pendingValue = this.pendingStats == null ? 0 : this.pendingStats[field.name];
-    //     let upgradedValue = this.pendingStats == null ? 0 : this.upgradedPendingStats[field.name];
-
-    //     if (this.newStats == null || this.round(this.newStats[field.name] - currentValue, field.format) != 0 ||
-    //       this.round(pendingValue - currentValue, field.format) != 0 ||
-    //       this.round(pendingValue - this.newStats[field.name], field.format) != 0) {
-
-    //       let newRow = {
-    //         label: field.label,
-    //         oldValue: this.currentStats == null ? null : this.round(currentValue, field.format),
-    //         newValue: this.newStats == null ? null : this.round(this.newStats[field.name], field.format),
-    //         delta: this.newStats == null ? null : this.round(this.newStats[field.name] - currentValue, field.format),
-    //         pendingValue: this.pendingStats == null ? null : this.round(pendingValue, field.format),
-    //         pendingDelta: this.pendingStats == null ? null : this.round(pendingValue - currentValue, field.format),
-    //         pendingUpgradedValue: this.upgradedPendingStats == null ? null : this.round(upgradedValue, field.format),
-    //         pendingUpgradedDelta: this.upgradedPendingStats == null ? null : this.round(upgradedValue - currentValue, field.format),
-    //       };
-    //       this.dataSource.push(newRow);
-
-    //       newChanges = newChanges || (newRow.delta != null && newRow.delta != newRow.pendingDelta)
-
-    //     }
-    //   });
-    // }
-    // this.displayedColumns = [];
-    // this.displayedColumns = this.displayedColumns.concat(this.existingColumns);
-
-    // if (newChanges) {
-    //   this.displayedColumns = this.displayedColumns.concat(this.currentColumns);
-    // }
-
-    // if (pendingChanges) {
-    //   this.displayedColumns = this.displayedColumns.concat(this.pendingColumns);
-    // }
     this.cdr.detectChanges();
   }
 
-  setModData(unitData: UnitsEntity, existingMods: ModsEntity[], lockedMods: ModsEntity[], pendingMods: ModsEntity[]) {
+  setModData(unitData: UnitsEntity, existingMods: ModsEntity[], lockedMods: ModsEntity[], pendingMods: ModsEntity[], excludedMods: ModsEntity[]) {
     this.inGameMods = existingMods;
     this.lockedMods = lockedMods;
     this.pendingMods = pendingMods;
+    this.excludedMods = excludedMods;
+
     this.unitData = unitData;
     this.calculate();
   }

@@ -64,7 +64,7 @@
 		<td *ngIf="showLocked" [class.highlight-worsten]="element.lockedDelta != null && element.lockedDelta < 0" [class.highlight-improve]="element.lockedDelta != null && element.lockedDelta > 0">{{ element.lockedDelta | number }}</td>
 
 		<td *ngIf="showPending">{{ element.pendingValue | number }}</td>
-		<td *ngIf="showPending" [class.highlight-worsten]="element.lockedDelta != null && element.lockedDelta < 0" [class.highlight-improve]="element.pendingDelta != null && element.pendingDelta > 0">{{ element.pendingDelta | number }}</td>
+		<td *ngIf="showPending" [class.highlight-worsten]="element.pendingDelta != null && element.pendingDelta < 0" [class.highlight-improve]="element.pendingDelta != null && element.pendingDelta > 0">{{ element.pendingDelta | number }}</td>
 
 		<td *ngIf="showSixE">{{ element.sixEValue | number }}</td>
 		<td *ngIf="showSixE">{{ element.sixEDelta | number }}</td>
