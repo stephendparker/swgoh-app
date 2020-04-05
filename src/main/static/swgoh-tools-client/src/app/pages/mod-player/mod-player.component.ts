@@ -943,7 +943,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
         let lockedMods = this.selectedCharacterDto.pendingMods.filter(pendingMod => this.selectedCharacterDto.currentMods.find(newMod => newMod.id == pendingMod.id) == null);
         modDisplay.highlightMods = lockedMods;
-        modDisplay.setLockedMods(this.selectedCharacterDto == null ? null : this.selectedCharacterDto.lockedMods);
+        modDisplay.setLockedMods(this.getLockedModDtos(true));
         // TODO
         // this.modList.setTheLockedMods(this.getLockedModDtos(true));
       });

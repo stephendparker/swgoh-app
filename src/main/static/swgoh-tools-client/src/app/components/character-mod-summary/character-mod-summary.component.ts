@@ -49,7 +49,7 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
   }
 
   updateData() {
-    this.displayMods = this.modDto.lockedMods;
+    this.displayMods = this.modDto.lockedMods.slice(0);
 
     this.modDto.currentMods.forEach(currentMod => {
 

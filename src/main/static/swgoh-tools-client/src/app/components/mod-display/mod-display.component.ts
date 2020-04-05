@@ -66,9 +66,13 @@ export class ModDisplayComponent implements OnInit, OnChanges {
     this.lockedMods = mods;
     if (this.modPortraits != null && this.lockedMods != null) {
       this.modPortraits.forEach(modPortrait => {
-        let locked = (mods != null && modPortrait.mod != null && mods.find(lockedMod => lockedMod.id == modPortrait.mod.id) != null);
+        modPortrait.locked = false;
+        if (modPortrait.mod != null) {
+          let lockedMod = mods.find(lockedMod => lockedMod.id == modPortrait.mod.id);
+          let locked = (mods != null && modPortrait.mod != null && lockedMod != null);
 
-        modPortrait.locked = locked;
+          modPortrait.locked = locked;
+        }
       })
     }
   }

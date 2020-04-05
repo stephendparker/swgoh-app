@@ -1,5 +1,0 @@
-<div class="flow row">
-	<div *ngFor="let character of characters" class="flow column" [style.width]="'130px'">
-		<app-character-portrait #characterPortraits [showName]="true" (click)="clickCharacter(character)" [baseId]="character"></app-character-portrait>
-	</div>
-</div>

@@ -1,0 +1,41 @@
+<div cdkDropListGroup class="flow row">
+	<div class="flow column available-characters-column">
+
+		<div class="flow row first-row">
+			<mat-form-field [style.width]="'100%'">
+				<mat-label>Filters</mat-label>
+				<mat-select [formControl]="categoriesFormControl" (selectionChange)="filterChange($event)" [(value)]="selected">
+					<mat-option *ngFor="let category of categoryList" [value]="category">{{category}}</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+		<div class="flow row">
+			<div cdkDropList [cdkDropListData]="unassignedCharacters()" (cdkDropListDropped)="dropAddAvailable($event)" class="scrollable"
+				[style.height]="displayModeSettings.modEditorHeight -200 + 'px'" [style.width]="'100%'">
+				<div class="available-box" *ngFor="let baseId of unassignedCharacters()" cdkDrag>
+					<app-character-portrait [baseId]="baseId"></app-character-portrait>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="flow column squads-column">
+		<div class="flow row first-row">
+			Create groups then click summary on toolbar
+		</div>
+		<div class="flow row">
+			<div class="scrollable" [style.height]="displayModeSettings.modEditorHeight -200 + 'px'">
+				<!-- All lists in here will be connected. -->
+				<div cdkDropList *ngFor="let group of characterGroups" cdkDropListOrientation="horizontal" [cdkDropListData]="group" class="assigned-list"
+					(cdkDropListDropped)="dropAddToGroup($event)">
+					<div class="assigned-box" *ngFor="let baseId of group" cdkDrag>
+						<app-character-portrait [baseId]="baseId"></app-character-portrait>
+					</div>
+				</div>
+				<div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="[]" class="assigned-list odd" (cdkDropListDropped)="dropCreateGroup($event)"
+					[style.height]="'84px'">
+					Drag here to create new group.
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
