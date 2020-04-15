@@ -22,8 +22,18 @@ export class SwgohGgDataService {
   charactersUrl: string = '/api/characters/';
   listPlayersMods: string = '/list/players/mods';
   gearUrl: string = '/api/gear';
+  optimizationUrl: string = '/api/mods/optimization';
 
   constructor(private http: HttpClient) { }
+
+  optimization(): Observable<any> {
+    return this.http.get<any>(this.optimizationUrl, httpOptions)
+      .pipe(
+      map(res => {
+        return res;
+      })
+      );
+  }
 
   player(allyCode: string): Observable<any> {
     return this.http.get<any>(this.playerUrl + allyCode.replace(/-/g, ""), httpOptions)

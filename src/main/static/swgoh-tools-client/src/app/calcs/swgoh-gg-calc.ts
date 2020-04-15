@@ -2,6 +2,7 @@ import { RootObject, Player } from './../model/swgohgg/guild-data';
 import { PlayerData, UnitsEntity } from './../model/swgohgg/player-data';
 import { Mods, ModsEntity, SecondaryStatsEntity } from './../model/swgohgg/mods-data';
 import { SwgohGgConstants } from './swgoh-gg-constants';
+import { ModCalculatorCharacterResultsDto } from './../model/optimization/mod-optimization';
 
 const MOD_SET_HEALTH = 1;
 const MOD_SET_OFFENSE = 2;
@@ -231,11 +232,11 @@ export class SlotInfo {
 }
 
 export class CharacterModDto {
-  public name: string;
-  public currentMods: ModsEntity[] = [];
-  public lockedMods: ModsEntity[] = [];
-  public pendingMods: ModsEntity[] = [];
-  public unitData: UnitsEntity;
+    public name: string;
+    public currentMods: ModsEntity[] = [];
+    public lockedMods: ModsEntity[] = [];
+    public pendingMods: ModsEntity[] = [];
+    public unitData: UnitsEntity;
 }
 
 export class SwgohGgCalc {
@@ -245,7 +246,7 @@ export class SwgohGgCalc {
     public static FOUR_SET_LIST = ["offense", "speed", "critDmg"];
 
     public static SETS: SetInfo[] = [
-        { name: 'speed', id: MOD_SET_SPEED },        
+        { name: 'speed', id: MOD_SET_SPEED },
         { name: 'critDmg', id: MOD_SET_CRIT_DMG },
         { name: 'offense', id: MOD_SET_OFFENSE },
         { name: 'health', id: MOD_SET_HEALTH },
@@ -418,6 +419,26 @@ export class SwgohGgCalc {
                 break;
             }
         }
+        return retVal;
+    }
+
+    public static hasFourSet(setCounts: any): any {
+
+        return setCounts[MOD_SET_OFFENSE] > 0 || setCounts[MOD_SET_SPEED] > 0 || setCounts[MOD_SET_CRIT_DMG] > 0;
+    }
+
+
+    public static getSetsById(mods: ModsEntity[]): any {
+        let retVal = {};
+        retVal[MOD_SET_OFFENSE] = Math.floor(this.getSetCount(mods, MOD_SET_OFFENSE) / 4);
+        retVal[MOD_SET_SPEED] = Math.floor(this.getSetCount(mods, MOD_SET_SPEED) / 4);
+        retVal[MOD_SET_CRIT_DMG] = Math.floor(this.getSetCount(mods, MOD_SET_CRIT_DMG) / 4);
+        retVal[MOD_SET_HEALTH] = Math.floor(this.getSetCount(mods, MOD_SET_HEALTH) / 2);
+        retVal[MOD_SET_DEFENSE] = Math.floor(this.getSetCount(mods, MOD_SET_DEFENSE) / 2);
+        retVal[MOD_SET_CRIT_CHANCE] = Math.floor(this.getSetCount(mods, MOD_SET_CRIT_CHANCE) / 2);
+        retVal[MOD_SET_POTENCY] = Math.floor(this.getSetCount(mods, MOD_SET_POTENCY) / 2);
+        retVal[MOD_SET_TENACITY] = Math.floor(this.getSetCount(mods, MOD_SET_TENACITY) / 2);
+
         return retVal;
     }
 
@@ -671,7 +692,7 @@ export class SwgohGgCalc {
             }
             case MOD_PRIMARY_ACCURACY: {
                 return SwgohGgConstants.MOD_ACCURACY_STAT_ID;
-            }                                                                                                            
+            }
         }
         return null;
     }
@@ -1067,6 +1088,26 @@ export class SwgohGgCalc {
         }
 
         return "unknown";
+    }
+
+    public static calculateModOptimizationStrength(mod: ModsEntity, optimizationResults: ModCalculatorCharacterResultsDto): number {
+
+        let retVal = 0;
+
+        let primaryMultiplier = optimizationResults.primaryMultipliers[mod.slot][mod.primary_stat.stat_id];
+
+        let primaryStrength: number = primaryMultiplier == null ? 0 : optimizationResults.primaryMultipliers[mod.slot][mod.primary_stat.stat_id];
+
+        let secondaryStrength: number = 0;
+
+        SwgohGgConstants.ALL_SECONDARIES.forEach(secondaryName => {
+            let modQualityScore = this.getSecondaryQuality(secondaryName, mod);
+            let optimizationMultiplier = optimizationResults.secondaryTypeMultipliers[secondaryName];
+            optimizationMultiplier = optimizationMultiplier == null ? 0 : optimizationMultiplier;
+            secondaryStrength = secondaryStrength + (modQualityScore * optimizationMultiplier);
+        });
+
+        return primaryStrength * secondaryStrength;
     }
 
     public static calculateModMatchStrength(mod: ModsEntity, modUnitCalcResults: ModUnitCalcResults): number {

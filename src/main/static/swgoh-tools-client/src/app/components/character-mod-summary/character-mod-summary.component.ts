@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { ModDisplayComponent } from './../mod-display/mod-display.component';
+import { ModCalculatorCharacterResultsDto } from './../../model/optimization/mod-optimization';
 
 @Component({
   selector: 'app-character-mod-summary',
@@ -15,7 +16,9 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
 
   @Input() modDto: CharacterModDto;
   @Input() lockedMods: ModsEntity[] = [];
-  @Input() optimization: ModUnitCalcResults;
+  @Input() optimization: ModCalculatorCharacterResultsDto;
+
+  @Input() allLocked: boolean = false;
 
   @ViewChild(ModDisplayComponent) modDisplay: ModDisplayComponent;
 

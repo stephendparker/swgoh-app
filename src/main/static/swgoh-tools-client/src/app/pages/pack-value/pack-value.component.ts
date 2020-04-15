@@ -76,7 +76,7 @@ export class PackValueComponent implements OnInit, OnDestroy {
     { name: 'Mk 5 Athakam Medpac Component', count: 10, crystals: 150 },
     { name: 'Mk 5 CEC Fusion Furnace', count: 1, crystals: 1400 },
     { name: 'Mk 5 CEC Fusion Furnace Salvage', count: 20, crystals: 560 },
-    { name: 'Mk 5 Merr-Sonn Thermal Detonator', count: 25, crystals: 2541 },
+    { name: 'Mk 5 Merr-Sonn Thermal Detonator', count: 1, crystals: 2541 },
     { name: 'Mk 5 Merr-Sonn Thermal Detonator Prototype', count: 1, crystals: 1274 },
     { name: 'Mk 5 Merr-Sonn Thermal Detonator Prototype Salvage', count: 25, crystals: 375 },
 

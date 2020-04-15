@@ -1,5 +1,6 @@
 package com.strange.swgoh.swgohapp.web.controller;
 
+import com.strange.swgoh.swgohapp.calculator.ModCalculatorResultsDto;
 import com.strange.swgoh.swgohapp.data.HotUtilsDataService;
 import com.strange.swgoh.swgohapp.data.SwgohGGDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +53,18 @@ public class SwgohGGController {
         return swgohGGDataService.gear();
     }
 
+    @RequestMapping(value = "/mods/optimization")
+    public ModCalculatorResultsDto getOtimizationData() {
+
+        return swgohGGDataService.getOptimizationData();
+    }
+
     @RequestMapping(value = "/list/players/mods", method = RequestMethod.POST)
     public Object getRefreshedPlayerListModsData(@RequestBody int[] allyCodes) {
         List<Object> playerListMods = new ArrayList<>();
+
         for (int allyCode: allyCodes) {
-            playerListMods.add(swgohGGDataService.playerMods(allyCode + ""));
+                playerListMods.add(swgohGGDataService.playerMods(allyCode + ""));
         }
         return playerListMods;
     }

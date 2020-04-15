@@ -133,11 +133,20 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
     }
 
     let derivedPendingMods = this.pendingMods == null ? [] : this.pendingMods.slice(0);
+
     if (this.lockedMods != null && this.lockedMods.length > 0) {
       this.lockedMods.forEach(lockedMod => {
+        if (derivedPendingMods.find(derivedPendingMod => derivedPendingMod.slot == lockedMod.slot) == null) {
+          derivedPendingMods.push(lockedMod);
+        }
+      });
+    }
+
+    if (this.inGameMods != null && this.inGameMods.length > 0) {
+      this.inGameMods.forEach(lockedMod => {
         if (this.excludedMods == null || this.excludedMods.find(excludedMod => excludedMod.id == lockedMod.id) == null &&
           derivedPendingMods.find(derivedPendingMod => derivedPendingMod.slot == lockedMod.slot) == null) {
-            derivedPendingMods.push(lockedMod);
+          derivedPendingMods.push(lockedMod);
         }
       });
     }

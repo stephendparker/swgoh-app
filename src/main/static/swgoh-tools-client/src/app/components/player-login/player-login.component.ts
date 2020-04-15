@@ -6,7 +6,6 @@ import { takeUntil, delay } from 'rxjs/operators';
 
 export class PlayerLoginDto {
   public playerId: string;
-  public modelPlayers: number[];
   public playerHotutils: string;
 }
 
@@ -17,18 +16,10 @@ export class PlayerLoginDto {
 })
 export class PlayerLoginComponent implements OnInit, OnDestroy {
 
-  public NONE_SOURCE = "NONE";
-  public GUILD_SOURCE = "GUILD";
-  public PLAYER_SOURCE = "PLAYER";
-
   public playerId: string = '738889527';
-  public modelPlayerId: string = '';
   public lockInput: boolean = false;
   public playerHotutils: string = 'd8461c19-9324-4c78-870f-6e10f22e20cd';
 
-  modelSource: string = this.NONE_SOURCE;
-
-  guildPlayers: number[] = null;
 
   protected unsubscribe$ = new Subject<void>();
 
@@ -45,16 +36,8 @@ export class PlayerLoginComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  selectGuildPlayers(players: number[]) {
-    if (players != null) {
-      this.guildPlayers = players;
-    }
-  }
-
   formComplete() {
-    return this.playerId != null && (this.modelSource == this.NONE_SOURCE ||
-      (this.modelSource == this.PLAYER_SOURCE && this.modelPlayerId != null) ||
-      (this.modelSource == this.GUILD_SOURCE && this.guildPlayers != null));
+    return this.playerId != null;
   }
 
   onClose(): void {
@@ -62,17 +45,8 @@ export class PlayerLoginComponent implements OnInit, OnDestroy {
   }
 
   onOk(): void {
-    let modelIds: number[] = null;
-
-    if (this.modelSource == this.PLAYER_SOURCE) {
-      modelIds = [+this.modelPlayerId];
-    } else if (this.modelSource == this.GUILD_SOURCE) {
-      modelIds = this.guildPlayers;
-    }
-
     let retVal: PlayerLoginDto = {
       playerId: this.playerId,
-      modelPlayers: modelIds,
       playerHotutils: this.playerHotutils
     };
     this.dialogRef.close(retVal);

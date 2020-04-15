@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, Output, EventEmitter, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { DataStoreService } from './../../services/data-store.service';
 import { DisplayModeService, DisplayModeSettings } from './../../services/display-mode.service';
@@ -16,11 +16,12 @@ export class SquadManagerComponent implements OnInit, OnDestroy {
 
   @Output() updateSquads: EventEmitter<string[][]> = new EventEmitter();
 
+  @Input() characterGroups: string[][] = [];
+
   protected unsubscribe$ = new Subject<void>();
 
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
-  characterGroups: string[][] = [];
   fullCharacterList: string[] = [];
 
   filterSelected: string;

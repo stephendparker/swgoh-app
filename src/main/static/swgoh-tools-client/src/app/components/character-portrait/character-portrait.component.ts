@@ -18,7 +18,7 @@ export class CharacterPortraitComponent implements OnInit, OnDestroy, OnChanges 
   @Input() showName: boolean = true;
   @Input() maxHeight: string = null;
 
-  public locked: boolean = false;
+  @Input() locked: boolean = false;
 
   protected unsubscribe$ = new Subject<void>();
 

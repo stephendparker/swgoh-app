@@ -20,12 +20,13 @@
 
 			<mat-menu #menu="matMenu">
 				<button mat-menu-item (click)="setReviewFilterAll()">All</button>
+				<button mat-menu-item (click)="setReviewFilterMovedMods()">Moved Mods</button>
 				<button mat-menu-item [matMenuTriggerFor]="squadsMenu">Squads</button>
 				<button mat-menu-item [matMenuTriggerFor]="categoriesMenu">Categories</button>
 			</mat-menu>
 
 			<mat-menu #squadsMenu="matMenu">
-				<button *ngFor="let squad of squads" mat-menu-item (click)="setReviewFilterSquad(squad)"><app-character-identifier  [baseId]="squad[0]"></app-character-identifier></button>
+				<button *ngFor="let squad of squadDtos" mat-menu-item (click)="setReviewFilterSquad(squad.characters)"><mat-icon *ngIf="squad.allLocked" aria-hidden="false" >locked</mat-icon> {{ squad.label }} </button>
 			</mat-menu>
 			<mat-menu #categoriesMenu="matMenu">
 				<button *ngFor="let category of categoryList" mat-menu-item (click)="setReviewFilterCategory(category)">{{ category }}</button>
@@ -50,7 +51,7 @@
 			<div *cdkVirtualFor="let character of getReviewPlayerCharacterDtos(); let index=index; let odd=odd; let even=even;" [class.odd]="odd"
 				[style.height]="displayModeSettings.modCharacterReviewHeight + 'px'">
 
-				<app-character-mod-summary [lockedMods]="getLockedMods(true)" (modsClicked)="modCharacter(character.name)" [modDto]="character"
+				<app-character-mod-summary [lockedMods]="getLockedMods(true)" [allLocked]="character.lockedMods != null && character.lockedMods.length == 6" (modsClicked)="modCharacter(character.name)" [modDto]="character"
 					[optimization]="getOptimization(character.name)"></app-character-mod-summary>
 
 			</div>
@@ -83,7 +84,7 @@
   			</button>
 		</mat-toolbar>
 
-		<app-squad-manager #squadManager (updateSquads)="updateSquads($event)"></app-squad-manager>
+		<app-squad-manager #squadManager (updateSquads)="updateSquads($event)" [characterGroups]="squads"></app-squad-manager>
 
 	</div>
 
@@ -110,7 +111,7 @@
     			<mat-icon class="rotate-180">play_arrow</mat-icon>
   			</button>
 
-			<button mat-icon-button (click)="clickOptimizeCharacter(selectedCharacterDto.name)" [disabled]="getModelData() == null">
+			<button mat-icon-button (click)="clickOptimizeCharacter(selectedCharacterDto.name)">
     			<mat-icon>offline_bolt</mat-icon>
   			</button>
 

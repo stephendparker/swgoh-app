@@ -8,6 +8,7 @@ import { CharacterData } from './../model/swgohgg/character-data';
 import { Mods } from './../model/swgohgg/mods-data';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Gear } from './../model/swgohgg/gear-data';
+import { ModCalculatorCharacterResultsDto, ModCalculatorResultsDto } from './../model/optimization/mod-optimization';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class DataStoreService {
   playerModDataCache = {};
   gearCache: Gear[] = null;
   characterDataCache: CharacterData[] = null;
+  optimizationDataCache: any = null;
 
   constructor(private swgohGgDs: SwgohGgDataService) {
   }
@@ -35,27 +37,52 @@ export class DataStoreService {
     this.modelGuildData.next(guildData);
   }
 
-  public getCharacterData(): Observable<CharacterData[]> {
+  public getModOptimizationData(): Observable<ModCalculatorResultsDto> {
 
-    let characterFetchData: BehaviorSubject<CharacterData[]> = new BehaviorSubject<CharacterData[]>(null);
-    let characterFetchData$: Observable<CharacterData[]> = asObservable(characterFetchData);
+    let modOptimizationData: BehaviorSubject<ModCalculatorResultsDto> = new BehaviorSubject<ModCalculatorResultsDto>(null);
+    let modOptimizationData$: Observable<ModCalculatorResultsDto> = asObservable(modOptimizationData);
 
-    if (this.characterDataCache != undefined && this.characterDataCache != null) {
+    if (this.optimizationDataCache != undefined && this.optimizationDataCache != null) {
 
       (async () => {
         await delay(1);
-        characterFetchData.next(this.characterDataCache);
-        characterFetchData.complete();
+        modOptimizationData.next(this.optimizationDataCache);
+        modOptimizationData.complete();
       })();
 
     } else {
-      this.swgohGgDs.characters().subscribe(characterData => {
-        this.characterDataCache = characterData;
-        characterFetchData.next(characterData);
-        characterFetchData.complete();
+      this.swgohGgDs.optimization().subscribe(optimizationData => {
+        this.optimizationDataCache = optimizationData;
+        modOptimizationData.next(optimizationData);
+        modOptimizationData.complete();
       });
     }
-    return characterFetchData$;
+    return modOptimizationData$;
+  }
+
+  public characterFetchData: BehaviorSubject<CharacterData[]> = new BehaviorSubject<CharacterData[]>(null);
+  public characterFetchData$: Observable<CharacterData[]> = asObservable(this.characterFetchData);
+
+  public getCharacterData(): Observable<CharacterData[]> {
+
+
+    if (this.characterDataCache != undefined && this.characterDataCache != null) {
+
+      // (async () => {
+      //   await delay(1);
+      //   characterFetchData.next(this.characterDataCache);
+      //   characterFetchData.complete();
+      // })();
+
+    } else {
+      this.characterDataCache = [];
+      this.swgohGgDs.characters().subscribe(characterData => {
+        this.characterDataCache = characterData;
+        this.characterFetchData.next(characterData);
+        // this.characterFetchData.complete();
+      });
+    }
+    return this.characterFetchData$;
   }
 
   public getGearData(): Observable<Gear[]> {
