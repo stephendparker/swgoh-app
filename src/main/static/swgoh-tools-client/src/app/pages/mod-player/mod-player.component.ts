@@ -80,7 +80,18 @@ export class PlayerModConfiguration {
   public modEditorViewConfigurations: ModEditorViewConfiguration[] = [];
 }
 
-export class SquadDto {
+class PlayerModSaveData {
+  playerAllyCode: string; // ally code
+
+  squads: string[][] = []; // squads to organize the players
+  modEditorViewConfigurations: ModEditorViewConfiguration[] = []; // views, filters, sorting, etc per character
+
+  playerModData: PlayerModData = new PlayerModData(); // from swgoh and mod utils
+  restoredLockedMods: SaveModDto[] = []; // locked mods to character, mod id and charactername
+}
+
+// DTO used to show as filtering option, includes a label (leader name) and if all characters are locked
+class SquadDto {
   public characters: string[] = [];
   public label: string;
   public allLocked: boolean = false;
@@ -92,20 +103,22 @@ export class SquadDto {
   styleUrls: ['./mod-player.component.scss']
 })
 export class ModPlayerComponent implements OnInit, OnDestroy {
+
   SwgohGgCalc: typeof SwgohGgCalc = SwgohGgCalc;
 
   @ViewChildren('pendingModsDisplay') pendingModsDisplay: QueryList<ModDisplayComponent>;
   @ViewChildren('compareCurrentPending') compareCurrentPending: QueryList<ModSetComparisonComponent>;
   @ViewChildren('characterPortrait') characterPortrait: QueryList<CharacterPortraitComponent>;
   @ViewChildren('selectedSlotModPortrait') selectedSlotModPortrait: QueryList<ModPortraitComponent>;
-  @ViewChildren('modSetSummaryComponents') modSetSummaryComponents: QueryList<ModSetSummaryComponent>;
   private squadManagers: QueryList<SquadManagerComponent>;
   @ViewChildren('squadManager') set squadManagerContent(content: QueryList<SquadManagerComponent>) {
     this.squadManagers = content;
   }
-
-  @ViewChild(AddCharacterComponent) addCharacterComponent: AddCharacterComponent;
   @ViewChild(ModListComponentComponent) modList: ModListComponentComponent;
+
+  protected unsubscribe$ = new Subject<void>();
+
+  displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
   public VIEW_SELECT_CHARACTER = 1;
   public VIEW_MODS = 2;
@@ -114,28 +127,28 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   public VIEW_REVIEW_ALL_CHARACTERS = 5;
   public FILTER_OUT_THRESHOLD = .35;
 
-  SQUADS_LOCAL_STORAGE_KEY = "squads";
-  PLAYER_MOD_DATA_STORAGE_KEY = "playerModData";
-  PLAYER_LOCKED_MOD_DATA_STORAGE_KEY = "lockedMods";
-  PLAYER_FILTERS_DATA_STORAGE_KEY = "filterMods";
+  public SAVE_DATA_KEY = "mod-player-data";
 
-  REVIEW_FILTER_SQUAD = "filterSquad";
-  REVIEW_FILTER_MOVED_MODS = "movedMods";
-  REVIEW_FILTER_CATEGORY = "filterCategory";
+  public SQUADS_LOCAL_STORAGE_KEY = "squads";
+  public PLAYER_MOD_DATA_STORAGE_KEY = "playerModData";
+  public PLAYER_LOCKED_MOD_DATA_STORAGE_KEY = "lockedMods";
+  public PLAYER_FILTERS_DATA_STORAGE_KEY = "filterMods";
+
+  public REVIEW_FILTER_SQUAD = "filterSquad";
+  public REVIEW_FILTER_MOVED_MODS = "movedMods";
+  public REVIEW_FILTER_CATEGORY = "filterCategory";
+
 
   public viewMode: number = null;
-
-  displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
-
-  modelSource: string;
-  protected unsubscribe$ = new Subject<void>();
 
   fullyLockedCharacters: CharacterModDto[] = [];
 
   // data returned from services (not configured by user)
-  playerModData: PlayerModData = new PlayerModData();
+  // playerModData: PlayerModData = new PlayerModData();
 
   squadDtos: SquadDto[] = [];
+
+  saveData: PlayerModSaveData = new PlayerModSaveData();
 
   selectedSlotMod: ModsEntity; // the mod the user clicks in their display
   selectedCharacterDto: CharacterModDto = null;
@@ -151,28 +164,23 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   filterSlots: number[] = [];
   filterLocked: boolean = true;
 
-  playerModConfiguration: PlayerModConfiguration = new PlayerModConfiguration();
+  // playerModConfiguration: PlayerModConfiguration = new PlayerModConfiguration();
 
   modelGuildMods: Mods[] = null;
 
   editSquadIndex: number = null;
 
-  filterSelected: string;
-  filteredCharacters: string[] = [];
-
   reviewFilterType: string = null;
   reviewFilterSquad: string[] = null;
   reviewFilterCategory: string = null;
 
-  squads: string[][] = [];
+  // squads: string[][] = [];
 
-  restoredLockedMods: SaveModDto[] = null;
+  // restoredLockedMods: SaveModDto[] = null;
 
-  categoriesFormControl = new FormControl();
-  categoryList: string[] = [];
+  categoryList: string[] = []; // categories list is used in filter options for summary view
   characterData: CharacterData[] = null;
-
-  optimizationData: ModCalculatorResultsDto;
+  optimizationData: ModCalculatorResultsDto;  // used for mod optimization
 
   constructor(private dataStoreService: DataStoreService, private hotutilsDataService: HotutilsDataService,
     private displayModeService: DisplayModeService, private cdr: ChangeDetectorRef, public dialog: MatDialog) { }
@@ -204,54 +212,28 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       }
     });
 
-    let squadString = localStorage.getItem(this.SQUADS_LOCAL_STORAGE_KEY);
-    if (squadString != null) {
-      this.squads = JSON.parse(squadString);
-    }
 
-    let filterString = localStorage.getItem(this.PLAYER_FILTERS_DATA_STORAGE_KEY);
-    if (filterString != null) {
-      this.playerModConfiguration = JSON.parse(filterString);
-    }
-
-    let pmdString = localStorage.getItem(this.PLAYER_MOD_DATA_STORAGE_KEY);
-    if (pmdString != null) {
-      this.playerModData = JSON.parse(pmdString);
-
-      let savedModsString = localStorage.getItem(this.PLAYER_LOCKED_MOD_DATA_STORAGE_KEY);
-      if (savedModsString != null) {
-        this.restoredLockedMods = JSON.parse(savedModsString);
-      }
+    let saveDataString = localStorage.getItem(this.SAVE_DATA_KEY);
+    if (saveDataString != null) {
+      this.saveData = JSON.parse(saveDataString);
       this.refreshDataCalculations();
     }
+
     this.updateFullyLockedCharacters();
 
     (async () => {
       await delay(1);
       this.updateFullyLockedCharacters();
 
-      if (this.playerModData.playerAllyCode == null) {
+      if (this.saveData.playerAllyCode == null) {
         this.openPlayerLogin();
       } else {
         this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
       }
       if (this.squadManagers) {
-        this.squadManagers.forEach(squadManager => squadManager.setCharacterGroups(this.squads));
+        this.squadManagers.forEach(squadManager => squadManager.setCharacterGroups(this.saveData.squads));
       }
     })();
-  }
-
-  filterChange(filterChangeEvent: any) {
-    this.filteredCharacters = [];
-    this.filterSelected = null;
-    if (filterChangeEvent == null) {
-      this.filteredCharacters = this.characterData.map(character => character.base_id);
-    } else {
-      this.filterSelected = filterChangeEvent.value;
-      this.filteredCharacters = this.characterData.filter(character => {
-        return character.categories.indexOf(filterChangeEvent.value) != -1;
-      }).map(character => character.base_id);
-    }
   }
 
   setReviewFilterAll() {
@@ -326,36 +308,13 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   }
 
   generateDefaultEditorViews() {
-    let views: ModEditorViewConfiguration[] = this.playerModConfiguration.modEditorViewConfigurations;
+    let views: ModEditorViewConfiguration[] = this.saveData.modEditorViewConfigurations;
     this.playerCharacterDtos.forEach(pcd => {
 
       if (views.find(view => view.characterName == pcd.name) == null) {
 
         let modEditorViewConfiguration = new ModEditorViewConfiguration();
         modEditorViewConfiguration.characterName = pcd.name;
-
-        let optimizationCharacterData: ModCalculatorCharacterResultsDto = this.optimizationData.characterResults.find(optimizationCharacter => optimizationCharacter.name == name);
-
-
-        if (optimizationCharacterData != null) {
-          if (optimizationCharacterData.commonSet1Name != null) {
-            let setNumber = SwgohGgCalc.convertSetPropertyNameToNumber(optimizationCharacterData.commonSet1Name);
-            modEditorViewConfiguration.filterSets.indexOf(setNumber) === -1 ? modEditorViewConfiguration.filterSets.push(setNumber) : null;
-          }
-          if (optimizationCharacterData.commonSet2Name != null) {
-            let setNumber = SwgohGgCalc.convertSetPropertyNameToNumber(optimizationCharacterData.commonSet2Name);
-            modEditorViewConfiguration.filterSets.indexOf(setNumber) === -1 ? modEditorViewConfiguration.filterSets.push(setNumber) : null;
-          }
-          if (optimizationCharacterData.commonSet3Name != null) {
-            let setNumber = SwgohGgCalc.convertSetPropertyNameToNumber(optimizationCharacterData.commonSet3Name);
-            modEditorViewConfiguration.filterSets.indexOf(setNumber) === -1 ? modEditorViewConfiguration.filterSets.push(setNumber) : null;
-          }
-
-          modEditorViewConfiguration.circlePrimaryFilters = this.getAcceptablePrimary(optimizationCharacterData, SwgohGgConstants.MOD_SLOT_CIRCLE);
-          modEditorViewConfiguration.crossPrimaryFilters = this.getAcceptablePrimary(optimizationCharacterData, SwgohGgConstants.MOD_SLOT_CROSS);
-          modEditorViewConfiguration.arrowPrimaryFilters = this.getAcceptablePrimary(optimizationCharacterData, SwgohGgConstants.MOD_SLOT_ARROW);
-          modEditorViewConfiguration.trianglePrimaryFilters = this.getAcceptablePrimary(optimizationCharacterData, SwgohGgConstants.MOD_SLOT_TRIANGLE);
-        }
         views.push(modEditorViewConfiguration);
       }
     });
@@ -375,36 +334,53 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  saveSettings() {
-    localStorage.setItem(this.SQUADS_LOCAL_STORAGE_KEY, JSON.stringify(this.squads));
-    localStorage.setItem(this.PLAYER_MOD_DATA_STORAGE_KEY, JSON.stringify(this.playerModData));
-    localStorage.setItem(this.PLAYER_FILTERS_DATA_STORAGE_KEY, JSON.stringify(this.playerModConfiguration));
-
+  getSavedModsDtos(): SaveModDto[] {
+    let retVal: SaveModDto[] = [];
     if (this.playerCharacterDtos) {
-      let saveMods: SaveModDto[] = [];
-
       this.playerCharacterDtos.forEach(characterPlayerDto => {
         if (characterPlayerDto.lockedMods != null && characterPlayerDto.lockedMods.length > 0) {
           characterPlayerDto.lockedMods.forEach(mod => {
-            saveMods.push({
+            retVal.push({
               id: mod.id,
               character: characterPlayerDto.name
             });
           });
         }
       });
-      localStorage.setItem(this.PLAYER_LOCKED_MOD_DATA_STORAGE_KEY, JSON.stringify(saveMods))
     }
+    return retVal;
+  }
+
+  saveSettings() {
+
+    this.saveData.restoredLockedMods = this.getSavedModsDtos();
+    localStorage.setItem(this.SAVE_DATA_KEY, JSON.stringify(this.saveData));
+
+
+    // localStorage.setItem(this.SQUADS_LOCAL_STORAGE_KEY, JSON.stringify(this.squads));
+    // localStorage.setItem(this.PLAYER_MOD_DATA_STORAGE_KEY, JSON.stringify(this.playerModData));
+    // localStorage.setItem(this.PLAYER_FILTERS_DATA_STORAGE_KEY, JSON.stringify(this.playerModConfiguration));
+
+    // if (this.playerCharacterDtos) {
+    //   let saveMods: SaveModDto[] = [];
+
+    //   this.playerCharacterDtos.forEach(characterPlayerDto => {
+    //     if (characterPlayerDto.lockedMods != null && characterPlayerDto.lockedMods.length > 0) {
+    //       characterPlayerDto.lockedMods.forEach(mod => {
+    //         saveMods.push({
+    //           id: mod.id,
+    //           character: characterPlayerDto.name
+    //         });
+    //       });
+    //     }
+    //   });
+    //   localStorage.setItem(this.PLAYER_LOCKED_MOD_DATA_STORAGE_KEY, JSON.stringify(saveMods))
+    // }
   }
 
 
   updateSquads(squads: string[][]) {
-    this.squads = squads;
-    this.saveSettings();
-  }
-
-  updateSquad(squad: string[]) {
-    this.squads[this.editSquadIndex] = squad;
+    this.saveData.squads = squads;
     this.saveSettings();
   }
 
@@ -414,18 +390,18 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     let netWorkResponses = [];
 
     if (playerSwgohGg) {
-      netWorkCalls.push(this.dataStoreService.getPlayerData(this.playerModData.playerAllyCode));
+      netWorkCalls.push(this.dataStoreService.getPlayerData(this.saveData.playerAllyCode));
       netWorkResponses.push((playerData) => {
         if (playerData != null) {
-          this.playerModData.playerData = playerData;
+          this.saveData.playerModData.playerData = playerData;
 
         }
       })
-      netWorkCalls.push(this.dataStoreService.getPlayerModData(+this.playerModData.playerAllyCode));
+      netWorkCalls.push(this.dataStoreService.getPlayerModData(+this.saveData.playerAllyCode));
       netWorkResponses.push((playerMods) => {
         if (playerMods != null) {
-          this.playerModData.playerMods = playerMods.value.body;
-          let filteredMods = this.playerModData.playerMods.mods.filter(mod => mod.character == "EMPERORPALPATINE");
+          this.saveData.playerModData.playerMods = playerMods.value.body;
+          let filteredMods = this.saveData.playerModData.playerMods.mods.filter(mod => mod.character == "EMPERORPALPATINE");
           let y = 10;
         }
       })
@@ -434,7 +410,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       netWorkCalls.push(this.hotutilsDataService.playerMods(sessionIdHotutils));
       netWorkResponses.push((playerModListResponse) => {
         if (playerModListResponse != null) {
-          this.playerModData.unequippedMods = playerModListResponse;
+          this.saveData.playerModData.unequippedMods = playerModListResponse;
         }
       })
     }
@@ -479,8 +455,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result != null) {
-        this.playerModData.playerAllyCode = result.playerId;
-        this.reloadData(true, result.playerHotutils != null, result.playerHotutils, false, result.playerHotutils);
+        this.saveData.playerAllyCode = result.playerId;
+        this.reloadData(true, result.playerHotutils != null, false, result.playerHotutils);
         this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
       }
     });
@@ -525,7 +501,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result != null) {
-        this.squads = this.squads.filter((squad, indexSquad) => indexSquad != index);
+        this.saveData.squads = this.saveData.squads.filter((squad, indexSquad) => indexSquad != index);
         this.updateComponents();
         this.cdr.detectChanges();
       }
@@ -598,10 +574,10 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
         }
         if (result.filters == DeleteModConfigDialogComponent.ALL) {
-          this.playerModConfiguration.modEditorViewConfigurations = [];
+          this.saveData.modEditorViewConfigurations = [];
         }
         if (result.filters == DeleteModConfigDialogComponent.RESET) {
-          this.playerModConfiguration.modEditorViewConfigurations = [];
+          this.saveData.modEditorViewConfigurations = [];
           this.generateDefaultEditorViews();
         }
         this.saveSettings();
@@ -708,8 +684,52 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.sameMods(characterModDto.lockedMods, characterModDto.pendingMods);
   }
 
-  toggleLock(characterModDto: CharacterModDto) {
+  unlockedMod(characterModDto: CharacterModDto, lockedMods: ModsEntity[]) {
 
+    let retVal = false;
+    characterModDto.currentMods.forEach(currentMod => {
+
+      let slotAlreadyLocked: boolean = characterModDto.lockedMods.find(lockedMod => lockedMod.slot == currentMod.slot) != null;
+      let modAlreadyLocked: boolean = lockedMods != null && lockedMods.find(lockedMod => lockedMod.id == currentMod.id) != null;
+
+      if (slotAlreadyLocked == false && modAlreadyLocked == false) {
+        retVal = true;
+      }
+    });
+    return retVal;
+  }
+
+  toggleSummaryLock(characterModDto: CharacterModDto) {
+    let lockedMods = this.getLockedMods(true);
+    if (characterModDto != null) {
+      if (this.unlockedMod(characterModDto, lockedMods)) {
+        // lock all visible mods
+
+        let displayMods = characterModDto.lockedMods.slice(0);
+
+
+        characterModDto.currentMods.forEach(currentMod => {
+
+          let slotAlreadyLocked: boolean = characterModDto.lockedMods.find(lockedMod => lockedMod.slot == currentMod.slot) != null;
+          let modAlreadyLocked: boolean = lockedMods != null && lockedMods.find(lockedMod => lockedMod.id == currentMod.id) != null;
+
+          if (slotAlreadyLocked == false && modAlreadyLocked == false) {
+            displayMods.push(currentMod);
+          }
+        });
+        characterModDto.lockedMods = displayMods;
+        this.saveSettings();
+      }
+      else {
+        // unlock all mods
+        characterModDto.lockedMods = [];
+        this.saveSettings();
+      }
+    }
+  }
+
+  toggleLock(characterModDto: CharacterModDto) {
+    let lockedMods = this.getLockedMods(true);
     if (characterModDto != null) {
       if (this.allLocked(characterModDto)) {
         characterModDto.lockedMods = [];
@@ -736,10 +756,10 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   }
 
   getFullModList(): ModsEntity[] {
-    let retVal = this.playerModData.playerMods.mods.slice(0);
+    let retVal = this.saveData.playerModData.playerMods.mods.slice(0);
     // if (this.)
-    if (this.playerModData.unequippedMods != null && this.playerModData.unequippedMods.length != null) {
-      this.playerModData.unequippedMods.forEach(unequippedMod => {
+    if (this.saveData.playerModData.unequippedMods != null && this.saveData.playerModData.unequippedMods.length != null) {
+      this.saveData.playerModData.unequippedMods.forEach(unequippedMod => {
         if (retVal.find(iMod => iMod.id == unequippedMod.id) == null) {
           retVal.push(unequippedMod);
         }
@@ -762,7 +782,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     if (name != null) {
       this.selectedCharacterDto = this.playerCharacterDtos.find(dto => dto.name == name);
 
-      this.selectedModEditorViewConfiguration = this.playerModConfiguration.modEditorViewConfigurations.find(view => view.characterName == name);
+      this.selectedModEditorViewConfiguration = this.saveData.modEditorViewConfigurations.find(view => view.characterName == name);
 
       if (this.selectedModEditorViewConfiguration != null) {
         this.modList.setFilters(this.selectedModEditorViewConfiguration);
@@ -815,7 +835,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   }
 
   updateFullyLockedCharacters() {
-    this.fullyLockedCharacters = this.playerCharacterDtos.filter(dto => dto.lockedMods != null && dto.lockedMods.length == 6);
+    if (this.playerCharacterDtos != null) {
+      this.fullyLockedCharacters = this.playerCharacterDtos.filter(dto => dto.lockedMods != null && dto.lockedMods.length == 6);
+    }
   }
 
   getOptimization(name: string): ModCalculatorCharacterResultsDto {
@@ -836,8 +858,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   updateComponents() {
 
     this.squadDtos = [];
-    if (this.squads != null && this.squads.length > 0) {
-      this.squadDtos = this.squads.map(squad => {
+    if (this.saveData.squads != null && this.saveData.squads.length > 0) {
+      this.squadDtos = this.saveData.squads.map(squad => {
         let retVal = new SquadDto();
 
         retVal.characters = squad.slice(0);
@@ -864,13 +886,6 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     if (this.modList) {
       this.modList.setLockedMods(this.getLockedMods(true));
       this.modList.setTheLockedMods(this.getLockedModDtos(true));
-    }
-    if (this.modSetSummaryComponents && this.selectedCharacter != null && this.optimizationData != null) {
-      let optimizationCharacterData = this.optimizationData.characterResults.find(optimizationCharacter => optimizationCharacter.name == name);
-      if (optimizationCharacterData != null) {
-        this.modSetSummaryComponents.forEach(modSetSummaryComponent => modSetSummaryComponent.setCommonSet(optimizationCharacterData.commonSet1Name,
-          optimizationCharacterData.commonSet2Name, optimizationCharacterData.commonSet3Name));
-      };
     }
 
     if (this.selectedSlotModPortrait) {
@@ -925,9 +940,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         playerCharacterDto = new CharacterModDto();
         playerCharacterDto.name = mod.character;
         this.playerCharacterDtos.push(playerCharacterDto);
-        playerCharacterDto.unitData = this.playerModData.playerData.units.find(unit => unit.data.base_id == mod.character);
-        if (this.restoredLockedMods != null && this.restoredLockedMods.length > 0) {
-          let savedMods: SaveModDto[] = this.restoredLockedMods.filter(saveDto => saveDto.character == playerCharacterDto.name);
+        playerCharacterDto.unitData = this.saveData.playerModData.playerData.units.find(unit => unit.data.base_id == mod.character);
+        if (this.saveData.restoredLockedMods != null && this.saveData.restoredLockedMods.length > 0) {
+          let savedMods: SaveModDto[] = this.saveData.restoredLockedMods.filter(saveDto => saveDto.character == playerCharacterDto.name);
           savedMods.forEach(saveMod => {
             let foundLockedMod = allMods.find(modIndex => modIndex.id == saveMod.id);
             if (foundLockedMod != null) {
@@ -939,7 +954,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       playerCharacterDto.currentMods.push(mod);
       playerCharacterDto.pendingMods.push(mod);
     });
-    this.playerModData.playerData.units.forEach(unit => {
+    this.saveData.playerModData.playerData.units.forEach(unit => {
       let playerCharacterDto: CharacterModDto = this.playerCharacterDtos.find(dto => dto.name == unit.data.base_id);
 
       if (playerCharacterDto == null) {
@@ -947,8 +962,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         playerCharacterDto.name = unit.data.base_id;
         this.playerCharacterDtos.push(playerCharacterDto);
         playerCharacterDto.unitData = unit;
-        if (this.restoredLockedMods != null && this.restoredLockedMods.length > 0) {
-          let savedMods: SaveModDto[] = this.restoredLockedMods.filter(saveDto => saveDto.character == playerCharacterDto.name);
+        if (this.saveData.restoredLockedMods != null && this.saveData.restoredLockedMods.length > 0) {
+          let savedMods: SaveModDto[] = this.saveData.restoredLockedMods.filter(saveDto => saveDto.character == playerCharacterDto.name);
           savedMods.forEach(saveMod => {
             let foundLockedMod = allMods.find(modIndex => modIndex.id == saveMod.id);
             if (foundLockedMod != null) {
@@ -958,36 +973,44 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         }
       }
     })
-    if (this.playerModConfiguration == null) {
-      this.generateDefaultEditorViews();
-    }
+    this.generateDefaultEditorViews();
   }
 
+  // return a list of locked mods
+  // TODO implement false method of this
   getLockedMods(locked: boolean): ModsEntity[] {
     let retVal: ModsEntity[] = [];
-    if (locked) {
+    if (this.playerCharacterDtos != null) {
 
-      this.playerCharacterDtos.forEach(dto => {
-        dto.lockedMods.forEach(mod => {
-          retVal.push(mod);
-        })
-      });
+      if (locked) {
+
+        this.playerCharacterDtos.forEach(dto => {
+          dto.lockedMods.forEach(mod => {
+            retVal.push(mod);
+          })
+        });
+      }
+
     }
     return retVal;
   }
 
+  // return a list of locked mods ids and the characters they are locked to
   getLockedModDtos(locked: boolean): LockedModDto[] {
     let retVal: LockedModDto[] = [];
-    if (locked) {
+    if (this.playerCharacterDtos != null) {
 
-      this.playerCharacterDtos.forEach(dto => {
-        dto.lockedMods.forEach(mod => {
-          retVal.push({
-            id: mod.id,
-            name: dto.name
-          });
-        })
-      });
+      if (locked) {
+
+        this.playerCharacterDtos.forEach(dto => {
+          dto.lockedMods.forEach(mod => {
+            retVal.push({
+              id: mod.id,
+              name: dto.name
+            });
+          })
+        });
+      }
     }
     return retVal;
   }

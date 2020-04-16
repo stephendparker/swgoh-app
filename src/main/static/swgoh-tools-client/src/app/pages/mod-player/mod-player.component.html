@@ -52,7 +52,7 @@
 				[style.height]="displayModeSettings.modCharacterReviewHeight + 'px'">
 
 				<app-character-mod-summary [lockedMods]="getLockedMods(true)" [allLocked]="character.lockedMods != null && character.lockedMods.length == 6" (modsClicked)="modCharacter(character.name)" [modDto]="character"
-					[optimization]="getOptimization(character.name)"></app-character-mod-summary>
+					[optimization]="getOptimization(character.name)" (toggleLock)="toggleSummaryLock(character)"></app-character-mod-summary>
 
 			</div>
 
@@ -84,7 +84,7 @@
   			</button>
 		</mat-toolbar>
 
-		<app-squad-manager #squadManager (updateSquads)="updateSquads($event)" [characterGroups]="squads"></app-squad-manager>
+		<app-squad-manager #squadManager (updateSquads)="updateSquads($event)" [characterGroups]="saveData.squads"></app-squad-manager>
 
 	</div>
 

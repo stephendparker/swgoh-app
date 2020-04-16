@@ -20,12 +20,16 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
 
   @Input() allLocked: boolean = false;
 
+  @Output() modsClicked: EventEmitter<any> = new EventEmitter();
+  @Output() toggleLock: EventEmitter<any> = new EventEmitter();
+
+  canLock: boolean = false;
+
   @ViewChild(ModDisplayComponent) modDisplay: ModDisplayComponent;
 
 
   displayMods: ModsEntity[];
 
-  @Output() modsClicked: EventEmitter<any> = new EventEmitter();
 
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
@@ -51,21 +55,33 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
     this.modsClicked.emit(true);
   }
 
+  clickToggleLock() {
+    this.toggleLock.emit(true);
+  }
+
   updateData() {
     this.displayMods = this.modDto.lockedMods.slice(0);
+
+
+    this.canLock = true;
 
     this.modDto.currentMods.forEach(currentMod => {
 
       let slotAlreadyLocked: boolean = this.modDto.lockedMods.find(lockedMod => lockedMod.slot == currentMod.slot) != null;
       let modAlreadyLocked: boolean = this.lockedMods != null && this.lockedMods.find(lockedMod => lockedMod.id == currentMod.id) != null;
 
-
       if (slotAlreadyLocked == false && modAlreadyLocked == false) {
         this.displayMods.push(currentMod);
+
+        // fall back to current mod
+        this.canLock = false;
       }
     });
 
+
+
     let movedMods = this.displayMods.filter(displayMod => this.modDto.currentMods.find(newMod => newMod.id == displayMod.id) == null);
+
     this.modDisplay.highlightMods = movedMods;
   }
 

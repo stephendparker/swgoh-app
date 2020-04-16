@@ -11,7 +11,15 @@
 		</div>
 	</div>
 	<div class="flow column" [style.width]="displayModeSettings.modLeftPaneWidth + 'px'">
-		<app-mod-display #modDisplay [mods]="displayMods" (click)="clickMods()"></app-mod-display>
+
+		<div class="flow row">
+			<button mat-icon-button (click)="clickToggleLock()">
+				<mat-icon>{{ canLock ? 'lock' : 'lock_open' }}</mat-icon>
+  			</button>
+		</div>
+		<div class="flow row">
+			<app-mod-display #modDisplay [mods]="displayMods" (click)="clickMods()"></app-mod-display>
+		</div>
 	</div>
 	<div class="flow column">
 		<app-mod-set-comparison [unitData]="modDto.unitData" [inGameMods]="modDto.currentMods" [lockedMods]="modDto.lockedMods" [excludedMods]="lockedMods"></app-mod-set-comparison>
