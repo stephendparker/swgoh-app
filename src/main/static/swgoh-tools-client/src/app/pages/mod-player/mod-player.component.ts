@@ -276,8 +276,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       case this.REVIEW_FILTER_MOVED_MODS: {
         retVal = this.playerCharacterDtos.filter(playerCharacterDto => {
           let effectiveMods = this.getEffectiveMods(playerCharacterDto);
-          return effectiveMods.length != playerCharacterDto.currentMods.length ||
-            (effectiveMods.filter(effectiveMod => playerCharacterDto.currentMods.find(currentMod => currentMod.id == effectiveMod.id) == null).length > 0);
+          return playerCharacterDto.lockedMods.length > 0 && (effectiveMods.length != playerCharacterDto.currentMods.length ||
+            (effectiveMods.filter(effectiveMod => playerCharacterDto.currentMods.find(currentMod => currentMod.id == effectiveMod.id) == null).length > 0));
         });
         break;
       }
@@ -382,6 +382,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   updateSquads(squads: string[][]) {
     this.saveData.squads = squads;
     this.saveSettings();
+    this.updateComponents();
   }
 
   reloadData(playerSwgohGg: boolean, playerHotutils: boolean, clearMods: boolean, sessionIdHotutils: string) {

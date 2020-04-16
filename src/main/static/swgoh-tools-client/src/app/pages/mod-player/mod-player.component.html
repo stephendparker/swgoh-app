@@ -20,9 +20,10 @@
 
 			<mat-menu #menu="matMenu">
 				<button mat-menu-item (click)="setReviewFilterAll()">All</button>
-				<button mat-menu-item (click)="setReviewFilterMovedMods()">Moved Mods</button>
-				<button mat-menu-item [matMenuTriggerFor]="squadsMenu">Squads</button>
+				<button mat-menu-item (click)="viewMode = VIEW_EDIT_SQUAD">Manage Squads</button>
+				<button mat-menu-item [matMenuTriggerFor]="squadsMenu">Squads</button>				
 				<button mat-menu-item [matMenuTriggerFor]="categoriesMenu">Categories</button>
+				<button mat-menu-item (click)="setReviewFilterMovedMods()">Moved Mods</button>
 			</mat-menu>
 
 			<mat-menu #squadsMenu="matMenu">
