@@ -14,6 +14,20 @@
 
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
 
+			<button mat-icon-button [matMenuTriggerFor]="sortSummaryMenu">
+				<mat-icon>sort</mat-icon>
+			</button>
+
+			<mat-menu #sortSummaryMenu="matMenu">
+				<button mat-menu-item (click)="setSortPower()" [class.thick]="summarySort == ENUM_SORT_TYPE.POWER">Power</button>
+				<button mat-menu-item (click)="setSortSpeed()" [class.thick]="summarySort == ENUM_SORT_TYPE.SPEED">Speed</button>
+				<button mat-menu-item (click)="setSortOffense()" [class.thick]="summarySort == ENUM_SORT_TYPE.OFFENSE">Offense</button>
+				<button mat-menu-item (click)="setSortHealth()" [class.thick]="summarySort == ENUM_SORT_TYPE.HEALTH">Health</button>
+				<button mat-menu-item (click)="setSortProtection()" [class.thick]="summarySort == ENUM_SORT_TYPE.PROTECTION">Protection</button>
+				<button mat-menu-item (click)="setSortPotency()" [class.thick]="summarySort == ENUM_SORT_TYPE.POTENCY">Potency</button>
+				<button mat-menu-item (click)="setSortTenacity()" [class.thick]="summarySort == ENUM_SORT_TYPE.TENACITY">Tenacity</button>
+			</mat-menu>
+
 			<button mat-icon-button [matMenuTriggerFor]="menu">
 				<mat-icon>filter_list</mat-icon>
 			</button>
@@ -21,7 +35,7 @@
 			<mat-menu #menu="matMenu">
 				<button mat-menu-item (click)="setReviewFilterAll()">All</button>
 				<button mat-menu-item (click)="viewMode = VIEW_EDIT_SQUAD">Manage Squads</button>
-				<button mat-menu-item [matMenuTriggerFor]="squadsMenu">Squads</button>				
+				<button mat-menu-item [matMenuTriggerFor]="squadsMenu">Squads</button>
 				<button mat-menu-item [matMenuTriggerFor]="categoriesMenu">Categories</button>
 				<button mat-menu-item (click)="setReviewFilterMovedMods()">Moved Mods</button>
 			</mat-menu>
@@ -49,11 +63,11 @@
 		<cdk-virtual-scroll-viewport [itemSize]="displayModeSettings.modCharacterReviewHeight" [minBufferPx]="displayModeSettings.modEditorHeight"
 			[maxBufferPx]="displayModeSettings.modEditorHeight + 200" [style.width]="'100%'" [style.height]="displayModeSettings.modEditorHeight + 'px'">
 
-			<div *cdkVirtualFor="let character of getReviewPlayerCharacterDtos(); let index=index; let odd=odd; let even=even;" [class.odd]="odd"
+			<div *cdkVirtualFor="let character of summaryViewCharacters; let index=index; let odd=odd; let even=even;" [class.odd]="odd"
 				[style.height]="displayModeSettings.modCharacterReviewHeight + 'px'">
 
-				<app-character-mod-summary [lockedMods]="getLockedMods(true)" [allLocked]="character.lockedMods != null && character.lockedMods.length == 6" (modsClicked)="modCharacter(character.name)" [modDto]="character"
-					[optimization]="getOptimization(character.name)" (toggleLock)="toggleSummaryLock(character)"></app-character-mod-summary>
+				<app-character-mod-summary [lockedMods]="getLockedMods(true)" [allLocked]="character.lockedMods != null && character.lockedMods.length == 6"
+					(modsClicked)="modCharacter(character.name)" [modDto]="character" [optimization]="getOptimization(character.name)" (toggleLock)="toggleSummaryLock(character)"></app-character-mod-summary>
 
 			</div>
 

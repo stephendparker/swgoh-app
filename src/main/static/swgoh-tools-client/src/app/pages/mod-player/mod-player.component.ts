@@ -90,6 +90,17 @@ class PlayerModSaveData {
   restoredLockedMods: SaveModDto[] = []; // locked mods to character, mod id and charactername
 }
 
+
+export enum ENUM_SORT_TYPE {
+  POWER = 1,
+  SPEED,
+  OFFENSE,
+  HEALTH,
+  PROTECTION,
+  POTENCY,
+  TENACITY
+}
+
 // DTO used to show as filtering option, includes a label (leader name) and if all characters are locked
 class SquadDto {
   public characters: string[] = [];
@@ -103,6 +114,8 @@ class SquadDto {
   styleUrls: ['./mod-player.component.scss']
 })
 export class ModPlayerComponent implements OnInit, OnDestroy {
+
+  get ENUM_SORT_TYPE() { return ENUM_SORT_TYPE; }
 
   SwgohGgCalc: typeof SwgohGgCalc = SwgohGgCalc;
 
@@ -138,6 +151,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   public REVIEW_FILTER_MOVED_MODS = "movedMods";
   public REVIEW_FILTER_CATEGORY = "filterCategory";
 
+  public summarySort: ENUM_SORT_TYPE = ENUM_SORT_TYPE.POWER;
 
   public viewMode: number = null;
 
@@ -236,25 +250,88 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     })();
   }
 
+  summaryViewCharacters: CharacterModDto[] = [];
+
+  setSortPower() {
+    this.summarySort = ENUM_SORT_TYPE.POWER;
+    this.updateSummaryViewCharacters();
+  }
+
+  setSortSpeed() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+
+    this.summarySort = ENUM_SORT_TYPE.SPEED;
+    this.updateSummaryViewCharacters();
+    this.cdr.detectChanges();
+  }
+
+  setSortOffense() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+    this.summarySort = ENUM_SORT_TYPE.OFFENSE;
+    this.updateSummaryViewCharacters();
+  }
+
+  setSortHealth() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+    this.summarySort = ENUM_SORT_TYPE.HEALTH;
+    this.updateSummaryViewCharacters();
+  }
+
+  setSortProtection() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+    this.summarySort = ENUM_SORT_TYPE.PROTECTION;
+    this.updateSummaryViewCharacters();
+  }
+
+  setSortPotency() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+    this.summarySort = ENUM_SORT_TYPE.POTENCY;
+    this.updateSummaryViewCharacters();
+  }
+
+  setSortTenacity() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+    this.summarySort = ENUM_SORT_TYPE.TENACITY;
+    this.updateSummaryViewCharacters();
+  }
+
   setReviewFilterAll() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
     this.reviewFilterType = null;
+    this.updateSummaryViewCharacters();
   }
 
   setReviewFilterMovedMods() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
     this.reviewFilterType = this.REVIEW_FILTER_MOVED_MODS;
+    this.updateSummaryViewCharacters();
   }
 
   setReviewFilterSquad(squad) {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
     this.reviewFilterType = this.REVIEW_FILTER_SQUAD;
     this.reviewFilterSquad = squad;
+    this.updateSummaryViewCharacters();
   }
 
   setReviewFilterCategory(category) {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
     this.reviewFilterType = this.REVIEW_FILTER_CATEGORY;
     this.reviewFilterCategory = category;
+    this.updateSummaryViewCharacters();
   }
 
-  getReviewPlayerCharacterDtos(): CharacterModDto[] {
+  updateSummaryViewCharacters() {
     let retVal: CharacterModDto[] = [];
 
     switch (this.reviewFilterType) {
@@ -286,7 +363,96 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    return retVal;
+
+    switch (this.summarySort) {
+      case ENUM_SORT_TYPE.POWER: {
+        retVal.sort((n1, n2) => {
+          let n1Power = n1.unitData == null ? 0 : n1.unitData.data.power;
+          let n2Power = n2.unitData == null ? 0 : n2.unitData.data.power;
+          return n2Power - n1Power;
+        });
+        break;
+      }
+      case ENUM_SORT_TYPE.SPEED: {
+
+        retVal.sort((n1, n2) => {
+          let n1Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n1.name);
+          let n2Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n2.name);
+
+          let n1Score = n1Optimization == null ? 0 : n1Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_SPEED_NAME];
+          let n2Score = n2Optimization == null ? 0 : n2Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_SPEED_NAME];
+          return n2Score - n1Score;
+        });
+        break;
+      }
+      case ENUM_SORT_TYPE.HEALTH: {
+
+        retVal.sort((n1, n2) => {
+          let n1Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n1.name);
+          let n2Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n2.name);
+
+          let n1Score = n1Optimization == null ? 0 : n1Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_HEALTH_NAME];
+          let n2Score = n2Optimization == null ? 0 : n2Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_HEALTH_NAME];
+          return n2Score - n1Score;
+        });
+        break;
+      }
+      case ENUM_SORT_TYPE.OFFENSE: {
+
+        retVal.sort((n1, n2) => {
+          let n1Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n1.name);
+          let n2Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n2.name);
+
+          let n1Score = n1Optimization == null ? 0 : n1Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_OFFENSE_NAME];
+          let n2Score = n2Optimization == null ? 0 : n2Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_OFFENSE_NAME];
+          return n2Score - n1Score;
+        });
+        break;
+      }
+      case ENUM_SORT_TYPE.POTENCY: {
+
+        retVal.sort((n1, n2) => {
+          let n1Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n1.name);
+          let n2Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n2.name);
+
+          let n1Score = n1Optimization == null ? 0 : n1Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_POTENCY_NAME];
+          let n2Score = n2Optimization == null ? 0 : n2Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_POTENCY_NAME];
+          return n2Score - n1Score;
+        });
+        break;
+      }
+      case ENUM_SORT_TYPE.PROTECTION: {
+
+        retVal.sort((n1, n2) => {
+          let n1Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n1.name);
+          let n2Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n2.name);
+
+          let n1Score = n1Optimization == null ? 0 : n1Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_PROTECTION_NAME];
+          let n2Score = n2Optimization == null ? 0 : n2Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_PROTECTION_NAME];
+          return n2Score - n1Score;
+        });
+        break;
+      }  
+      case ENUM_SORT_TYPE.TENACITY: {
+
+        retVal.sort((n1, n2) => {
+          let n1Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n1.name);
+          let n2Optimization = this.optimizationData.characterResults.find(characterResult => characterResult.name == n2.name);
+
+          let n1Score = n1Optimization == null ? 0 : n1Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_TENACITY_NAME];
+          let n2Score = n2Optimization == null ? 0 : n2Optimization.secondaryTypeCounts[SwgohGgConstants.MOD_SECONDARY_TENACITY_NAME];
+          return n2Score - n1Score;
+        });
+        break;
+      }              
+      default: {
+        //statements; 
+        break;
+      }
+    }
+
+    this.summaryViewCharacters = retVal;
+
   }
 
   getEffectiveMods(playerCharacterDto: CharacterModDto): ModsEntity[] {
@@ -926,6 +1092,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         }
       });
     }
+    this.updateSummaryViewCharacters();
   }
 
   // Generate player characters and assign mods to them
@@ -956,21 +1123,24 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       playerCharacterDto.pendingMods.push(mod);
     });
     this.saveData.playerModData.playerData.units.forEach(unit => {
-      let playerCharacterDto: CharacterModDto = this.playerCharacterDtos.find(dto => dto.name == unit.data.base_id);
 
-      if (playerCharacterDto == null) {
-        playerCharacterDto = new CharacterModDto();
-        playerCharacterDto.name = unit.data.base_id;
-        this.playerCharacterDtos.push(playerCharacterDto);
-        playerCharacterDto.unitData = unit;
-        if (this.saveData.restoredLockedMods != null && this.saveData.restoredLockedMods.length > 0) {
-          let savedMods: SaveModDto[] = this.saveData.restoredLockedMods.filter(saveDto => saveDto.character == playerCharacterDto.name);
-          savedMods.forEach(saveMod => {
-            let foundLockedMod = allMods.find(modIndex => modIndex.id == saveMod.id);
-            if (foundLockedMod != null) {
-              playerCharacterDto.lockedMods.push(foundLockedMod);
-            }
-          });
+      if (unit.data.combat_type == 1) {
+        let playerCharacterDto: CharacterModDto = this.playerCharacterDtos.find(dto => dto.name == unit.data.base_id);
+
+        if (playerCharacterDto == null) {
+          playerCharacterDto = new CharacterModDto();
+          playerCharacterDto.name = unit.data.base_id;
+          this.playerCharacterDtos.push(playerCharacterDto);
+          playerCharacterDto.unitData = unit;
+          if (this.saveData.restoredLockedMods != null && this.saveData.restoredLockedMods.length > 0) {
+            let savedMods: SaveModDto[] = this.saveData.restoredLockedMods.filter(saveDto => saveDto.character == playerCharacterDto.name);
+            savedMods.forEach(saveMod => {
+              let foundLockedMod = allMods.find(modIndex => modIndex.id == saveMod.id);
+              if (foundLockedMod != null) {
+                playerCharacterDto.lockedMods.push(foundLockedMod);
+              }
+            });
+          }
         }
       }
     })
