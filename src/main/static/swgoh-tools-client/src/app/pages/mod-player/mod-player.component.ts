@@ -216,6 +216,15 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
           });
         });
         this.categoryList = this.categoryList.sort((a, b) => a.localeCompare(b));
+
+        if (this.playerCharacterDtos != null) {
+          this.playerCharacterDtos.forEach(playerCharacterDto => {
+            let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == playerCharacterDto.name)
+            playerCharacterDto.label = charData == null ? null : charData.name;
+          });
+        }
+
+
         this.updateComponents();
       }
     });
@@ -331,6 +340,46 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.updateSummaryViewCharacters();
   }
 
+  modNextCharacter() {
+    let currentCharacter = this.selectedCharacter;
+
+    let currentCharacterIndex = 0;
+    let targetIndex = 0;
+
+    this.summaryViewCharacters.forEach((character, index) => {
+      if (character.name == currentCharacter) {
+        currentCharacterIndex = index;
+      }
+    });
+
+    if (this.summaryViewCharacters.length > currentCharacterIndex + 1) {
+      targetIndex = currentCharacterIndex + 1;
+    }
+    this.modCharacter(this.summaryViewCharacters[targetIndex].name);
+
+  }
+
+  modPreviousCharacter() {
+    let currentCharacter = this.selectedCharacter;
+
+    let currentCharacterIndex = 0;
+    let targetIndex = 0;
+
+    this.summaryViewCharacters.forEach((character, index) => {
+      if (character.name == currentCharacter) {
+        currentCharacterIndex = index;
+      }
+    });
+
+    if (currentCharacterIndex == 0) {
+      targetIndex = this.summaryViewCharacters.length - 1;
+    } else {
+      targetIndex = currentCharacterIndex - 1;
+    }
+    this.modCharacter(this.summaryViewCharacters[targetIndex].name);
+
+  }
+
   updateSummaryViewCharacters() {
     let retVal: CharacterModDto[] = [];
 
@@ -363,6 +412,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         break;
       }
     }
+
+    retVal = retVal.filter(playerCharacterDto => playerCharacterDto.name != null);
 
     switch (this.summarySort) {
       case ENUM_SORT_TYPE.POWER: {
@@ -432,7 +483,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
           return n2Score - n1Score;
         });
         break;
-      }  
+      }
       case ENUM_SORT_TYPE.TENACITY: {
 
         retVal.sort((n1, n2) => {
@@ -444,7 +495,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
           return n2Score - n1Score;
         });
         break;
-      }              
+      }
       default: {
         //statements; 
         break;
@@ -774,7 +825,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   }
 
   // FROM UI 
-  modCharacter(character) {
+  modCharacter(character: string) {
     this.viewMode = this.VIEW_MODS;
     this.setSelectedCharacter(character);
     this.revertToInGameModsSoft();
@@ -1107,6 +1158,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       if (playerCharacterDto == null) {
         playerCharacterDto = new CharacterModDto();
         playerCharacterDto.name = mod.character;
+        let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == this.baseId)
+        playerCharacterDto.label = charData == null ? null : charData.name;
+
         this.playerCharacterDtos.push(playerCharacterDto);
         playerCharacterDto.unitData = this.saveData.playerModData.playerData.units.find(unit => unit.data.base_id == mod.character);
         if (this.saveData.restoredLockedMods != null && this.saveData.restoredLockedMods.length > 0) {
@@ -1130,6 +1184,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         if (playerCharacterDto == null) {
           playerCharacterDto = new CharacterModDto();
           playerCharacterDto.name = unit.data.base_id;
+          let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == this.baseId)
+          playerCharacterDto.label = charData == null ? null : charData.name;
+
           this.playerCharacterDtos.push(playerCharacterDto);
           playerCharacterDto.unitData = unit;
           if (this.saveData.restoredLockedMods != null && this.saveData.restoredLockedMods.length > 0) {

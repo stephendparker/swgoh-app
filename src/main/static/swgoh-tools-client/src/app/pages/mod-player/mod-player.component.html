@@ -106,11 +106,31 @@
 
 	<div [class.hidden]="viewMode != VIEW_MODS">
 		<mat-toolbar>
-
 			<button mat-icon-button (click)="viewMode = VIEW_REVIEW_ALL_CHARACTERS">
+    			<mat-icon>list</mat-icon>
+  			</button>
+
+			<button mat-icon-button (click)="viewMode = VIEW_EDIT_SQUAD">
+    			<mat-icon>group</mat-icon>
+  			</button>
+
+			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
+			
+			<button mat-icon-button (click)="modPreviousCharacter()">
     			<mat-icon>navigate_before</mat-icon>
   			</button>
 			<app-character-portrait #characterPortrait [maxHeight]="'50px'" [showName]="false" (click)="viewMode = VIEW_REVIEW_CHARACTER"></app-character-portrait>
+			<button mat-icon-button (click)="modNextCharacter()">
+    			<mat-icon>navigate_next</mat-icon>
+  			</button>
+			<button mat-icon-button [matMenuTriggerFor]="changeCharacterMenu" *ngIf="reviewFilterType != null">
+    			<mat-icon>more_vert</mat-icon>
+  			</button>
+			<mat-menu #changeCharacterMenu="matMenu">
+				<button mat-menu-item *ngFor="let character of summaryViewCharacters" [class.thick]="false" (click)="modCharacter(character.name)">
+					 {{ character.label }}
+				</button>
+			</mat-menu>
 
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
 

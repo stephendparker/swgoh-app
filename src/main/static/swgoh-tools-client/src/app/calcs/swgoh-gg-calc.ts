@@ -233,6 +233,7 @@ export class SlotInfo {
 
 export class CharacterModDto {
     public name: string;
+    public label: string;
     public currentMods: ModsEntity[] = [];
     public lockedMods: ModsEntity[] = [];
     public pendingMods: ModsEntity[] = [];
