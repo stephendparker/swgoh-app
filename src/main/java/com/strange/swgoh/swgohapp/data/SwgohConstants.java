@@ -17,8 +17,8 @@ public class SwgohConstants {
     public static int MOD_POTENCY_STAT_ID = 17;
     public static int MOD_SPEED_STAT_ID = 5;
     public static int MOD_TENACITY_STAT_ID = 18;
-    public static int MOD_CRIT_AVOIDANCE_STAT_ID = 52;
-    public static int MOD_ACCURACY_STAT_ID = 54;
+    public static int MOD_CRIT_AVOIDANCE_STAT_ID = 54;
+    public static int MOD_ACCURACY_STAT_ID = 52;
 
     public static int MOD_SET_HEALTH = 1;
     public static int MOD_SET_OFFENSE = 2;
@@ -43,7 +43,7 @@ public class SwgohConstants {
     public static String MOD_SET_DEFENSE_NAME = "defense";
     public static String MOD_SET_SPEED_NAME = "speed";
     public static String MOD_SET_CRIT_CHANCE_NAME = "critChance";
-    public static String MOD_SET_CRIT_DMG_NAME = "critDamage";
+    public static String MOD_SET_CRIT_DMG_NAME = "critDmg";
     public static String MOD_SET_POTENCY_NAME = "potency";
     public static String MOD_SET_TENACITY_NAME = "tenacity";
 

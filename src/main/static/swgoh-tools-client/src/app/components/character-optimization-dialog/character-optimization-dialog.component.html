@@ -1,0 +1,131 @@
+<h4 mat-dialog-title>Optimization Settings</h4>
+<mat-dialog-content>
+
+	<mat-tab-group>
+		<mat-tab label="Summary">
+
+			<div class="tab-content">
+				<div class="flow row">
+					<div class="flow column title-column">
+						Target Set
+					</div>
+					<div class="flow column">
+						<app-mod-set-summary [commonSet1]="optimization?.commonSet1Name" [commonSet2]="optimization?.commonSet2Name" [commonSet3]="optimization?.commonSet3Name"></app-mod-set-summary>
+					</div>
+				</div>
+
+				<div class="flow row" *ngFor="let slot of slotPrimaries">
+					<div class="flow column title-column">
+						<app-mod-slot-icon [slot]='slot.id'></app-mod-slot-icon>
+					</div>
+					<div class="flow column">
+						{{ slot.commonLabel }}
+					</div>
+				</div>
+
+
+				<div *ngFor="let secondary of secondaries; let index=index;">
+					<div class="flow row" *ngIf="index < 4">
+						<div class="flow column title-column">
+							{{ secondary.label }}
+						</div>
+						<div class="flow column">
+							<mat-slider [disabled]="true" [max]="100" [min]="0" [step]="1" [(ngModel)]="secondary.factor">
+							</mat-slider>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</mat-tab>
+		<mat-tab label="Sets">
+
+			<div class="tab-content">
+
+				<div class="flow row">
+					<div class="flow column title-column">
+						Four sets factor:
+					</div>
+					<div class="flow column">
+
+						<mat-slider [disabled]="true" [max]="100" [min]="0" [step]="1" [(ngModel)]="fourSetsMultiplier">
+						</mat-slider>
+
+					</div>
+				</div>
+
+				<mat-divider></mat-divider>
+
+				<div class="flow row" *ngFor="let set of fourSets">
+					<div class="flow column title-column">
+						<app-mod-set-icon [setType]="set.label"></app-mod-set-icon>
+					</div>
+					<div class="flow column">
+						<mat-slider [disabled]="true" [max]="100" [min]="0" [step]="1" [(ngModel)]="set.factor">
+						</mat-slider>
+					</div>
+				</div>
+
+				<mat-divider></mat-divider>
+
+				<div class="flow row" *ngFor="let set of twoSets">
+					<div class="flow column title-column">
+						<app-mod-set-icon [setType]="set.label"></app-mod-set-icon>
+					</div>
+					<div class="flow column">
+						<mat-slider [disabled]="true" [max]="100" [min]="0" [step]="1" [(ngModel)]="set.factor">
+						</mat-slider>
+					</div>
+				</div>
+
+			</div>
+
+		</mat-tab>
+		<mat-tab label="Primaries">
+			<div class="tab-content">
+
+				<div *ngFor="let primary of slotPrimaryFactors; let index=index; let odd=odd; let even=even;" [class.odd]="odd">
+					<div class="flow row">
+						<div class="flow column title-column">
+							<app-mod-slot-icon [slot]='primary.id'></app-mod-slot-icon>
+						</div>
+						<div class="flow column">
+							<div *ngFor="let primaryType of primary.primaries">
+								<div class="flow row">
+									{{ primaryType.label }}
+								</div>
+								<div class="flow row">
+									<mat-slider [style.width]="'100%'" [disabled]="true" [max]="100" [min]="0" [step]="1" [(ngModel)]="primaryType.factor">
+									</mat-slider>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+		</mat-tab>
+		<mat-tab label="Secondaries">
+			<div class="tab-content">
+				<div *ngFor="let secondary of secondaries; let index=index;">
+					<div class="flow row">
+						<div class="flow column title-column">
+							{{ secondary.label }}
+						</div>
+						<div class="flow column">
+							<mat-slider [disabled]="true" [max]="100" [min]="0" [step]="1" [(ngModel)]="secondary.factor">
+							</mat-slider>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</mat-tab>
+	</mat-tab-group>
+
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button (click)="onClose()">Close</button>
+</div>

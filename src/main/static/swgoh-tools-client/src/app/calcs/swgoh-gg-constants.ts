@@ -58,8 +58,22 @@ export class SwgohGgConstants {
     public static MOD_POTENCY_STAT_ID = 17;
     public static MOD_SPEED_STAT_ID = 5;
     public static MOD_TENACITY_STAT_ID = 18;
-    public static MOD_CRIT_AVOIDANCE_STAT_ID = 52;
-    public static MOD_ACCURACY_STAT_ID = 54;
+    public static MOD_CRIT_AVOIDANCE_STAT_ID = 54;
+    public static MOD_ACCURACY_STAT_ID = 52;
+
+    public static PRIMARY_LABEL_MAP = {
+        55: 'Health',
+        56: 'Protection',
+        48: 'Offense',
+        49: 'Defense',
+        53: 'Critical Chance',
+        16: 'Critical Damage',
+        17: 'Potency',
+        5: 'Speed',
+        18: 'Tenacity',
+        54: 'Critical Avoidance',
+        52: 'Accuracy'
+    }
 
     public static MOD_SET_HEALTH = 1;
     public static MOD_SET_OFFENSE = 2;
@@ -69,6 +83,22 @@ export class SwgohGgConstants {
     public static MOD_SET_CRIT_DMG = 6;
     public static MOD_SET_POTENCY = 7;
     public static MOD_SET_TENACITY = 8;
+
+
+    public static SET_LABEL_MAP = {
+        1: 'health',
+        2: 'offense',
+        3: 'defense',
+        4: 'speed',
+        5: 'critChance',
+        6: 'critDmg',
+        7: 'potency',
+        8: 'tenacity'
+    }
+
+    public static FOUR_SETS = [SwgohGgConstants.MOD_SET_SPEED, SwgohGgConstants.MOD_SET_OFFENSE, SwgohGgConstants.MOD_SET_CRIT_DMG];
+    public static TWO_SETS = [SwgohGgConstants.MOD_SET_HEALTH, SwgohGgConstants.MOD_SET_DEFENSE, SwgohGgConstants.MOD_SET_CRIT_CHANCE,
+    SwgohGgConstants.MOD_SET_POTENCY, SwgohGgConstants.MOD_SET_TENACITY];
 
     public static ALL_PRIMARIES = [SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID, SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID,
     SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_DEFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_CRIT_CHANCE_STAT_ID, SwgohGgConstants.MOD_CRIT_DMG_STAT_ID,
@@ -86,4 +116,5 @@ export class SwgohGgConstants {
 
     public static ALL_ARROW_PRIMARIES = [SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID, SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID, SwgohGgConstants.MOD_SPEED_STAT_ID,
     SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_DEFENSE_PERCENT_STAT_ID, SwgohGgConstants.MOD_CRIT_AVOIDANCE_STAT_ID, SwgohGgConstants.MOD_ACCURACY_STAT_ID];
+
 }

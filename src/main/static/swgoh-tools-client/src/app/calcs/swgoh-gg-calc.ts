@@ -259,12 +259,21 @@ export class SwgohGgCalc {
 
     public static SLOTS: SlotInfo[] = [
         { name: 'square', id: MOD_SLOT_SQUARE },
-        { name: 'diamond', id: MOD_SLOT_ARROW },
-        { name: 'circle', id: MOD_SLOT_DIAMOND },
-        { name: 'arrow', id: MOD_SLOT_TRIANGLE },
-        { name: 'triangle', id: MOD_SLOT_CIRCLE },
+        { name: 'diamond', id: MOD_SLOT_DIAMOND },
+        { name: 'circle', id: MOD_SLOT_CIRCLE },
+        { name: 'arrow', id: MOD_SLOT_ARROW },
+        { name: 'triangle', id: MOD_SLOT_TRIANGLE },
         { name: 'cross', id: MOD_SLOT_CROSS }
     ];
+
+    public static SLOTS_PRIMARY_CONFIGURABLE: SlotInfo[] = [
+        { name: 'arrow', id: MOD_SLOT_ARROW },
+        { name: 'circle', id: MOD_SLOT_CIRCLE },
+        { name: 'triangle', id: MOD_SLOT_TRIANGLE },
+        { name: 'cross', id: MOD_SLOT_CROSS }
+    ];
+
+
 
     public static getGuildAllyCodeList(guildData: RootObject): number[] {
         let retVal: number[] = [];

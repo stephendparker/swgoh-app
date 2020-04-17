@@ -28,6 +28,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import { SquadManagerComponent } from './../../components/squad-manager/squad-manager.component';
 import { ModCalculatorCharacterResultsDto, ModCalculatorResultsDto } from './../../model/optimization/mod-optimization';
 import { SwgohGgConstants } from './../../calcs/swgoh-gg-constants';
+import { CharacterOptimizationDialogComponent } from './../../components/character-optimization-dialog/character-optimization-dialog.component';
 
 
 class CharacterBestMods {
@@ -861,6 +862,19 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  clickViewOptimizationSettings(name: string) {
+    const dialogRef = this.dialog.open(CharacterOptimizationDialogComponent, {
+      width: '900px',
+      disableClose: true,
+      data: {
+        optimization: this.optimizationData.characterResults.find(optimizationCharacter => optimizationCharacter.name == name)
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+    });
+
+  }
+
   // Set mod MatSort
   setModSort(sortField: string) {
     this.sortField = sortField;
@@ -1158,7 +1172,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       if (playerCharacterDto == null) {
         playerCharacterDto = new CharacterModDto();
         playerCharacterDto.name = mod.character;
-        let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == this.baseId)
+        let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == mod.character)
         playerCharacterDto.label = charData == null ? null : charData.name;
 
         this.playerCharacterDtos.push(playerCharacterDto);
@@ -1184,7 +1198,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         if (playerCharacterDto == null) {
           playerCharacterDto = new CharacterModDto();
           playerCharacterDto.name = unit.data.base_id;
-          let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == this.baseId)
+          let charData = this.characterData == null ? null : this.characterData.find(character => character.base_id == unit.data.base_id)
           playerCharacterDto.label = charData == null ? null : charData.name;
 
           this.playerCharacterDtos.push(playerCharacterDto);

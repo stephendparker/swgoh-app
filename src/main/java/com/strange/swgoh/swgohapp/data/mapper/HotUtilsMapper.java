@@ -26,8 +26,8 @@ public class HotUtilsMapper {
     public static int MOD_POTENCY_STAT_ID = 17;
     public static int MOD_SPEED_STAT_ID = 5;
     public static int MOD_TENACITY_STAT_ID = 18;
-    public static int MOD_CRIT_AVOIDANCE_STAT_ID = 52;
-    public static int MOD_ACCURACY_STAT_ID = 54;
+    public static int MOD_CRIT_AVOIDANCE_STAT_ID = 54;
+    public static int MOD_ACCURACY_STAT_ID = 52;
 
 
 

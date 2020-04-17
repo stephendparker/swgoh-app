@@ -62,6 +62,8 @@ import { DeleteModConfigDialogComponent } from './components/delete-mod-config-d
 import { CharacterModSummaryComponent } from './components/character-mod-summary/character-mod-summary.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SquadManagerComponent } from './components/squad-manager/squad-manager.component';
+import { CharacterOptimizationDialogComponent } from './components/character-optimization-dialog/character-optimization-dialog.component';
+import { MatSliderModule } from '@angular/material/slider';
 
 @NgModule({
   declarations: [
@@ -98,7 +100,8 @@ import { SquadManagerComponent } from './components/squad-manager/squad-manager.
     ModSetSummaryComponent,
     DeleteModConfigDialogComponent,
     CharacterModSummaryComponent,
-    SquadManagerComponent
+    SquadManagerComponent,
+    CharacterOptimizationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -126,7 +129,8 @@ import { SquadManagerComponent } from './components/squad-manager/squad-manager.
     ScrollingModule,
     MatMenuModule,
     MatCheckboxModule,
-    DragDropModule
+    DragDropModule,
+    MatSliderModule
   ],
   entryComponents: [
     ColumnSelectorComponent,
@@ -135,7 +139,8 @@ import { SquadManagerComponent } from './components/squad-manager/squad-manager.
     ModFilterDialogComponent,
     RefreshModDialogComponent,
     ConfirmationDialogComponent,
-    DeleteModConfigDialogComponent
+    DeleteModConfigDialogComponent,
+    CharacterOptimizationDialogComponent
   ],
   providers: [DecimalPipe],
   bootstrap: [AppComponent]
