@@ -115,7 +115,7 @@
   			</button>
 
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
-			
+
 			<button mat-icon-button (click)="modPreviousCharacter()">
     			<mat-icon>navigate_before</mat-icon>
   			</button>
@@ -196,15 +196,17 @@
 				</button>
 			</mat-menu>
 
-			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
-
 			<button mat-icon-button (click)="openModFilterOptions()">
     			<mat-icon>filter_list</mat-icon>
   			</button>
 
+			<button mat-icon-button [class.filter-selected]="filterLocked" (click)="toggleLockedFilter()">
+					<mat-icon>lock</mat-icon>
+				</button>
+
 			<mat-divider class="style-fix" [vertical]="true"></mat-divider>
 
-			<ng-container *ngIf="displayModeSettings.mini == false">
+			<!--<ng-container *ngIf="displayModeSettings.mini == false">
 
 				<button *ngFor="let set of SwgohGgCalc.SETS" mat-icon-button [class.filter-selected]="selectedModEditorViewConfiguration != null && selectedModEditorViewConfiguration.filterSets.indexOf(set.id) != -1"
 					[class.important-filter]="isCommonSet(set)" (click)="toggleSetFilter(set.id)">
@@ -223,7 +225,7 @@
 					<mat-icon>lock</mat-icon>
 				</button>
 			</ng-container>
-
+-->
 
 
 			<span class="spacer"></span>

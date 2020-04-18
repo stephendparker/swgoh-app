@@ -74,6 +74,9 @@ export class ModEditorViewConfiguration {
   public circlePrimaryFilters: number[] = [];
   public arrowPrimaryFilters: number[] = [];
 
+  public secondaryIncludeFilters: number[] = [];
+  public secondaryExcludeFilters: number[] = [];
+
   public sort: string = 'strength';
 }
 
@@ -750,7 +753,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         arrowPrimaryFilters: this.selectedModEditorViewConfiguration.arrowPrimaryFilters,
         circlePrimaryFilters: this.selectedModEditorViewConfiguration.circlePrimaryFilters,
         trianglePrimaryFilters: this.selectedModEditorViewConfiguration.trianglePrimaryFilters,
-        crossPrimaryFilters: this.selectedModEditorViewConfiguration.crossPrimaryFilters
+        crossPrimaryFilters: this.selectedModEditorViewConfiguration.crossPrimaryFilters,
+        secondaryIncludeFilters: this.selectedModEditorViewConfiguration.secondaryIncludeFilters,
+        secondaryExcludeFilters: this.selectedModEditorViewConfiguration.secondaryExcludeFilters,
       }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -760,11 +765,14 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.filterSlots = result.filterSlots;
 
         if (this.selectedModEditorViewConfiguration != null) {
+
           this.selectedModEditorViewConfiguration.filterSets = result.filterSets;
           this.selectedModEditorViewConfiguration.arrowPrimaryFilters = result.arrowPrimaryFilter;
           this.selectedModEditorViewConfiguration.circlePrimaryFilters = result.circlePrimaryFilter;
           this.selectedModEditorViewConfiguration.trianglePrimaryFilters = result.trianglePrimaryFilter;
           this.selectedModEditorViewConfiguration.crossPrimaryFilters = result.crossPrimaryFilter;
+          this.selectedModEditorViewConfiguration.secondaryIncludeFilters = result.secondaryIncludeFilters;
+          this.selectedModEditorViewConfiguration.secondaryExcludeFilters = result.secondaryExcludeFilters;
         } else {
           this.setSetFilter([]);
         }

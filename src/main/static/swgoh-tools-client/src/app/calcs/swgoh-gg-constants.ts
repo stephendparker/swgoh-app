@@ -44,6 +44,10 @@ export class SwgohGgConstants {
     public static SPECIAL_CRITICAL_AVOIDANCE_STAT_ID = 40;
 
 
+    public static MOD_EITHER_HEALTH_STAT_ID = -1;
+    public static MOD_EITHER_PROTECTION_STAT_ID = -28;
+    public static MOD_EITHER_OFFENSE_STAT_ID = -41;
+    public static MOD_EITHER_DEFENSE_STAT_ID = -42;
 
     public static MOD_HEALTH_STAT_ID = 1;
     public static MOD_HEALTH_PERCENT_STAT_ID = 55;

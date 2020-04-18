@@ -17,6 +17,8 @@ export class ModListFilter {
   public circlePrimaryFilters: number[] = [];
   public trianglePrimaryFilters: number[] = [];
   public crossPrimaryFilters: number[] = [];
+  public secondaryIncludeFilters: number[] = [];
+  public secondaryExcludeFilters: number[] = [];
 }
 
 export class LockedModDto {
@@ -106,6 +108,8 @@ export class ModListComponentComponent implements OnInit {
     this.modListFilter.circlePrimaryFilters = filters.circlePrimaryFilters.slice(0);
     this.modListFilter.trianglePrimaryFilters = filters.trianglePrimaryFilters.slice(0);
     this.modListFilter.crossPrimaryFilters = filters.crossPrimaryFilters.slice(0);
+    this.modListFilter.secondaryExcludeFilters = filters.secondaryExcludeFilters == null ? [] : filters.secondaryExcludeFilters.slice(0);
+    this.modListFilter.secondaryIncludeFilters = filters.secondaryIncludeFilters == null ? [] : filters.secondaryIncludeFilters.slice(0);
     this.sortField = filters.sort;
 
     this.regenerateRows();
@@ -176,6 +180,71 @@ export class ModListComponentComponent implements OnInit {
       if (this.modListFilter.arrowPrimaryFilters != null && this.modListFilter.arrowPrimaryFilters.length > 0) {
         modList = modList.filter(mod => mod.mod.slot != SwgohGgConstants.MOD_SLOT_ARROW || this.modListFilter.arrowPrimaryFilters.indexOf(mod.mod.primary_stat.stat_id) != -1);
       }
+
+      if (this.modListFilter.secondaryIncludeFilters != null && this.modListFilter.secondaryIncludeFilters.length > 0) {
+        modList = modList.filter(mod => {
+
+          let retVal = true;
+          this.modListFilter.secondaryIncludeFilters.forEach(secondaryInclude => {
+
+            if (secondaryInclude < 0) {
+              switch (secondaryInclude) {
+                case SwgohGgConstants.MOD_EITHER_DEFENSE_STAT_ID: {
+                  if (mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_DEFENSE_PERCENT_STAT_ID) == null &&
+                    mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_DEFENSE_STAT_ID) == null) {
+                    retVal = false;
+                  }
+                  break;
+                }
+
+                case SwgohGgConstants.MOD_EITHER_HEALTH_STAT_ID: {
+                  if (mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_HEALTH_PERCENT_STAT_ID) == null &&
+                    mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_HEALTH_STAT_ID) == null) {
+                    retVal = false;
+                  }
+                  break;
+                }
+
+                case SwgohGgConstants.MOD_EITHER_OFFENSE_STAT_ID: {
+                  if (mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_OFFENSE_STAT_ID) == null &&
+                    mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_OFFENSE_PERCENT_STAT_ID) == null) {
+                    retVal = false;
+                  }
+                  break;
+                }
+
+                case SwgohGgConstants.MOD_EITHER_PROTECTION_STAT_ID: {
+                  if (mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_PROTECTION_PERCENT_STAT_ID) == null &&
+                    mod.mod.secondary_stats.find(stat => stat.stat_id == SwgohGgConstants.MOD_PROTECTION_STAT_ID) == null) {
+                    retVal = false;
+                  }
+                  break;
+                }
+              }
+
+            } else if (mod.mod.secondary_stats.find(stat => stat.stat_id == secondaryInclude) == null) {
+              retVal = false;
+            }
+          })
+          return retVal;
+
+        });
+      }
+
+      if (this.modListFilter.secondaryExcludeFilters != null && this.modListFilter.secondaryExcludeFilters.length > 0) {
+        modList = modList.filter(mod => {
+          let retVal = true;
+          this.modListFilter.secondaryExcludeFilters.forEach(secondaryInclude => {
+
+            if (mod.mod.secondary_stats.find(stat => stat.stat_id == secondaryInclude) != null) {
+              retVal = false;
+            }
+          })
+          return retVal;
+
+        });
+      }
+
 
       if (this.lockedFilter != true) {
         modList = modList.filter(mod => this.lockedModDtos.find(lockedModDto => lockedModDto.id == mod.mod.id) == null);
