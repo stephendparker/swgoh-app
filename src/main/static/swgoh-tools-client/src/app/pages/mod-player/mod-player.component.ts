@@ -102,7 +102,7 @@ export class PlayerModConfiguration {
 class PlayerModSaveData {
   playerAllyCode: string; // ally code
 
- public resetAllyCode() {
+  public resetAllyCode() {
     this.playerModData = new PlayerModData();
     this.restoredLockedMods = [];
   }
@@ -953,16 +953,41 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   }
 
   resetMods(name: string) {
-    this.selectedCharacterDto.lockedMods = this.selectedCharacterDto.currentMods.slice(0);
-    this.revertToInGameModsSoft();
-    this.updateComponents();
-    this.updateUserInterface();
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {
+        confirmationText: 'Reset mods? (will revert to in game mods and take off other characters)'
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        // TODO - confirm
+        this.selectedCharacterDto.lockedMods = this.selectedCharacterDto.currentMods.slice(0);
+        this.revertToInGameModsSoft();
+        this.updateComponents();
+        this.updateUserInterface();
+      }
+    });
   }
 
   revertMods(name: string) {
-    this.revertToInGameModsSoft();
-    this.updateComponents();
-    this.updateUserInterface();
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {
+        confirmationText: 'Revert mods? (will undo any pending changes)'
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        this.revertToInGameModsSoft();
+        this.updateComponents();
+        this.updateUserInterface();
+      }
+    });
   }
 
   sameMods(set1: ModsEntity[], set2: ModsEntity[]): boolean {
