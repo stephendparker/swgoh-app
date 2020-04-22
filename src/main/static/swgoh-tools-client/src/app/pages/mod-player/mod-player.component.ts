@@ -968,8 +968,39 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.revertToInGameModsSoft();
         this.updateComponents();
         this.updateUserInterface();
+        this.saveSettings();
       }
     });
+  }
+
+  pendingModsNotLocked() {
+    let pendingMods = this.selectedCharacterDto.pendingMods;
+    let lockedMods = this.selectedCharacterDto.lockedMods;
+    let currentMods = this.selectedCharacterDto.currentMods;
+
+    return this.sameMods(lockedMods, pendingMods) != true || (lockedMods.length == 0 && this.sameMods(pendingMods, currentMods) != true );
+  }
+
+  exitModdingScreen() {
+
+    if (this.pendingModsNotLocked()) {
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        width: '600px',
+        disableClose: true,
+        data: {
+          confirmationText: 'Lock pending mods?'
+        }
+      })
+      dialogRef.afterClosed().subscribe(result => {
+        if (result != null) {
+          this.toggleLock(this.selectedCharacterDto);
+          this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+        }
+        this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+      });
+    } else {
+      this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+    }
   }
 
   revertMods(name: string) {
