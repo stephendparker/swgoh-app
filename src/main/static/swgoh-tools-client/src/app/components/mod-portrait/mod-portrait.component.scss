@@ -48,7 +48,7 @@
 .mod-summary {
     float: left;
     display: inline-block;
-    width: 240px;
+    width: 210px;
     height: 100px;
 }
 
@@ -82,7 +82,7 @@
 
 .stat-primary {
     // font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0px;
     line-height: 1.1;
@@ -95,7 +95,8 @@
     font-weight: 300;
     letter-spacing: 0px;
     line-height: 1.1;
-    width: 145px;
+    width: 125px;
+    word-wrap: break-word;
     margin-top: 4px;
 }
 
@@ -693,19 +694,19 @@
     outline: solid 1px black;
 }
 
-.mod-level {
-    background-color: papayawhip;
-    width: 20px;
-    height: 20px;
-    border: solid 1px black;
-    position: absolute;
-    left: -85px;
-    top: 74px;
-    text-align: center;
-    font-weight: bolder;
-    font-style: italic;
-    font-size: 16px;
-}
+// .mod-level {
+//     background-color: papayawhip;
+//     width: 20px;
+//     height: 20px;
+//     border: solid 1px black;
+//     position: absolute;
+//     left: -85px;
+//     top: 74px;
+//     text-align: center;
+//     font-weight: bolder;
+//     font-style: italic;
+//     font-size: 16px;
+// }
 
 .mod-upgradeable {}
 
@@ -3017,16 +3018,16 @@
     vertical-align: top
 }
 
-.popup-statmod .statmod-title {
-    padding: 5px 10px;
-    font-size: 18px;
-    font-weight: 700;
-    background-color: #425058;
-    border-bottom: 2px solid #99abb5;
-    margin-bottom: 15px;
-    border-radius: 5px 5px 0 0;
-    color: #fff
-}
+// .popup-statmod .statmod-title {
+//     padding: 5px 10px;
+//     font-size: 18px;
+//     font-weight: 700;
+//     background-color: #425058;
+//     border-bottom: 2px solid #99abb5;
+//     margin-bottom: 15px;
+//     border-radius: 5px 5px 0 0;
+//     color: #fff
+// }
 
 .popup-statmod .statmod-details {
     border-top: 1px solid #eaeaea;
@@ -3296,11 +3297,11 @@
     background-position: -56px -234px
 }
 
-.pc-statmod-list .statmod-summary .statmod-level {
-    position: absolute;
-    font-size: 10px;
-    width: 16px
-}
+// .pc-statmod-list .statmod-summary .statmod-level {
+//     position: absolute;
+//     font-size: 10px;
+//     width: 16px
+// }
 
 .pc-statmod-list .statmod-pips {
     box-shadow: 0 0 0 1px #181615

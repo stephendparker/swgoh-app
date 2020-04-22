@@ -61,6 +61,9 @@ export class ModListComponentComponent implements OnInit {
 
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
+  rightPanelWidth: number = 0;
+  height: number = 0;
+
   protected unsubscribe$ = new Subject<void>();
 
   constructor(private displayModeService: DisplayModeService, private cdr: ChangeDetectorRef) {
@@ -69,10 +72,15 @@ export class ModListComponentComponent implements OnInit {
 
   ngOnInit() {
     this.displayModeService.displayModeSettings$.pipe(takeUntil(this.unsubscribe$)).subscribe(displayModeSettings => {
-      if (displayModeSettings != null)
+      if (displayModeSettings != null) {
         this.displayModeSettings = displayModeSettings;
+        this.rightPanelWidth = this.displayModeSettings.mini ? this.displayModeSettings.windowWidth : this.displayModeSettings.modRightPaneWidth;
+
+        this.height = this.displayModeSettings.mini ? this.displayModeSettings.modEditorHeight - 380 : this.displayModeSettings.modEditorHeight;
+      }
       this.regenerateRows();
       this.cdr.detectChanges();
+
     });
     this.regenerateRows();
     this.cdr.detectChanges();
@@ -83,6 +91,8 @@ export class ModListComponentComponent implements OnInit {
   }
 
   setMods(mods: EvaluatedModDto[]) {
+    this.mods = [];
+    this.cdr.detectChanges();
     this.mods = mods;
     this.regenerateRows();
     this.cdr.detectChanges();
@@ -154,7 +164,9 @@ export class ModListComponentComponent implements OnInit {
 
   regenerateRows() {
     if (this.mods != null && this.mods.length > 0) {
-      let columnCount = Math.floor((this.displayModeSettings.modRightPaneWidth - 30) / this.displayModeSettings.modPortraitWidth);
+
+
+      let columnCount = Math.floor((this.rightPanelWidth - 30) / this.displayModeSettings.modPortraitWidth);
 
       let modList = this.mods;
 

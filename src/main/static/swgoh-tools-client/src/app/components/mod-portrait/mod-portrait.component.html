@@ -1,5 +1,5 @@
 <div *ngIf="mod != null" [id]="mod.id">
-	<div *ngIf="displayModeSettings.mini == false">
+	<div *ngIf="displayModeSettings.mini == false || large == true">
 		<div class="mod-summary mod-content-item mod-locked">
 			<div class="mod-dots mod-content-item">
 				<div class="mod-dot mod-content-item"></div>
@@ -25,7 +25,7 @@
 		</div>
 	</div>
 
-	<div *ngIf="displayModeSettings.mini">
+	<div *ngIf="displayModeSettings.mini && large != true">
 
 		<section [class.container]="true">
 			<div [class.icon-section]="true">
@@ -44,7 +44,7 @@
 
 						<div *ngIf="showStatsSmall" [style.width]="'40px'" [style.height]="'40px'" [style.top]="showStatsSmall ? '0px' : '40px'"
 							[style.right]="showStatsSmall ? '40px' : '0px'">
-							<img [src]="imageUrl" [style.max-width]="'30px'" [style.max-height]="'30px'">
+							<img *ngIf="mod.character != null" [src]="imageUrl" [style.max-width]="'30px'" [style.max-height]="'30px'">
 
 						</div>
 						<!--<div *ngIf="showStatsSmall" [style.width]="'40px'" [style.height]="'40px'" [style.top]="showStatsSmall ? '0px' : '40px'"
@@ -65,7 +65,7 @@
 			</div>
 
 			<div [class.stats-section]="showStatsSmall == false" *ngIf="showStatsSmall == false">
-				<div [style.width]="'20px'" [style.height]="'40px'" style="float: left">
+				<div *ngIf="mod.character != null" [style.width]="'20px'" [style.height]="'40px'" style="float: left">
 					<img [src]="imageUrl" [style.max-width]="'20px'" [style.max-height]="'20px'">
 				</div>
 

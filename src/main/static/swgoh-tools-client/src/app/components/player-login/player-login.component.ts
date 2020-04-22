@@ -16,9 +16,9 @@ export class PlayerLoginDto {
 })
 export class PlayerLoginComponent implements OnInit, OnDestroy {
 
-  public playerId: string = '738889527';
+  public playerId: string = '';
   public lockInput: boolean = false;
-  public playerHotutils: string = 'd8461c19-9324-4c78-870f-6e10f22e20cd';
+  public playerHotutils: string = null;
 
 
   protected unsubscribe$ = new Subject<void>();
@@ -37,7 +37,7 @@ export class PlayerLoginComponent implements OnInit, OnDestroy {
   }
 
   formComplete() {
-    return this.playerId != null;
+    return this.playerId != null && (  (this.playerId.length === 0 || !this.playerId.trim()) == false);
   }
 
   onClose(): void {

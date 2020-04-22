@@ -37,27 +37,21 @@ export class DataStoreService {
     this.modelGuildData.next(guildData);
   }
 
-  public getModOptimizationData(): Observable<ModCalculatorResultsDto> {
+  public modOptimizationData: BehaviorSubject<ModCalculatorResultsDto> = new BehaviorSubject<ModCalculatorResultsDto>(null);
+  public modOptimizationData$: Observable<ModCalculatorResultsDto> = asObservable(this.modOptimizationData);
 
-    let modOptimizationData: BehaviorSubject<ModCalculatorResultsDto> = new BehaviorSubject<ModCalculatorResultsDto>(null);
-    let modOptimizationData$: Observable<ModCalculatorResultsDto> = asObservable(modOptimizationData);
+  public getModOptimizationData(): Observable<ModCalculatorResultsDto> {
 
     if (this.optimizationDataCache != undefined && this.optimizationDataCache != null) {
 
-      (async () => {
-        await delay(1);
-        modOptimizationData.next(this.optimizationDataCache);
-        modOptimizationData.complete();
-      })();
-
     } else {
+      this.optimizationDataCache = {};
       this.swgohGgDs.optimization().subscribe(optimizationData => {
         this.optimizationDataCache = optimizationData;
-        modOptimizationData.next(optimizationData);
-        modOptimizationData.complete();
+        this.modOptimizationData.next(optimizationData);
       });
     }
-    return modOptimizationData$;
+    return this.modOptimizationData$;
   }
 
   public characterFetchData: BehaviorSubject<CharacterData[]> = new BehaviorSubject<CharacterData[]>(null);

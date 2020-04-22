@@ -66,6 +66,21 @@ export class PlayerModData {
 
 export class ModEditorViewConfiguration {
   public characterName;
+
+  public reset() {
+    this.filterSets = [];
+    this.filterSlots = [];
+
+    this.crossPrimaryFilters = [];
+    this.trianglePrimaryFilters = [];
+    this.circlePrimaryFilters = [];
+    this.arrowPrimaryFilters = [];
+
+    this.secondaryIncludeFilters = [];
+    this.secondaryExcludeFilters = [];
+
+    this.sort = 'strength';
+  }
   public filterSets: number[] = [];
   public filterSlots: number[] = [];
 
@@ -135,7 +150,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
   protected unsubscribe$ = new Subject<void>();
 
-  displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
+  displayModeSettings: DisplayModeSettings = new DisplayModeSettings(); // LINKED TO UI
 
   public VIEW_SELECT_CHARACTER = 1;
   public VIEW_MODS = 2;
@@ -164,13 +179,13 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   // data returned from services (not configured by user)
   // playerModData: PlayerModData = new PlayerModData();
 
-  squadDtos: SquadDto[] = [];
+  squadDtos: SquadDto[] = [];  // LINKED TO UI
 
-  saveData: PlayerModSaveData = new PlayerModSaveData();
+  saveData: PlayerModSaveData = new PlayerModSaveData(); // LINKED TO UI
 
   selectedSlotMod: ModsEntity; // the mod the user clicks in their display
-  selectedCharacterDto: CharacterModDto = null;
-  selectedModEditorViewConfiguration: ModEditorViewConfiguration = null;
+  selectedCharacterDto: CharacterModDto = null; // LINKED TO UI
+  selectedModEditorViewConfiguration: ModEditorViewConfiguration = null; // LINKED TO UI
   playerCharacterDtos: CharacterModDto[];
 
   evaludatedMods: EvaluatedModDto[];
@@ -196,7 +211,11 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
   // restoredLockedMods: SaveModDto[] = null;
 
-  categoryList: string[] = []; // categories list is used in filter options for summary view
+  summaryViewCharacters: CharacterModDto[] = [];  // LINKED TO UI
+
+  allLockedMods: ModsEntity[] = [];
+
+  categoryList: string[] = []; // LINKED TO UI - categories list is used in filter options for summary view
   characterData: CharacterData[] = null;
   optimizationData: ModCalculatorResultsDto;  // used for mod optimization
 
@@ -263,11 +282,23 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     })();
   }
 
-  summaryViewCharacters: CharacterModDto[] = [];
+  updateUserInterface() {
+    this.allLockedMods = this.getLockedMods(true);
+
+    this.cdr.detectChanges();
+  }
+
+
+  updateViewMode(mode: number) {
+    this.viewMode = mode;
+    this.updateUserInterface();
+  }
+
 
   setSortPower() {
     this.summarySort = ENUM_SORT_TYPE.POWER;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setSortSpeed() {
@@ -276,7 +307,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
     this.summarySort = ENUM_SORT_TYPE.SPEED;
     this.updateSummaryViewCharacters();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   setSortOffense() {
@@ -284,6 +315,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.summarySort = ENUM_SORT_TYPE.OFFENSE;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setSortHealth() {
@@ -291,6 +323,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.summarySort = ENUM_SORT_TYPE.HEALTH;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setSortProtection() {
@@ -298,6 +331,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.summarySort = ENUM_SORT_TYPE.PROTECTION;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setSortPotency() {
@@ -305,6 +339,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.summarySort = ENUM_SORT_TYPE.POTENCY;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setSortTenacity() {
@@ -312,6 +347,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.summarySort = ENUM_SORT_TYPE.TENACITY;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setReviewFilterAll() {
@@ -319,6 +355,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.reviewFilterType = null;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setReviewFilterMovedMods() {
@@ -326,6 +363,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.reviewFilterType = this.REVIEW_FILTER_MOVED_MODS;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setReviewFilterSquad(squad) {
@@ -334,6 +372,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.reviewFilterType = this.REVIEW_FILTER_SQUAD;
     this.reviewFilterSquad = squad;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   setReviewFilterCategory(category) {
@@ -342,6 +381,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.reviewFilterType = this.REVIEW_FILTER_CATEGORY;
     this.reviewFilterCategory = category;
     this.updateSummaryViewCharacters();
+    this.updateUserInterface();
   }
 
   modNextCharacter() {
@@ -360,7 +400,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       targetIndex = currentCharacterIndex + 1;
     }
     this.modCharacter(this.summaryViewCharacters[targetIndex].name);
-
+    this.updateUserInterface();
   }
 
   modPreviousCharacter() {
@@ -381,7 +421,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       targetIndex = currentCharacterIndex - 1;
     }
     this.modCharacter(this.summaryViewCharacters[targetIndex].name);
-
+    this.updateUserInterface();
   }
 
   updateSummaryViewCharacters() {
@@ -416,6 +456,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         break;
       }
     }
+    retVal = retVal == null ? [] : retVal;
 
     retVal = retVal.filter(playerCharacterDto => playerCharacterDto.name != null);
 
@@ -604,6 +645,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.saveData.squads = squads;
     this.saveSettings();
     this.updateComponents();
+    this.updateUserInterface();
   }
 
   reloadData(playerSwgohGg: boolean, playerHotutils: boolean, clearMods: boolean, sessionIdHotutils: string) {
@@ -663,6 +705,8 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result != null) {
         this.reloadData(result.playerSwgohGg, result.playerHotutils, result.clearMods, result.sessionIdHotutils);
+        this.updateComponents();
+        this.updateUserInterface();
       }
     });
   }
@@ -709,7 +753,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.filterLocked = !this.filterLocked;
     this.modList.setLockedFilter(this.filterLocked);
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   deleteSquad(index: number) {
@@ -781,7 +825,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.modList.setFilters(this.selectedModEditorViewConfiguration);
         this.saveSettings();
         this.updateComponents();
-        this.cdr.detectChanges();
+        this.updateUserInterface();
       }
     });
   }
@@ -798,18 +842,23 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
           this.playerCharacterDtos.forEach(characterModDto => {
             characterModDto.lockedMods = [];
           });
+        }
 
+        if (result.squads == DeleteModConfigDialogComponent.ALL) {
+          this.saveData.squads = [];
+        }
+        if (result.unequippedMods == DeleteModConfigDialogComponent.ALL) {
+          this.saveData.playerModData.unequippedMods = [];
         }
         if (result.filters == DeleteModConfigDialogComponent.ALL) {
-          this.saveData.modEditorViewConfigurations = [];
+          this.saveData.modEditorViewConfigurations.forEach(config => config.reset());
         }
-        if (result.filters == DeleteModConfigDialogComponent.RESET) {
-          this.saveData.modEditorViewConfigurations = [];
-          this.generateDefaultEditorViews();
-        }
+        this.revertToInGameModsSoft();
+        this.setSelectedCharacter(this.selectedCharacter);
+
         this.saveSettings();
         this.updateComponents();
-        this.cdr.detectChanges();
+        this.updateUserInterface();
       }
     });
   }
@@ -820,7 +869,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.filterSlots = mod == null ? [] : [mod.slot];
     this.modList.setModSlotFilter(this.filterSlots);
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   // FROM UI - add a single mod to the current characters pending
@@ -830,7 +879,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.selectedCharacterDto.pendingMods.push(mod);
     }
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   // FROM UI 
@@ -839,7 +888,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.setSelectedCharacter(character);
     this.revertToInGameModsSoft();
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   // assign pending mods to character, first mods that are locked, second mods in game that are not locked to other players
@@ -867,7 +916,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   clickOptimizeCharacter(name: string) {
     this.optimize(name);
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   clickViewOptimizationSettings(name: string) {
@@ -888,19 +937,20 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.sortField = sortField;
     this.selectedModEditorViewConfiguration.sort = sortField;
     this.modList.setModSortField(this.selectedModEditorViewConfiguration.sort = sortField);
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   resetMods(name: string) {
-
+    this.selectedCharacterDto.lockedMods = this.selectedCharacterDto.currentMods.slice(0);
+    this.revertToInGameModsSoft();
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   revertMods(name: string) {
     this.revertToInGameModsSoft();
     this.updateComponents();
-    this.cdr.detectChanges();
+    this.updateUserInterface();
   }
 
   sameMods(set1: ModsEntity[], set2: ModsEntity[]): boolean {
@@ -966,6 +1016,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.saveSettings();
       }
     }
+    this.updateUserInterface();
   }
 
   toggleLock(characterModDto: CharacterModDto) {
@@ -991,7 +1042,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       }
 
       this.updateComponents();
-      this.cdr.detectChanges();
+      this.updateUserInterface();
     }
   }
 

@@ -1,16 +1,5 @@
-<h4 mat-dialog-title>Delete Mod Configurations (All Characters)</h4>
+<h4 mat-dialog-title>Delete Mod Data (All Characters)</h4>
 <mat-dialog-content>
-
-	<div class="flow row">
-		<div class="flow row">Filters:</div>
-		<div class="flow row">
-			<mat-button-toggle-group name="filters" [(ngModel)]="filters">
-				<mat-button-toggle [value]="_NONE">None</mat-button-toggle>
-				<mat-button-toggle [value]="_RESET">Reset to Optimization</mat-button-toggle>
-				<mat-button-toggle [value]="_ALL">Remove All</mat-button-toggle>
-			</mat-button-toggle-group>
-		</div>
-	</div>
 
 	<div class="flow row">
 		<div class="flow row">Locked Mods:</div>
@@ -22,9 +11,42 @@
 		</div>
 	</div>
 
+	<div class="flow row">
+		<div class="flow row">Squads:</div>
+		<div class="flow row">
+			<mat-button-toggle-group name="squads" [(ngModel)]="squads">
+				<mat-button-toggle [value]="_NONE">None</mat-button-toggle>
+				<mat-button-toggle [value]="_ALL">Remove All</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+	</div>
+
+	<div class="flow row">
+		<div class="flow row">Unequipped Mods:</div>
+		<div class="flow row">
+			<mat-button-toggle-group name="unequippedMods" [(ngModel)]="unequippedMods">
+				<mat-button-toggle [value]="_NONE">None</mat-button-toggle>
+				<mat-button-toggle [value]="_ALL">Remove All</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+	</div>
+
+
+	<div class="flow row">
+		<div class="flow row">Filters:</div>
+		<div class="flow row">
+			<mat-button-toggle-group name="filters" [(ngModel)]="filters">
+				<mat-button-toggle [value]="_NONE">None</mat-button-toggle>
+				<mat-button-toggle [value]="_ALL">Remove All</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+	</div>
+
+
+
 </mat-dialog-content>
 
 <div mat-dialog-actions align="end">
-	<button mat-button [disabled]="confirmation == false" (click)="onOk()">Ok</button>
+	<button mat-button (click)="onOk()">Ok</button>
 	<button mat-button (click)="onClose()">Close</button>
 </div>

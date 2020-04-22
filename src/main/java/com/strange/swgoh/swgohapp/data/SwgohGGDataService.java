@@ -155,7 +155,7 @@ public class SwgohGGDataService {
         int count = 0;
         for (Player player : optimizationGuild.getPlayers()) {
 
-            if (count < 10) {
+            if (count < 50) {
                 count = count + 1;
                 modsList.add(playerModsMapped(player.getData().getAllyCode().toString()));
             }

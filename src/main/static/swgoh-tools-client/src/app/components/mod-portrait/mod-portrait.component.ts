@@ -23,6 +23,9 @@ export class ModPortraitComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() currentCharacter: string;
 
+  @Input() large: boolean = false;
+
+
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
   @Input() locked: boolean = false;

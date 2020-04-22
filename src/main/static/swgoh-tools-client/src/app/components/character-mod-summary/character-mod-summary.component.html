@@ -1,28 +1,34 @@
 <div class="flow row">
-	<div class="flow column padded">
-		<div class="flow row">
-			<app-character-portrait [baseId]="modDto.name" [locked]="allLocked"></app-character-portrait>
-		</div>
-		<div class="flow row" *ngIf="optimization != null">
-			<div class="flow row">Target Set:</div>
+	<ng-container>
+		<div class="flow column portrait-column">
 			<div class="flow row">
-				<app-mod-set-summary [commonSet1]="optimization?.commonSet1Name" [commonSet2]="optimization?.commonSet2Name" [commonSet3]="optimization?.commonSet3Name"></app-mod-set-summary>
+				<app-character-portrait [baseId]="modDto.name" [locked]="allLocked"></app-character-portrait>
+			</div>
+			<div class="flow row" *ngIf="optimization != null">
+				<div class="flow row">Target Set:</div>
+				<div class="flow row">
+					<app-mod-set-summary [commonSet1]="optimization?.commonSet1Name" [commonSet2]="optimization?.commonSet2Name" [commonSet3]="optimization?.commonSet3Name"></app-mod-set-summary>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="flow column" [style.width]="displayModeSettings.modLeftPaneWidth + 'px'">
+	</ng-container>
 
-		<div class="flow row">
+	<div class="flow column">
+
+		<div class="flow row ">
 			<button mat-icon-button (click)="clickToggleLock()">
 				<mat-icon>{{ canLock ? 'lock' : 'lock_open' }}</mat-icon>
   			</button>
 		</div>
-		<div class="flow row">
-			<app-mod-display #modDisplay [mods]="displayMods" (click)="clickMods()"></app-mod-display>
+		<div class="flow row ">
+			<app-mod-display #modDisplay [large]="true" [mods]="displayMods" (click)="clickMods()"></app-mod-display>
 		</div>
 	</div>
-	<div class="flow column">
-		<app-mod-set-comparison [unitData]="modDto.unitData" [inGameMods]="modDto.currentMods" [lockedMods]="modDto.lockedMods" [excludedMods]="lockedMods"></app-mod-set-comparison>
+	<div class="flow column" [class.hidden]="displayModeSettings.mini == true">
+		<div class="horizontal-scroll">
+			<app-mod-set-comparison [showSixEOverride]="false" [unitData]="modDto.unitData" [inGameMods]="modDto.currentMods" [lockedMods]="modDto.lockedMods"
+				[excludedMods]="lockedMods"></app-mod-set-comparison>
+		</div>
 	</div>
 
 </div>

@@ -5,7 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { ModDisplayComponent } from './../mod-display/mod-display.component';
-import { ModCalculatorCharacterResultsDto } from './../../model/optimization/mod-optimization';
+import { ModCalculatorCharacterResultsDto, ModCalculatorResultsDto } from './../../model/optimization/mod-optimization';
+import { DataStoreService } from './../../services/data-store.service';
 
 @Component({
   selector: 'app-character-mod-summary',
@@ -16,7 +17,7 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
 
   @Input() modDto: CharacterModDto;
   @Input() lockedMods: ModsEntity[] = [];
-  @Input() optimization: ModCalculatorCharacterResultsDto;
+  
 
   @Input() allLocked: boolean = false;
 
@@ -30,17 +31,27 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
 
   displayMods: ModsEntity[];
 
+  optimizationData: ModCalculatorResultsDto;  // used for mod optimization
+  optimization: ModCalculatorCharacterResultsDto;
 
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings();
 
   protected unsubscribe$ = new Subject<void>();
 
-  constructor(private displayModeService: DisplayModeService, private cdr: ChangeDetectorRef) { }
+  constructor(private displayModeService: DisplayModeService, private dataStoreService: DataStoreService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.displayModeService.displayModeSettings$.pipe(takeUntil(this.unsubscribe$)).subscribe(displayModeSettings => {
       if (displayModeSettings != null)
         this.displayModeSettings = displayModeSettings;
+    });
+
+    this.dataStoreService.getModOptimizationData().pipe(takeUntil(this.unsubscribe$)).subscribe(optimizationData => {
+      if (optimizationData != null) {
+        this.optimizationData = optimizationData;
+        this.updateData();
+        this.cdr.detectChanges();
+      }
     });
 
     this.updateData();
@@ -62,6 +73,7 @@ export class CharacterModSummaryComponent implements OnInit, OnChanges {
   updateData() {
     this.displayMods = this.modDto.lockedMods.slice(0);
 
+    this.optimization = this.optimizationData == null ? null : this.optimizationData.characterResults.find(optimizationCharacter => optimizationCharacter.name == this.modDto.name);
 
     this.canLock = true;
 

@@ -44,30 +44,30 @@
 
 	<tr>
 		<th></th>
-		<th>Game</th>
+		<th *ngIf="showGame">Game</th>
 		<th *ngIf="showLocked">Locked</th>
-		<th *ngIf="showLocked">Locked Delta</th>
+		<th *ngIf="showLockedPending">Locked Delta</th>
 
 		<th *ngIf="showPending">Pending</th>
 		<th *ngIf="showPending">Pending Delta</th>
 
-		<th *ngIf="showSixE">6E</th>
-		<th *ngIf="showSixE">6E Delta</th>
+		<th *ngIf="showSixE && showSixEOverride && displayModeSettings.mini == false">6E</th>
+		<th *ngIf="showSixE && showSixEOverride && displayModeSettings.mini == false">6E Delta</th>
 	</tr>
 
 	<tr *ngFor="let element of dataSource">
 		<td>{{ element.label }}</td>
 
-		<td>{{ element.inGameValue | number }} <span *ngIf="element.inGameBonusText != 0"> ({{ element.inGameBonusText | number }})</span></td>
+		<td *ngIf="showGame">{{ element.inGameValue | number }} <span *ngIf="element.inGameBonusText != 0"> ({{ element.inGameBonusText | number }})</span></td>
 
 		<td *ngIf="showLocked">{{ element.lockedValue | number }}</td>
-		<td *ngIf="showLocked" [class.highlight-worsten]="element.lockedDelta != null && element.lockedDelta < 0" [class.highlight-improve]="element.lockedDelta != null && element.lockedDelta > 0">{{ element.lockedDelta | number }}</td>
+		<td *ngIf="showLockedPending" [class.highlight-worsten]="element.lockedDelta != null && element.lockedDelta < 0" [class.highlight-improve]="element.lockedDelta != null && element.lockedDelta > 0">{{ element.lockedDelta | number }}</td>
 
 		<td *ngIf="showPending">{{ element.pendingValue | number }}</td>
 		<td *ngIf="showPending" [class.highlight-worsten]="element.pendingDelta != null && element.pendingDelta < 0" [class.highlight-improve]="element.pendingDelta != null && element.pendingDelta > 0">{{ element.pendingDelta | number }}</td>
 
-		<td *ngIf="showSixE">{{ element.sixEValue | number }}</td>
-		<td *ngIf="showSixE">{{ element.sixEDelta | number }}</td>
+		<td *ngIf="showSixE && showSixEOverride && displayModeSettings.mini == false">{{ element.sixEValue | number }}</td>
+		<td *ngIf="showSixE && showSixEOverride && displayModeSettings.mini == false">{{ element.sixEDelta | number }}</td>
 	</tr>
 
 </table>

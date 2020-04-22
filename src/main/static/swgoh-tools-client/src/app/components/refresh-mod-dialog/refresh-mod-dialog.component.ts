@@ -11,7 +11,7 @@ export class RefreshModDialogComponent implements OnInit {
   playerSwgohGg: boolean = false;
   playerHotutils: boolean = false;
   clearMods: boolean = false;
-  sessionIdHotutils: string = 'd8461c19-9324-4c78-870f-6e10f22e20cd';
+  sessionIdHotutils: string = '';
 
   constructor(public dialogRef: MatDialogRef<RefreshModDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 

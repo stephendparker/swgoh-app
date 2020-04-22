@@ -29,6 +29,8 @@ export class ModDisplayComponent implements OnInit, OnChanges {
 
   @Output() modClicked: EventEmitter<ModsEntity> = new EventEmitter();
 
+  @Input() large: boolean = false;
+
   square: ModsEntity;
   diamond: ModsEntity;
   circle: ModsEntity;
@@ -44,12 +46,20 @@ export class ModDisplayComponent implements OnInit, OnChanges {
 
   border: string = null;
 
+  modDisplayPortaitHeight: number = 0;
+
   constructor(private displayModeService: DisplayModeService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.displayModeService.displayModeSettings$.pipe(takeUntil(this.unsubscribe$)).subscribe(displayModeSettings => {
       if (displayModeSettings != null) {
         this.displayModeSettings = displayModeSettings;
+
+        this.modDisplayPortaitHeight = this.displayModeSettings.modDisplayPortaitHeight;
+        if (this.large) {
+          this.modDisplayPortaitHeight = this.displayModeSettings.modPortraitLargeHeight;
+        }
+
         this.cdr.detectChanges();
       }
     });

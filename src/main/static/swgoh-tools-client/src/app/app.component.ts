@@ -9,7 +9,8 @@ import { DisplayModeService } from './services/display-mode.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   host: {
-    '(window:resize)': 'onResize($event)'
+    '(window:resize)': 'onResize($event)',
+    '(window:orientationchange)': 'onOrientationChange($event)'
   }
 })
 export class AppComponent {
@@ -22,4 +23,9 @@ export class AppComponent {
   onResize(event) {
     this.displayModeService.setWindowSize(event.target);
   }
-}
+
+  onOrientationChange(event) {
+     this.displayModeService.setWindowSize(event.target);
+  }
+} 
+ 

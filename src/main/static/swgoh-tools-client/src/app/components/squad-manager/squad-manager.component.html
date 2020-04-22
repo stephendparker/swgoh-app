@@ -4,7 +4,7 @@
 		<div class="flow row first-row">
 			<mat-form-field [style.width]="'100%'">
 				<mat-label>Filters</mat-label>
-				<mat-select [formControl]="categoriesFormControl" (selectionChange)="filterChange($event)" [(value)]="selected">
+				<mat-select [formControl]="categoriesFormControl" (selectionChange)="filterChange($event)" [(value)]="filterSelected">
 					<mat-option *ngFor="let category of categoryList" [value]="category">{{category}}</mat-option>
 				</mat-select>
 			</mat-form-field>

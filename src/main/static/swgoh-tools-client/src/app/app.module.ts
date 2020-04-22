@@ -64,6 +64,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SquadManagerComponent } from './components/squad-manager/squad-manager.component';
 import { CharacterOptimizationDialogComponent } from './components/character-optimization-dialog/character-optimization-dialog.component';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -130,7 +131,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatMenuModule,
     MatCheckboxModule,
     DragDropModule,
-    MatSliderModule
+    MatSliderModule,
+    MatTooltipModule
   ],
   entryComponents: [
     ColumnSelectorComponent,

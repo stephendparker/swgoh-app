@@ -28,6 +28,7 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
   @Input() pendingMods: ModsEntity[] = null;
   @Input() unitData: UnitsEntity = null;
   @Input() excludedMods: ModsEntity[] = null;
+  @Input() showSixEOverride: boolean = true;
 
   fields: ModCompareFieldsDto[] = [
     { name: 'speed', label: 'Speed', format: '' },
@@ -39,11 +40,11 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
     { name: 'speciallDefense', label: 'Resistance', format: '%' },
     { name: 'tenacity', label: 'Tenacity', format: '%' },
     { name: 'potency', label: 'Potency', format: '%' },
-    { name: 'physicalCritChance', label: 'Physical Critical Chance', format: '%' },
-    { name: 'specialCritChance', label: 'Special Critical Chance', format: '%' },
-    { name: 'critDamage', label: 'Critical Damage', format: '%' },
-    { name: 'physicalCritAvoidance', label: 'Physical Critical Avoidance', format: '%' },
-    { name: 'specialCritAvoidance', label: 'Special Critical Avoidance', format: '%' }
+    { name: 'physicalCritChance', label: 'Physical Crit Chance', format: '%' },
+    { name: 'specialCritChance', label: 'Special Crit Chance', format: '%' },
+    { name: 'critDamage', label: 'Crit Damage', format: '%' },
+    { name: 'physicalCritAvoidance', label: 'Physical Crit Avoid', format: '%' },
+    { name: 'specialCritAvoidance', label: 'Special Crit Avoid', format: '%' }
   ];
 
   inGameTotalBonus: ModTotalBonus;
@@ -64,6 +65,8 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
   showLocked: boolean = false;
   showPending: boolean = false;
   showSixE: boolean = false;
+  showGame: boolean = true;
+  showLockedPending: boolean = true;
 
   existingTotalBonus: ModTotalBonus;
   newTotalBonus: ModTotalBonus;
@@ -206,6 +209,9 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
       };
       this.dataSource.push(newRow);
     });
+
+    this.showGame = this.displayModeSettings.mini == false || (this.showPending == false);
+    this.showLockedPending = this.showPending && (this.displayModeSettings.mini == false || this.showPending == false);
 
     this.cdr.detectChanges();
   }

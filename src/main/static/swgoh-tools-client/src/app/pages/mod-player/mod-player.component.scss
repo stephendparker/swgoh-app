@@ -26,6 +26,12 @@
     border-style: dotted;
 }
 
+.horizontal-scroll {
+    overflow: auto;
+    white-space: nowrap;
+    /* Scrollbar is displayed as it's needed */
+}
+
 .scrollable {
     overflow: auto;
     height: calc(-75px + 100vh)
