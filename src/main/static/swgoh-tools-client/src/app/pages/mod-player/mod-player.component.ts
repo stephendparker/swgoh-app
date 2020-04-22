@@ -102,6 +102,11 @@ export class PlayerModConfiguration {
 class PlayerModSaveData {
   playerAllyCode: string; // ally code
 
+ public resetAllyCode() {
+    this.playerModData = new PlayerModData();
+    this.restoredLockedMods = [];
+  }
+
   squads: string[][] = []; // squads to organize the players
   modEditorViewConfigurations: ModEditorViewConfiguration[] = []; // views, filters, sorting, etc per character
 
@@ -272,7 +277,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.updateFullyLockedCharacters();
 
       if (this.saveData.playerAllyCode == null) {
-        this.openPlayerLogin();
+        this.openPlayerLogin(true);
       } else {
         this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
       }
@@ -280,6 +285,10 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.squadManagers.forEach(squadManager => squadManager.setCharacterGroups(this.saveData.squads));
       }
     })();
+  }
+
+  openAccountDetails() {
+    this.openPlayerLogin(false);
   }
 
   updateUserInterface() {
@@ -713,14 +722,17 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
 
   // FROM UI
-  openPlayerLogin() {
+  openPlayerLogin(disableClose: boolean) {
     const dialogRef = this.dialog.open(PlayerLoginComponent, {
       width: '600px',
-      disableClose: true,
-      data: {}
+      disableClose: disableClose,
+      data: {
+        disableClose: disableClose
+      }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result != null) {
+        this.saveData.resetAllyCode();
         this.saveData.playerAllyCode = result.playerId;
         this.reloadData(true, result.playerHotutils != null, false, result.playerHotutils);
         this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;

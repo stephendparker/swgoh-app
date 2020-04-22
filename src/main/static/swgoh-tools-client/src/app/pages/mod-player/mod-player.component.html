@@ -55,7 +55,7 @@
 			<button mat-icon-button (click)="clickRefreshData()" matTooltip="Refresh player data">
     			<mat-icon>refresh</mat-icon>
   			</button>
-			<button mat-icon-button>
+			<button mat-icon-button (click)="openAccountDetails()">
     			<mat-icon>account_circle</mat-icon>
   			</button>
 		</mat-toolbar>
@@ -94,7 +94,7 @@
 			<button mat-icon-button (click)="clickRefreshData()" matTooltip="Refresh player data">
     			<mat-icon>refresh</mat-icon>
   			</button>
-			<button mat-icon-button>
+			<button mat-icon-button (click)="openAccountDetails()">
     			<mat-icon>account_circle</mat-icon>
   			</button>
 		</mat-toolbar>
@@ -200,7 +200,7 @@
     			<mat-icon>filter_list</mat-icon>
   			</button>
 
-			<button mat-icon-button [class.filter-selected]="filterLocked == false" (click)="toggleLockedFilter()"matTooltip="Show\Hide locked mods" > 
+			<button mat-icon-button [class.filter-selected]="filterLocked == false" (click)="toggleLockedFilter()" matTooltip="Show\Hide locked mods"> 
 					<mat-icon>wifi_lock</mat-icon>
 				</button>
 
@@ -216,7 +216,7 @@
 			<button mat-icon-button (click)="clickRefreshData()" matTooltip="Refresh player data">
     			<mat-icon>refresh</mat-icon>
   			</button>
-			<button mat-icon-button>
+			<button mat-icon-button (click)="openAccountDetails()">
     			<mat-icon>account_circle</mat-icon>
   			</button>
 		</mat-toolbar>

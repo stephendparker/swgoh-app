@@ -13,12 +13,14 @@
 		<mat-form-field [style.width]="'350px'">
 			<mat-label>Hot Utils Session</mat-label>
 			<input matInput [(ngModel)]="playerHotutils">
+			
 		</mat-form-field>
+		<span class="caption">** Note - Leave blank, contact admin to understand this field</span>
 	</div>
 
 </mat-dialog-content>
 
 <div mat-dialog-actions align="end">
 	<button mat-button (click)="onOk()" [disabled]="formComplete() == false">Ok</button>
-
+	<button *ngIf="data.disableClose == false" mat-button (click)="onClose()">Close</button>
 </div>
