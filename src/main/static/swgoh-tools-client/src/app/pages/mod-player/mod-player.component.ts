@@ -193,6 +193,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   public REVIEW_FILTER_SQUAD = "filterSquad";
   public REVIEW_FILTER_MOVED_MODS = "movedMods";
   public REVIEW_FILTER_CATEGORY = "filterCategory";
+  public REVIEW_FILTER_MISSING_SET = "missingSet";
 
   public summarySort: ENUM_SORT_TYPE = ENUM_SORT_TYPE.POWER;
 
@@ -398,6 +399,15 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.updateUserInterface();
   }
 
+
+  setReviewFilterMissingSet() {
+    this.summaryViewCharacters = [];
+    this.cdr.detectChanges();
+    this.reviewFilterType = this.REVIEW_FILTER_MISSING_SET;
+    this.updateSummaryViewCharacters();
+    this.updateUserInterface();
+  }
+
   setReviewFilterSquad(squad) {
     this.summaryViewCharacters = [];
     this.cdr.detectChanges();
@@ -472,6 +482,25 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         retVal = this.playerCharacterDtos.filter(playerCharacterDto => {
           let character = this.characterData.find(character => character.base_id == playerCharacterDto.name);
           return character != null && character.categories.indexOf(this.reviewFilterCategory) != -1;
+        });
+        break;
+      }
+      case this.REVIEW_FILTER_MISSING_SET: {
+        retVal = this.playerCharacterDtos.filter(playerCharacterDto => {
+
+          let visibleMods = this.getVisibleMods(playerCharacterDto);
+          let setsById = SwgohGgCalc.getSetsById(visibleMods);
+
+          let setCount = 0;
+          for (let key in setsById) {
+            setCount = setCount + setsById[key];
+          }
+
+          if (SwgohGgCalc.hasFourSet(setsById)) {
+            return setCount != 2;
+          } else {
+            return setCount != 3;
+          }
         });
         break;
       }
@@ -960,15 +989,15 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  getVisibleMods(): ModsEntity[] {
+  getVisibleMods(cmDto: CharacterModDto): ModsEntity[] {
     let lockedMods: ModsEntity[] = this.getLockedMods(true);
     let retVal: ModsEntity[] = [];
-    if (this.selectedCharacterDto != null) {
+    if (cmDto != null) {
       // assign all locked mods
-      retVal = this.selectedCharacterDto.lockedMods.slice(0);
+      retVal = cmDto.lockedMods.slice(0);
 
       // mods that are assigned to character in game
-      this.selectedCharacterDto.currentMods.filter(mod => {
+      cmDto.currentMods.filter(mod => {
         // remove mods that are locked to other players
         return lockedMods.find(lockedMod => lockedMod.id == mod.id) == null;
       }).filter(currentUnlockedMod => {
@@ -1038,7 +1067,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     let lockedMods = this.selectedCharacterDto.lockedMods;
     let currentMods = this.selectedCharacterDto.currentMods;
 
-    let visibleMods = this.getVisibleMods();
+    let visibleMods = this.getVisibleMods(this.selectedCharacterDto);
 
     return (this.sameMods(pendingMods, visibleMods) != true);
   }
