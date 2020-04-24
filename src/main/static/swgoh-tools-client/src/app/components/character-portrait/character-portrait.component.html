@@ -2,6 +2,6 @@
 	<div *ngIf="baseId != null" class="char-portrait-image" [style.width]="maxHeight == null ? '84px' :maxHeight" [style.height]="maxHeight == null ? '84px' :maxHeight">
 		<img *ngIf="baseId != null" class="portrait-image" [src]="imageUrl">
 	</div>
-	<img *ngIf="locked" class="lock-image" src="https://www.hotutils.app/images/locked.png">
+	<!--<img *ngIf="locked" class="lock-image" src="https://www.hotutils.app/images/locked.png">-->
 </div>
 <span *ngIf="showName" class="thick">{{ name }}</span>

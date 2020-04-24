@@ -60,14 +60,14 @@
   			</button>
 		</mat-toolbar>
 
-		<cdk-virtual-scroll-viewport [itemSize]="displayModeSettings.modCharacterReviewHeight" [minBufferPx]="displayModeSettings.modEditorHeight"
+		<cdk-virtual-scroll-viewport #viewPortCharacterSummary [itemSize]="displayModeSettings.modCharacterReviewHeight" [minBufferPx]="displayModeSettings.modEditorHeight"
 			[maxBufferPx]="displayModeSettings.modEditorHeight + 200" [style.width]="'100%'" [style.height]="displayModeSettings.modEditorHeight + 'px'">
 
 			<div *cdkVirtualFor="let character of summaryViewCharacters; let index=index; let odd=odd; let even=even;" [class.odd]="odd"
 				[style.height]="displayModeSettings.modCharacterReviewHeight + 'px'">
 
 				<app-character-mod-summary [lockedMods]="allLockedMods" [allLocked]="character.lockedMods != null && character.lockedMods.length == 6"
-					(modsClicked)="modCharacter(character.name)" [modDto]="character" (toggleLock)="toggleSummaryLock(character)"></app-character-mod-summary>
+					(modsClicked)="modCharacter(character.name, index)" [modDto]="character" (toggleLock)="toggleSummaryLock(character)"></app-character-mod-summary>
 
 			</div>
 
@@ -127,7 +127,7 @@
     			<mat-icon>more_vert</mat-icon>
   			</button>
 			<mat-menu #changeCharacterMenu="matMenu">
-				<button mat-menu-item *ngFor="let character of summaryViewCharacters" [class.thick]="false" (click)="modCharacter(character.name)">
+				<button mat-menu-item *ngFor="let character of summaryViewCharacters; let index=index" [class.thick]="false" (click)="modCharacter(character.name, index)">
 					 {{ character.label }}
 				</button>
 			</mat-menu>

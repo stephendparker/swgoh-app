@@ -25,6 +25,11 @@ export class ConfirmationDialogComponent implements OnInit {
   }
 
   onOk(): void {
-    this.dialogRef.close(true);
+    if (this.confirmation) {
+      this.dialogRef.close(true);
+    } else {
+       this.dialogRef.close(false);
+    }
+
   }
 }

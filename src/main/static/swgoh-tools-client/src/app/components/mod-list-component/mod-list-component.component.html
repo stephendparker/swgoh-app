@@ -1,10 +1,12 @@
-<cdk-virtual-scroll-viewport [minBufferPx]="height" [maxBufferPx]="height + 200"
-	[itemSize]="displayModeSettings.modPortraitHeight" [style.width]="rightPanelWidth - 30 + 'px'" [style.height]="height + 'px'">
-	<div *cdkVirtualFor="let modRow of modRows" [style.height]="displayModeSettings.modPortraitHeight + 'px'">
-		<div class="flow row">
-			<span *ngFor="let mod of modRow" [style.width]="displayModeSettings.modPortraitWidth+ 'px'" [class.highlight]="highlightedMod != null && highlightedMod.id == mod.id">
-				<app-mod-portrait #modPortraits [locked]="isLocked(mod)" [showStatsSmall]="true" [mod]="mod.mod" (click)="clickMod(mod.mod)" > </app-mod-portrait>
+<div [style.padding-top]="'5px'">
+	<cdk-virtual-scroll-viewport [minBufferPx]="height" [maxBufferPx]="height + 200" [itemSize]="displayModeSettings.modPortraitHeight"
+		[style.width]="rightPanelWidth - 30 + 'px'" [style.height]="height + 'px'">
+		<div *cdkVirtualFor="let modRow of modRows" [style.height]="displayModeSettings.modPortraitHeight + 'px'">
+			<div class="flow row">
+				<span *ngFor="let mod of modRow" [style.width]="displayModeSettings.modPortraitWidth+ 'px'" [class.highlight]="highlightedMod != null && highlightedMod.id == mod.id">
+				<app-mod-portrait #modPortraits [large]="true" [locked]="isLocked(mod)" [showStatsSmall]="true" [mod]="mod.mod" (click)="clickMod(mod.mod)" > </app-mod-portrait>
 			</span>
+			</div>
 		</div>
-	</div>
-</cdk-virtual-scroll-viewport>
+	</cdk-virtual-scroll-viewport>
+</div>

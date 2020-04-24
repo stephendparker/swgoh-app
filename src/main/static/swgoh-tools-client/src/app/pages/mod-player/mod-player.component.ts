@@ -29,6 +29,7 @@ import { SquadManagerComponent } from './../../components/squad-manager/squad-ma
 import { ModCalculatorCharacterResultsDto, ModCalculatorResultsDto } from './../../model/optimization/mod-optimization';
 import { SwgohGgConstants } from './../../calcs/swgoh-gg-constants';
 import { CharacterOptimizationDialogComponent } from './../../components/character-optimization-dialog/character-optimization-dialog.component';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 
 class CharacterBestMods {
@@ -151,11 +152,29 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
   @ViewChildren('squadManager') set squadManagerContent(content: QueryList<SquadManagerComponent>) {
     this.squadManagers = content;
   }
+
+  private viewPortCharacterSummary: CdkVirtualScrollViewport;
+  @ViewChild('viewPortCharacterSummary') set viewPortCharacterSummaryContent(content: CdkVirtualScrollViewport) {
+    this.viewPortCharacterSummary = content;
+    if (this.restoreScrollPosition) {
+      this.restoreScrollPosition = false;
+      setTimeout(() => {
+        this.viewPortCharacterSummary.scrollToIndex(this.characterIndex);
+      });
+    }
+  }
+
+
+
   @ViewChild(ModListComponentComponent) modList: ModListComponentComponent;
 
   protected unsubscribe$ = new Subject<void>();
 
   displayModeSettings: DisplayModeSettings = new DisplayModeSettings(); // LINKED TO UI
+
+
+  characterIndex: number = 0;
+  restoreScrollPosition: boolean = false;
 
   public VIEW_SELECT_CHARACTER = 1;
   public VIEW_MODS = 2;
@@ -269,6 +288,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.saveData = JSON.parse(saveDataString);
       this.refreshDataCalculations();
     }
+    this.allLockedMods = this.getLockedMods(true);
 
     this.updateFullyLockedCharacters();
 
@@ -300,6 +320,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
   updateViewMode(mode: number) {
     this.viewMode = mode;
+
+    this.restoreScrollPosition = true;
+
     this.updateUserInterface();
   }
 
@@ -408,7 +431,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     if (this.summaryViewCharacters.length > currentCharacterIndex + 1) {
       targetIndex = currentCharacterIndex + 1;
     }
-    this.modCharacter(this.summaryViewCharacters[targetIndex].name);
+    this.modCharacter(this.summaryViewCharacters[targetIndex].name, targetIndex);
     this.updateUserInterface();
   }
 
@@ -429,7 +452,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     } else {
       targetIndex = currentCharacterIndex - 1;
     }
-    this.modCharacter(this.summaryViewCharacters[targetIndex].name);
+    this.modCharacter(this.summaryViewCharacters[targetIndex].name, targetIndex);
     this.updateUserInterface();
   }
 
@@ -697,6 +720,11 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       this.refreshDataCalculations();
       this.saveSettings();
       this.dataStoreService.setLockInput(false);
+
+      this.refreshDataCalculations();
+      this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
+      this.updateComponents();
+      this.updateUserInterface();
     });
 
   }
@@ -735,7 +763,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.saveData.resetAllyCode();
         this.saveData.playerAllyCode = result.playerId;
         this.reloadData(true, result.playerHotutils != null, false, result.playerHotutils);
-        this.viewMode = this.VIEW_REVIEW_ALL_CHARACTERS;
+
       }
     });
   }
@@ -894,11 +922,19 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.updateUserInterface();
   }
 
+  characterIndex: number = 0;
+
   // FROM UI 
-  modCharacter(character: string) {
+  modCharacter(character: string, index: number) {
+    this.characterIndex = index;
+
     this.viewMode = this.VIEW_MODS;
     this.setSelectedCharacter(character);
     this.revertToInGameModsSoft();
+
+    if (this.modList != null) {
+      this.modList.setScrollIndex(0);
+    }
     this.updateComponents();
     this.updateUserInterface();
   }
@@ -922,6 +958,27 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.selectedCharacterDto.pendingMods.push(currentMod);
       });
     }
+  }
+
+  getVisibleMods(): ModsEntity[] {
+    let lockedMods: ModsEntity[] = this.getLockedMods(true);
+    let retVal: ModsEntity[] = [];
+    if (this.selectedCharacterDto != null) {
+      // assign all locked mods
+      retVal = this.selectedCharacterDto.lockedMods.slice(0);
+
+      // mods that are assigned to character in game
+      this.selectedCharacterDto.currentMods.filter(mod => {
+        // remove mods that are locked to other players
+        return lockedMods.find(lockedMod => lockedMod.id == mod.id) == null;
+      }).filter(currentUnlockedMod => {
+        // remove mods that slot is already accounted for
+        return retVal.find(pendingMod => pendingMod.slot == currentUnlockedMod.slot) == null;
+      }).forEach(currentMod => {
+        retVal.push(currentMod);
+      });
+    }
+    return retVal;
   }
 
   // FROM UI
@@ -964,7 +1021,10 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result != null) {
         // TODO - confirm
-        this.selectedCharacterDto.lockedMods = this.selectedCharacterDto.currentMods.slice(0);
+        this.selectedCharacterDto.pendingMods = this.selectedCharacterDto.currentMods.slice(0);
+
+        this.toggleLock(this.selectedCharacterDto);
+
         this.revertToInGameModsSoft();
         this.updateComponents();
         this.updateUserInterface();
@@ -978,7 +1038,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     let lockedMods = this.selectedCharacterDto.lockedMods;
     let currentMods = this.selectedCharacterDto.currentMods;
 
-    return this.sameMods(lockedMods, pendingMods) != true || (lockedMods.length == 0 && this.sameMods(pendingMods, currentMods) != true );
+    let visibleMods = this.getVisibleMods();
+
+    return (this.sameMods(pendingMods, visibleMods) != true);
   }
 
   exitModdingScreen() {
@@ -988,15 +1050,18 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         width: '600px',
         disableClose: true,
         data: {
-          confirmationText: 'Lock pending mods?'
+          confirmationText: 'Check to lock mods'
         }
       })
       dialogRef.afterClosed().subscribe(result => {
-        if (result != null) {
-          this.toggleLock(this.selectedCharacterDto);
-          this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+        if (result !== null) {
+          if (result == true) {
+            this.toggleLock(this.selectedCharacterDto);
+            this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+          } else {
+            this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+          }
         }
-        this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
       });
     } else {
       this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);

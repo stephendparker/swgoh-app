@@ -211,7 +211,7 @@ export class ModSetComparisonComponent implements OnInit, OnChanges {
     });
 
     this.showGame = this.displayModeSettings.mini == false || (this.showPending == false);
-    this.showLockedPending = this.showPending && (this.displayModeSettings.mini == false || this.showPending == false);
+    this.showLockedPending = this.showLocked && (this.displayModeSettings.mini == false || this.showPending == false);
 
     this.cdr.detectChanges();
   }

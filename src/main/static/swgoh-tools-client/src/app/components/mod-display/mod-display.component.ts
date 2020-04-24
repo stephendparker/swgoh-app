@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy, OnChanges, OnDestroy } from '@angular/core';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { takeUntil } from 'rxjs/operators';
 import { ModPortraitComponent } from './../mod-portrait/mod-portrait.component';
@@ -19,7 +19,7 @@ const MOD_SLOT_CROSS = 6;
   templateUrl: './mod-display.component.html',
   styleUrls: ['./mod-display.component.scss']
 })
-export class ModDisplayComponent implements OnInit, OnChanges {
+export class ModDisplayComponent implements OnInit, OnChanges, OnDestroy {
 
   @ViewChildren('modPortraits') modPortraits: QueryList<ModPortraitComponent>;
 
@@ -56,9 +56,9 @@ export class ModDisplayComponent implements OnInit, OnChanges {
         this.displayModeSettings = displayModeSettings;
 
         this.modDisplayPortaitHeight = this.displayModeSettings.modDisplayPortaitHeight;
-        if (this.large) {
+        // if (this.large) {
           this.modDisplayPortaitHeight = this.displayModeSettings.modPortraitLargeHeight;
-        }
+        // }
 
         this.cdr.detectChanges();
       }
@@ -66,6 +66,13 @@ export class ModDisplayComponent implements OnInit, OnChanges {
 
     this.setMods(this.mods);
   }
+
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   ngOnChanges() {
 
     this.setMods(this.mods);

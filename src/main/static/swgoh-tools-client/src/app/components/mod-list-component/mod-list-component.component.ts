@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 
 import { DisplayModeService, DisplayModeSettings } from './../../services/display-mode.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, delay } from 'rxjs/operators';
 import { ModPortraitComponent } from './../mod-portrait/mod-portrait.component';
 
 import { EvaluatedModDto } from './../../calcs/swgoh-gg-calc';
@@ -35,6 +36,8 @@ export class LockedModDto {
 export class ModListComponentComponent implements OnInit {
 
   private modPortraits: QueryList<ModPortraitComponent>;
+
+  @ViewChild(CdkVirtualScrollViewport) viewPort: CdkVirtualScrollViewport;
 
   @ViewChildren('modPortraits') set content(content: QueryList<ModPortraitComponent>) {
     this.modPortraits = content;
@@ -67,6 +70,15 @@ export class ModListComponentComponent implements OnInit {
   protected unsubscribe$ = new Subject<void>();
 
   constructor(private displayModeService: DisplayModeService, private cdr: ChangeDetectorRef) {
+
+  }
+
+
+  setScrollIndex(index: number) {
+    (async () => {
+      await delay(1);
+      this.viewPort.scrollToIndex(index);
+    })();
 
   }
 
