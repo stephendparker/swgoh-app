@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { Mods, ModsEntity } from './../../model/swgohgg/mods-data';
 import { Subject, forkJoin } from 'rxjs';
-import { ModCalculatedData, SwgohGgCalc, ModUnitCalcResults, SetTotalCounts, CommonSet, EvaluatedModDto, ModTotalBonus, StatsDto, SetInfo, CharacterModDto } from './../../calcs/swgoh-gg-calc';
+import { ModCalculatedData, SwgohGgCalc, ModUnitCalcResults, SetTotalCounts, CommonSet, EvaluatedModDto, ModTotalBonus, StatsDto, SetInfo, CharacterModDto, OPTIMIZE_TYPE } from './../../calcs/swgoh-gg-calc';
 import { delay, takeUntil } from 'rxjs/operators';
 import { DataStoreService } from './../../services/data-store.service';
 import { UnitsEntity, PlayerData } from './../../model/swgohgg/player-data';
@@ -30,6 +30,7 @@ import { ModCalculatorCharacterResultsDto, ModCalculatorResultsDto } from './../
 import { SwgohGgConstants } from './../../calcs/swgoh-gg-constants';
 import { CharacterOptimizationDialogComponent } from './../../components/character-optimization-dialog/character-optimization-dialog.component';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { OptimizeModsDialogComponent } from './../../components/optimize-mods-dialog/optimize-mods-dialog.component';
 
 
 class CharacterBestMods {
@@ -951,7 +952,6 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     this.updateUserInterface();
   }
 
-  characterIndex: number = 0;
 
   // FROM UI 
   modCharacter(character: string, index: number) {
@@ -1012,9 +1012,21 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
   // FROM UI
   clickOptimizeCharacter(name: string) {
-    this.optimize(name);
-    this.updateComponents();
-    this.updateUserInterface();
+
+
+    const dialogRef = this.dialog.open(OptimizeModsDialogComponent, {
+      width: '900px',
+      disableClose: true,
+      data: {}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        this.optimize(name, result);
+        this.updateComponents();
+        this.updateUserInterface();
+      }
+    });
+
   }
 
   clickViewOptimizationSettings(name: string) {
@@ -1478,7 +1490,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
     return retVal;
   }
 
-  optimize(name: string) {
+  optimize(name: string, optimizeOptions: OPTIMIZE_TYPE) {
     let allMods = this.getFullModList();
 
     let availableMods = allMods;
@@ -1498,7 +1510,7 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       let modsStrength: EvaluatedModDto[] = [];
       viableMods.forEach(modUnitEntity => {
         modsStrength.push({
-          strength: SwgohGgCalc.calculateModOptimizationStrength(modUnitEntity, optimizationCharacterData),
+          strength: SwgohGgCalc.calculateModOptimizationStrength(modUnitEntity, optimizationCharacterData, optimizeOptions),
           mod: modUnitEntity
         });
       });
@@ -1560,6 +1572,11 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
       });
 
       let bestValue: number = 0;
+      let bestSpeedValue: number = 0;
+
+      let cmdto: CharacterModDto = this.playerCharacterDtos.find(dto => dto.name == name);
+
+      let baseStats = SwgohGgCalc.calculateBaseStats(cmdto == null ? null : cmdto.unitData, cmdto == null ? null : cmdto.currentMods);
 
       bestSquares.forEach(square => {
         bestDiamonds.forEach(diamond => {
@@ -1569,7 +1586,20 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
                 bestCrosses.forEach(cross => {
 
                   let setValue = this.calculateTotalSetValue(square, diamond, circle, arrow, triangle, cross, optimizationCharacterData);
-                  if (setValue > bestValue) {
+
+
+                  let speedValue = 0;
+                  if (optimizeOptions == OPTIMIZE_TYPE.SPEED || optimizeOptions == OPTIMIZE_TYPE.SPEED_6E) {
+                    let newStats: StatsDto = SwgohGgCalc.calculateSetStats(baseStats,
+                      [square == null ? null : square.mod, diamond == null ? null : diamond.mod,
+                      circle == null ? null : circle.mod, arrow == null ? null : arrow.mod,
+                      triangle == null ? null : triangle.mod, cross == null ? null : cross.mod], optimizeOptions == OPTIMIZE_TYPE.SPEED_6E);
+
+                    speedValue = newStats.speed;
+                  }
+
+                  if (speedValue > bestSpeedValue || (speedValue == bestSpeedValue && setValue > bestValue)) {
+                    bestSpeedValue = speedValue;
                     bestValue = setValue;
                     bestMods.bestSquare = square;
                     bestMods.bestDiamond = diamond;

@@ -1,0 +1,18 @@
+<h4 mat-dialog-title>Optimize Mods</h4>
+<mat-dialog-content>
+	<form>
+		<div class="padded">
+			<mat-button-toggle-group name="optimizationType" [(ngModel)]="optimizationType">
+				<mat-button-toggle [value]="OPTIMIZE_TYPE.NORMAL">Normal</mat-button-toggle>
+				<mat-button-toggle [value]="OPTIMIZE_TYPE.SPEED">Highest Speed</mat-button-toggle>
+				<mat-button-toggle [value]="OPTIMIZE_TYPE.SPEED_6E">Highest Speed - Uprade as 6E</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+
+	</form>
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+	<button mat-button (click)="onOk()">Ok</button>
+	<button mat-button (click)="onClose()">Close</button>
+</div>

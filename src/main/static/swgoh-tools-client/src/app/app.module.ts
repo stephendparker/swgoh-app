@@ -65,6 +65,7 @@ import { SquadManagerComponent } from './components/squad-manager/squad-manager.
 import { CharacterOptimizationDialogComponent } from './components/character-optimization-dialog/character-optimization-dialog.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OptimizeModsDialogComponent } from './components/optimize-mods-dialog/optimize-mods-dialog.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +103,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DeleteModConfigDialogComponent,
     CharacterModSummaryComponent,
     SquadManagerComponent,
-    CharacterOptimizationDialogComponent
+    CharacterOptimizationDialogComponent,
+    OptimizeModsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -142,7 +144,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RefreshModDialogComponent,
     ConfirmationDialogComponent,
     DeleteModConfigDialogComponent,
-    CharacterOptimizationDialogComponent
+    CharacterOptimizationDialogComponent,
+    OptimizeModsDialogComponent
   ],
   providers: [DecimalPipe],
   bootstrap: [AppComponent]

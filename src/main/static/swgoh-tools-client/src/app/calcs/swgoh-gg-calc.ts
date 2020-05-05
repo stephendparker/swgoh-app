@@ -240,6 +240,13 @@ export class CharacterModDto {
     public unitData: UnitsEntity;
 }
 
+
+export enum OPTIMIZE_TYPE {
+    NORMAL = 1,
+    SPEED,
+    SPEED_6E
+}
+
 export class SwgohGgCalc {
 
     public static FULL_SET_LIST = ["offense", "speed", "critDmg", "health", "defense", "critChance", "potency", "tenacity"];
@@ -1100,7 +1107,21 @@ export class SwgohGgCalc {
         return "unknown";
     }
 
-    public static calculateModOptimizationStrength(mod: ModsEntity, optimizationResults: ModCalculatorCharacterResultsDto): number {
+    public static calculateBaseStats(unitData: UnitsEntity, inGameMods: ModsEntity[]): StatsDto {
+        if (unitData == null) {
+            return null;
+        }
+        let inGameTotalBonus: ModTotalBonus = SwgohGgCalc.calculateModTotalBonus(inGameMods);
+        return SwgohGgCalc.deriveBaseStats(unitData, inGameTotalBonus);
+    }
+
+    public static calculateSetStats(characterBaseStats: StatsDto, newMods: ModsEntity[], upgrade6e: boolean): StatsDto {
+        let newModsBonus: ModTotalBonus = SwgohGgCalc.calculateModTotalBonus(newMods, upgrade6e);
+        let retVal = SwgohGgCalc.applyBonuses(characterBaseStats, newModsBonus);
+        return retVal;
+    }
+
+    public static calculateModOptimizationStrength(mod: ModsEntity, optimizationResults: ModCalculatorCharacterResultsDto, optimizeOptions: OPTIMIZE_TYPE = null): number {
 
         let retVal = 0;
 
@@ -1117,7 +1138,27 @@ export class SwgohGgCalc {
             secondaryStrength = secondaryStrength + (modQualityScore * optimizationMultiplier);
         });
 
-        return primaryStrength * secondaryStrength;
+        let speedOverride = 0;
+
+        if (optimizeOptions == OPTIMIZE_TYPE.SPEED || optimizeOptions == OPTIMIZE_TYPE.SPEED_6E) {
+            if (mod.primary_stat.stat_id == SwgohGgConstants.MOD_SPEED_STAT_ID) {
+                let speed = 10000 * mod.primary_stat.value;
+                if (optimizeOptions == OPTIMIZE_TYPE.SPEED_6E) {
+                    speed = 320000;
+                }
+                speedOverride = 10000 * speed;
+            } else {
+                let speed: SecondaryStatsEntity = mod.secondary_stats.find(stat => stat.name == SwgohGgConstants.MOD_SECONDARY_SPEED_NAME);
+                let speedAmount = speed == null ? 0 : speed.value;
+
+                if (optimizeOptions == OPTIMIZE_TYPE.SPEED_6E && mod.rarity < 6) {
+                    speedAmount = speedAmount + 10000;
+                }
+                speedOverride = 10000 * speedAmount;
+            }
+            
+        }
+        return primaryStrength * secondaryStrength + speedOverride;
     }
 
     public static calculateModMatchStrength(mod: ModsEntity, modUnitCalcResults: ModUnitCalcResults): number {
