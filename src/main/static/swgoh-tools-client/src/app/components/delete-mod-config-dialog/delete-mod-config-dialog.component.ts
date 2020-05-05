@@ -20,6 +20,7 @@ export class DeleteModConfigDialogComponent implements OnInit {
   filters = DeleteModConfigDialogComponent.NONE;
   squads = DeleteModConfigDialogComponent.NONE;
   unequippedMods = DeleteModConfigDialogComponent.NONE;
+  warnPending = DeleteModConfigDialogComponent.NONE;
 
   constructor(public dialogRef: MatDialogRef<DeleteModConfigDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
@@ -37,7 +38,8 @@ export class DeleteModConfigDialogComponent implements OnInit {
       lockedMods: this.lockedMods,
       filters: this.filters,
       squads: this.squads,
-      unequippedMods: this.unequippedMods
+      unequippedMods: this.unequippedMods,
+      warnPending: this.warnPending
     });
   }
 

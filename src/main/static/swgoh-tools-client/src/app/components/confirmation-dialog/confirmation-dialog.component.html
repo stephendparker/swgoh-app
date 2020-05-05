@@ -2,7 +2,14 @@
 <mat-dialog-content>
 
 
-	<mat-checkbox name="confirmation" [(ngModel)]="confirmation">{{ confirmationText }}</mat-checkbox>
+	<mat-checkbox *ngIf="confirmationText != null" name="confirmation" [(ngModel)]="confirmation">{{ confirmationText }}</mat-checkbox>
+
+
+	<mat-radio-group class="my-radio-group" *ngIf="options != null" [(ngModel)]="selectedOption">
+		<mat-radio-button class="my-radio-button" *ngFor="let option of options" [value]="option.value">
+			{{option.text}}
+		</mat-radio-button>
+	</mat-radio-group>
 
 </mat-dialog-content>
 

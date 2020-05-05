@@ -42,6 +42,16 @@
 		</div>
 	</div>
 
+	<div class="flow row">
+		<div class="flow row">Warn pending:</div>
+		<div class="flow row">
+			<mat-button-toggle-group name="warnPending" [(ngModel)]="warnPending">
+				<mat-button-toggle [value]="_NONE">None</mat-button-toggle>
+				<mat-button-toggle [value]="_ALL">Reset</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+	</div>
+
 
 
 </mat-dialog-content>

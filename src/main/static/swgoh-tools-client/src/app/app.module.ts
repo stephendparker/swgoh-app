@@ -66,6 +66,7 @@ import { CharacterOptimizationDialogComponent } from './components/character-opt
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OptimizeModsDialogComponent } from './components/optimize-mods-dialog/optimize-mods-dialog.component';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -134,7 +135,8 @@ import { OptimizeModsDialogComponent } from './components/optimize-mods-dialog/o
     MatCheckboxModule,
     DragDropModule,
     MatSliderModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatRadioModule
   ],
   entryComponents: [
     ColumnSelectorComponent,

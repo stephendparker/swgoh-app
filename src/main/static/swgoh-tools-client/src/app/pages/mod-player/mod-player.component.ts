@@ -104,6 +104,8 @@ export class PlayerModConfiguration {
 class PlayerModSaveData {
   playerAllyCode: string; // ally code
 
+  disablePendingWarning: boolean = false;
+
   public resetAllyCode() {
     this.playerModData = new PlayerModData();
     this.restoredLockedMods = [];
@@ -923,6 +925,9 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         if (result.filters == DeleteModConfigDialogComponent.ALL) {
           this.saveData.modEditorViewConfigurations.forEach(config => config.reset());
         }
+        if (result.warnPending == DeleteModConfigDialogComponent.ALL) {
+          this.saveData.disablePendingWarning = false;
+        }
         this.revertToInGameModsSoft();
         this.setSelectedCharacter(this.selectedCharacter);
 
@@ -1086,18 +1091,26 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
 
   exitModdingScreen() {
 
-    if (this.pendingModsNotLocked()) {
+    if (this.pendingModsNotLocked() && this.saveData.disablePendingWarning != true) {
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         width: '600px',
         disableClose: true,
         data: {
-          confirmationText: 'Check to lock mods'
+          options: [
+            { text: 'Lock mods', value: 0 },
+            { text: 'Discard pending', value: 1 },
+            { text: "Don't show this again", value: 2 }
+          ]
         }
       })
       dialogRef.afterClosed().subscribe(result => {
         if (result !== null) {
-          if (result == true) {
+          if (result == 0) {
             this.toggleLock(this.selectedCharacterDto);
+            this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
+          } if (result == 2) {
+            this.saveData.disablePendingWarning = true;
+            this.saveSettings();
             this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);
           } else {
             this.updateViewMode(this.VIEW_REVIEW_ALL_CHARACTERS);

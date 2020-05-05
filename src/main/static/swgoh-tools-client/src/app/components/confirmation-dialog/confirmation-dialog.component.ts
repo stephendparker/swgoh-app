@@ -10,10 +10,13 @@ export class ConfirmationDialogComponent implements OnInit {
 
   confirmationText: string = null;
   confirmation: boolean = false;
+  options = null;
+  selectedOption = null;
 
   constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     if (data != null) {
       this.confirmationText = data.confirmationText;
+      this.options = data.options;
     }
   }
 
@@ -25,10 +28,12 @@ export class ConfirmationDialogComponent implements OnInit {
   }
 
   onOk(): void {
-    if (this.confirmation) {
+    if (this.options != null) {
+      this.dialogRef.close(this.selectedOption);
+    } else if (this.confirmation) {
       this.dialogRef.close(true);
     } else {
-       this.dialogRef.close(false);
+      this.dialogRef.close(false);
     }
 
   }
