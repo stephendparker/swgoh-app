@@ -67,6 +67,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OptimizeModsDialogComponent } from './components/optimize-mods-dialog/optimize-mods-dialog.component';
 import {MatRadioModule} from '@angular/material/radio';
+import { AboutDialogComponent } from './components/about-dialog/about-dialog.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import {MatRadioModule} from '@angular/material/radio';
     CharacterModSummaryComponent,
     SquadManagerComponent,
     CharacterOptimizationDialogComponent,
-    OptimizeModsDialogComponent
+    OptimizeModsDialogComponent,
+    AboutDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -147,7 +149,8 @@ import {MatRadioModule} from '@angular/material/radio';
     ConfirmationDialogComponent,
     DeleteModConfigDialogComponent,
     CharacterOptimizationDialogComponent,
-    OptimizeModsDialogComponent
+    OptimizeModsDialogComponent,
+    AboutDialogComponent
   ],
   providers: [DecimalPipe],
   bootstrap: [AppComponent]

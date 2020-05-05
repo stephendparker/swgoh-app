@@ -31,6 +31,7 @@ import { SwgohGgConstants } from './../../calcs/swgoh-gg-constants';
 import { CharacterOptimizationDialogComponent } from './../../components/character-optimization-dialog/character-optimization-dialog.component';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { OptimizeModsDialogComponent } from './../../components/optimize-mods-dialog/optimize-mods-dialog.component';
+import { AboutDialogComponent } from './../../components/about-dialog/about-dialog.component';
 
 
 class CharacterBestMods {
@@ -900,6 +901,15 @@ export class ModPlayerComponent implements OnInit, OnDestroy {
         this.updateUserInterface();
       }
     });
+  }
+
+  openContactUs() {
+    const dialogRef = this.dialog.open(AboutDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    })
+    dialogRef.afterClosed().subscribe(result => { });
   }
 
   clickCleanUpData() {
